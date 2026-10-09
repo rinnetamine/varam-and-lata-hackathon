@@ -58,6 +58,7 @@ def public_person(row):
         'phone': row['phone'],
         'address': row['address'],
         'birthDate': row['birth_date'],
+        'iban': row['iban'],
     }
 
 
@@ -107,6 +108,8 @@ class Handler(SimpleHTTPRequestHandler):
         read_match = re.fullmatch(r'/api/messages/(\d+)/read', path)
         if read_match:
             return self.handle_messages(int(read_match.group(1)))
+        if path == '/api/iban':
+            return self.handle_iban()
         if path == '/api/login':
             return self.handle_login()
         if path == '/api/logout':
@@ -149,6 +152,27 @@ class Handler(SimpleHTTPRequestHandler):
                 ).fetchone()
         if person is None:
             return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
+        self.send_json(HTTPStatus.OK, {'person': public_person(person)})
+
+    def handle_iban(self):
+        token = self.bearer_token()
+        with database() as db:
+            session = db.execute('SELECT person_id FROM sessions WHERE token_hash = ? AND expires_at > ?',
+                                 (hash_token(token), int(time.time()))).fetchone() if token else None
+            if session is None:
+                return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
+            data = self.read_json()
+            iban = re.sub(r'\s+', '', str(data.get('iban', ''))).upper() if data else ''
+            # Latvian IBAN: LV, checksum, four bank letters, thirteen account characters.
+            valid = bool(re.fullmatch(r'LV[0-9]{2}[A-Z]{4}[A-Z0-9]{13}', iban))
+            if valid:
+                rearranged = iban[4:] + iban[:4]
+                digits = ''.join(str(ord(char) - 55) if char.isalpha() else char for char in rearranged)
+                valid = int(digits) % 97 == 1
+            if not valid:
+                return self.send_json(HTTPStatus.BAD_REQUEST, {'error': 'invalid_iban'})
+            db.execute('UPDATE people SET iban = ? WHERE id = ?', (iban, session['person_id']))
+            person = db.execute('SELECT * FROM people WHERE id = ?', (session['person_id'],)).fetchone()
         self.send_json(HTTPStatus.OK, {'person': public_person(person)})
 
     def handle_messages(self, message_id=None):

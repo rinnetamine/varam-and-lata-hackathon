@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS people (
   email TEXT NOT NULL UNIQUE,
   phone TEXT NOT NULL UNIQUE,
   address TEXT NOT NULL,
-  birth_date TEXT NOT NULL
+  birth_date TEXT NOT NULL,
+  iban TEXT
 );
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
@@ -116,6 +117,9 @@ def connect(path):
             used.add(code)
             connection.execute('UPDATE people SET birth_date = ?, personas_kods = ? WHERE id = ?',
                                (birth.isoformat(), code, row['id']))
+    if 'iban' not in columns:
+        connection.execute('ALTER TABLE people ADD COLUMN iban TEXT')
+        connection.commit()
     return connection
 
 

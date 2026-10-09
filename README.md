@@ -67,3 +67,7 @@ Import licensed data snapshots with `python3 scripts/import_open_data.py`. See [
 ### Demo inbox
 
 SQLite `messages` stores each user's demo notifications, message body, received timestamp and nullable `read_at`. Startup seeds one fictional newborn-service message per user without duplicating it or resetting read status. Authenticated `GET /api/messages` returns only the current user's messages and unread count; `POST /api/messages/<id>/read` saves a read timestamp only for that user's message. Opening mail in the profile marks it read and updates the overview count. No external email is sent or received.
+
+### First-login bank account
+
+Users without an IBAN are directed to `bank-account.html` after login and when entering guarded pages. The authenticated `POST /api/iban` endpoint normalizes and validates a Latvian IBAN's format and MOD-97 checksum, then saves it on that user's record. Subsequent logins open the profile directly; the saved IBAN appears in My data. This does not verify account ownership or make payments. Use only demo IBANs. Existing people receive a nullable IBAN column without resetting records.

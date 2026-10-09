@@ -117,6 +117,16 @@ Object.assign(englishTranslations, {
  'Neizdevās ielādēt ziņojumus. Atjauno lapu un mēģini vēlreiz.':'Could not load messages. Refresh the page and try again.',
  'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.':'Services related to a child’s birth are collected in one place. Fictional message for the hackathon prototype.'
 });
+Object.assign(englishTranslations, {
+ 'Bankas konts (IBAN)':'Bank account (IBAN)', 'Pievieno bankas kontu':'Add your bank account',
+ 'Pirmajā pieslēgšanās reizē norādi Latvijas IBAN demonstrācijas kontu.':'Enter a Latvian demo IBAN when signing in for the first time.',
+ 'Izmanto tikai testa IBAN. Konts tiek saglabāts prototipa datubāzē; maksājumi netiek veikti.':'Use only a test IBAN. The account is saved in the prototype database; no payments are made.',
+ 'Saglabāt un turpināt':'Save and continue',
+ 'Ievadi derīgu Latvijas IBAN konta numuru.':'Enter a valid Latvian IBAN.',
+ 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.':'Could not save the account number. Try again.',
+ 'Neizdevās saglabāt sesiju. Mēģini vēlreiz.':'Could not save the session. Try again.',
+ 'Bankas konts — Faketvija.lv demo':'Bank account — Faketvija.lv demo'
+});
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}
 const originalText = new WeakMap();

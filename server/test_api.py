@@ -107,6 +107,20 @@ def main():
             _, raw = call('/api/messages', token=other_token)
             check('other user retains unread mail', json.loads(raw)['unreadCount'] == 1)
 
+            status, _ = call('/api/iban', 'POST', {'iban': 'LV00TEST0000000000001'})
+            check('IBAN requires authentication', status == 401)
+            status, _ = call('/api/iban', 'POST', {'iban': 'LV00TEST0000000000001'}, token=token)
+            check('invalid IBAN checksum rejected', status == 400)
+            bban = 'TEST0000000000001'
+            numeric = ''.join(str(ord(char) - 55) if char.isalpha() else char for char in bban + 'LV00')
+            iban = f'LV{98 - int(numeric) % 97:02d}{bban}'
+            status, raw = call('/api/iban', 'POST', {'iban': iban.lower()}, token=token)
+            check('valid demo IBAN saved and normalized', status == 200 and json.loads(raw)['person']['iban'] == iban)
+            _, raw = call('/api/me', token=token)
+            check('IBAN persists in profile', json.loads(raw)['person']['iban'] == iban)
+            _, raw = call('/api/me', token=other_token)
+            check('IBAN update isolated to current user', json.loads(raw)['person']['iban'] is None)
+
             stored = [row[0] for row in sqlite3.connect(db_path).execute('SELECT token_hash FROM sessions')]
             check('only token hashes are stored', token not in stored and all(len(item) == 64 for item in stored))
 
