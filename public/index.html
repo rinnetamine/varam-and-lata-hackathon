@@ -1,53 +1,62 @@
 <!doctype html>
 <html lang="lv">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kopā — e-pakalpojumu prototips</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
-  </head>
-  <body>
-    <div class="notice">Hakatona prototips · Nav oficiāls valsts portāls · Visi pakalpojumi ir demonstrācija</div>
-    <header class="container header">
-      <a class="brand" href="./">kopā<span>e-pakalpojumi vienuviet</span></a>
-      <a class="nav-link" href="#pakalpojumi">Pakalpojumi</a>
-    </header>
-    <main class="container">
-      <section class="hero">
-        <p class="eyebrow">MAZĀK SOĻU. VAIRĀK SKAIDRĪBAS.</p>
-        <h1>Viena dzīves situācija.<br>Vairāki pakalpojumi kopā.</h1>
-        <p class="intro">Izvēlies, ko vēlies paveikt. Mēs apvienojam saistītos e-pakalpojumus vienā saprotamā ceļā.</p>
-        <a class="button" href="#pakalpojumi">Apskatīt pakalpojumus <span aria-hidden="true">↓</span></a>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Latvija.gov.lv sākumlapas vizuālais makets hakatonam.">
+  <title>Sākumlapa – Valsts pārvaldes pakalpojumu portāls · Makets</title>
+  <link rel="stylesheet" href="styles.css?v=portal-2">
+  <script src="app.js?v=portal-3" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#saturs">Pāriet uz saturu</a>
+  <header class="portal-header">
+    <div class="header-inner">
+      <a href="./" aria-label="Sākumlapa"><img class="portal-logo" src="assets/logo.png" alt="Latvija.lv" width="147" height="61"></a>
+      <nav class="primary-nav" aria-label="Galvenā navigācija"><a href="#pakalpojumi">Pakalpojumi</a><a href="#dzives-situacijas">Dzīves situācijas</a><a href="#e-adrese">E-adrese</a></nav>
+      <div class="header-actions">
+        <span class="search-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span>Meklēt</span></span>
+        <span class="language-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>EN</span>
+        <button type="button" class="accessibility-button" aria-label="Palielināt tekstu" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7" r="1"/><path d="M7 10h10m-5 0v4m0 0-3 4m3-4 3 4"/></svg></button>
+        <a class="login-button" id="login-button" href="login.html" style="text-decoration:none">Ienākt Mana Latvija.lv <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </header>
+  <main id="saturs" class="shell">
+    <section class="hero" aria-labelledby="warning-title">
+      <p class="overline">VALSTS PĀRVALDES PAKALPOJUMU PORTĀLS</p>
+      <h1 id="warning-title">Uzmanību!</h1>
+      <p class="warning"><strong>Paziņojumi</strong> par jauniem e-adreses ziņojumiem <strong>netiek sūtīti SMS.</strong> Ja saņemat šādu īsziņu, neatveriet tajā esošās saites. Jaunus e-adreses ziņojumus pārbaudiet tikai portālā Latvija.gov.lv.</p>
+      <div class="hero-image"><img src="assets/phone.png" alt="Latvija.lv portāls tālrunī: e-adrese, paziņojumi un personas dati" width="1731" height="1841"></div>
+    </section>
+    <div class="sections" id="pakalpojumi">
+      <section class="panel heading-panel"><h2>Pakalpojumu ieteikumi</h2></section>
+      <section class="panel heading-panel"><h2>Populārākie pakalpojumi</h2></section>
+      <section class="panel advice" aria-labelledby="advice-title">
+        <h2 id="advice-title">Digitālie padomi</h2>
+        <article><h3>Kur atrast savus un bērna datus?</h3><p>Noskaidro, kā sadaļā “Mani dati” apskatīt savus un pārstāvēto personu datus valsts reģistros.</p><span class="text-link">Uz padomu</span></article>
+        <article><h3>Kā izveidot e-rēķinu?</h3><p>Iepazīsti e-rēķinu iespējas: sagatavo, nosūti, saņem un pārvaldi rēķinus vienuviet Latvija.gov.lv.</p><span class="text-link">Uz padomu</span></article>
+        <article><h3>Kas ir e-adrese un kam tā paredzēta?</h3><p>Uzzini, kā e-adrese nodrošina drošu un oficiālu saziņu ar valsts un pašvaldību iestādēm.</p><span class="text-link">Uz padomu</span></article>
+        <article><h3>Kā laikus uzzināt par jaunu ziņojumu e-adresē?</h3><p>Apstiprini savu e-pasta adresi, lai laikus uzzinātu par jauniem e-adresē saņemtajiem ziņojumiem.</p><span class="text-link">Uz padomu</span></article>
+        <div class="outline-label">Skatīt visus padomus</div>
       </section>
-      <section id="pakalpojumi" aria-labelledby="services-title">
-        <div class="section-heading"><h2 id="services-title">Ar ko sāksim?</h2><p>Pakalpojumu apvienošanas piemēri</p></div>
-        <div class="cards">
-          <article class="card">
-            <span class="number">01</span><h3>Mainu dzīvesvietu</h3>
-            <p>Deklarēšana, pašvaldības informācija un saistīto pakalpojumu aktualizēšana.</p>
-            <button type="button" data-bundle="moving">Apskatīt soļus <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="card">
-            <span class="number">02</span><h3>Ģimenē piedzimis bērns</h3>
-            <p>Dzimšanas reģistrācija, pabalsti un pieteikšanās pašvaldības atbalstam.</p>
-            <button type="button" data-bundle="family">Apskatīt soļus <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="card">
-            <span class="number">03</span><h3>Sāku uzņēmējdarbību</h3>
-            <p>Reģistrācija, nodokļu informācija un pirmie uzņēmējdarbības soļi.</p>
-            <button type="button" data-bundle="business">Apskatīt soļus <span aria-hidden="true">→</span></button>
-          </article>
-        </div>
-      </section>
-      <section id="bundle" class="bundle" aria-labelledby="bundle-title" hidden>
-        <p class="eyebrow">DEMONSTRĀCIJAS PLŪSMA</p>
-        <h2 id="bundle-title" tabindex="-1"></h2>
-        <p>Šie ir ilustratīvi soļi. Prototips neveic pieteikumus un nav savienots ar valsts sistēmām.</p>
-        <ol id="bundle-steps"></ol>
-        <button class="button secondary" id="close-bundle" type="button">Aizvērt</button>
-      </section>
-    </main>
-    <footer class="container">Kopā · Hakatona ideja par apvienotiem e-pakalpojumiem · <a href="data-licenses.html">Datu avoti un licences</a></footer>
-  </body>
+      <section id="dzives-situacijas" class="panel heading-panel"><h2>Dzīves situācijas</h2></section>
+      <section class="panel heading-panel"><h2>Dalies ar savu viedokli par portāla jauno versiju</h2></section>
+      <section id="e-adrese" class="panel heading-panel"><h2>Droša saziņa sākas ar e-adresi</h2></section>
+      <section class="panel heading-panel"><h2>Aktualitātes un tehniskie darbi</h2></section>
+<p class="tagline">Latvija.lv kopš 2006. gada - Tavs drošais ceļvedis digitālajā valstī.</p>
+    </div>
+  </main>
+<footer class="footer shell">
+    <img class="logo" src="assets/logo.png" alt="Latvija.lv" width="147" height="61" loading="lazy">
+    <div class="outline-label language">English</div>
+    <div class="footer-heading">Noderīgi</div>
+    <div class="footer-heading">Noteikumi</div>
+    <div class="footer-heading">Seko mums</div>
+    <div class="social"><span>Youtube</span><span>Facebook</span><span>X</span></div>
+    <section class="contacts"><h2>KONTAKTI</h2><p>© 2026 Valsts digitālās attīstības aģentūra<br>Reģistrācijas numurs: 90001733697</p><p>Tālrunis: <a href="tel:+37167502757">+37167502757</a></p><p>E-pasts: <a href="mailto:portals@vdaa.gov.lv">portals@vdaa.gov.lv</a></p></section>
+    <div class="funds">Izmantotie atbalsta fondi</div>
+    <p class="prototype-note">Hakatona dizaina makets · Nav oficiālais portāls · Pakalpojumi un autentifikācija nav pieslēgti.</p>
+  </footer>
+</body>
 </html>
