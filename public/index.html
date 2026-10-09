@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="lv">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kopā — e-pakalpojumu prototips</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="notice">Hakatona prototips · Nav oficiāls valsts portāls · Visi pakalpojumi ir demonstrācija</div>
+    <header class="container header">
+      <a class="brand" href="./">kopā<span>e-pakalpojumi vienuviet</span></a>
+      <a class="nav-link" href="#pakalpojumi">Pakalpojumi</a>
+    </header>
+    <main class="container">
+      <section class="hero">
+        <p class="eyebrow">MAZĀK SOĻU. VAIRĀK SKAIDRĪBAS.</p>
+        <h1>Viena dzīves situācija.<br>Vairāki pakalpojumi kopā.</h1>
+        <p class="intro">Izvēlies, ko vēlies paveikt. Mēs apvienojam saistītos e-pakalpojumus vienā saprotamā ceļā.</p>
+        <a class="button" href="#pakalpojumi">Apskatīt pakalpojumus <span aria-hidden="true">↓</span></a>
+      </section>
+      <section id="pakalpojumi" aria-labelledby="services-title">
+        <div class="section-heading"><h2 id="services-title">Ar ko sāksim?</h2><p>Pakalpojumu apvienošanas piemēri</p></div>
+        <div class="cards">
+          <article class="card">
+            <span class="number">01</span><h3>Mainu dzīvesvietu</h3>
+            <p>Deklarēšana, pašvaldības informācija un saistīto pakalpojumu aktualizēšana.</p>
+            <button type="button" data-bundle="moving">Apskatīt soļus <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="card">
+            <span class="number">02</span><h3>Ģimenē piedzimis bērns</h3>
+            <p>Dzimšanas reģistrācija, pabalsti un pieteikšanās pašvaldības atbalstam.</p>
+            <button type="button" data-bundle="family">Apskatīt soļus <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="card">
+            <span class="number">03</span><h3>Sāku uzņēmējdarbību</h3>
+            <p>Reģistrācija, nodokļu informācija un pirmie uzņēmējdarbības soļi.</p>
+            <button type="button" data-bundle="business">Apskatīt soļus <span aria-hidden="true">→</span></button>
+          </article>
+        </div>
+      </section>
+      <section id="bundle" class="bundle" aria-labelledby="bundle-title" hidden>
+        <p class="eyebrow">DEMONSTRĀCIJAS PLŪSMA</p>
+        <h2 id="bundle-title" tabindex="-1"></h2>
+        <p>Šie ir ilustratīvi soļi. Prototips neveic pieteikumus un nav savienots ar valsts sistēmām.</p>
+        <ol id="bundle-steps"></ol>
+        <button class="button secondary" id="close-bundle" type="button">Aizvērt</button>
+      </section>
+    </main>
+    <footer class="container">Kopā · Hakatona ideja par apvienotiem e-pakalpojumiem</footer>
+  </body>
+</html>
