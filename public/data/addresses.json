@@ -1,0 +1,1269 @@
+{
+  "source": "https://data.gov.lv/dati/dataset/varis-atvertie-dati",
+  "publisher": "Valsts zemes dienests",
+  "license": "CC BY 4.0",
+  "retrievedAt": "2026-10-09T13:09:27.730207+00:00",
+  "scope": "Five sample building addresses per municipality. Full resolved snapshot is in addresses/; index is municipalities.json.",
+  "addresses": [
+    {
+      "code": "101092673",
+      "label": "\"Agras\", Aizkraukle, Aizkraukles pag., Aizkraukles nov., LV-5101",
+      "municipalityCode": "100016630",
+      "municipality": "Aizkraukles novads"
+    },
+    {
+      "code": "103163640",
+      "label": "\"Aijas\", Iršu pag., Aizkraukles nov., LV-5108",
+      "municipalityCode": "100016630",
+      "municipality": "Aizkraukles novads"
+    },
+    {
+      "code": "103423145",
+      "label": "\"Aijas\", Klintaines pag., Aizkraukles nov., LV-5129",
+      "municipalityCode": "100016630",
+      "municipality": "Aizkraukles novads"
+    },
+    {
+      "code": "103483008",
+      "label": "\"Aijas\", Staburaga pag., Aizkraukles nov., LV-5128",
+      "municipalityCode": "100016630",
+      "municipality": "Aizkraukles novads"
+    },
+    {
+      "code": "103233455",
+      "label": "\"Ainavas\", Kokneses pag., Aizkraukles nov., LV-5113",
+      "municipalityCode": "100016630",
+      "municipality": "Aizkraukles novads"
+    },
+    {
+      "code": "102874305",
+      "label": "\"Adamova\", Liepnas pag., Alūksnes nov., LV-4354",
+      "municipalityCode": "100015694",
+      "municipality": "Alūksnes novads"
+    },
+    {
+      "code": "106212186",
+      "label": "\"Adrakaši 1\", Jaunalūksnes pag., Alūksnes nov., LV-4350",
+      "municipalityCode": "100015694",
+      "municipality": "Alūksnes novads"
+    },
+    {
+      "code": "104335324",
+      "label": "\"Adrakaši\", Jaunalūksnes pag., Alūksnes nov., LV-4350",
+      "municipalityCode": "100015694",
+      "municipality": "Alūksnes novads"
+    },
+    {
+      "code": "103662337",
+      "label": "\"Aguce\", Veclaicenes pag., Alūksnes nov., LV-4335",
+      "municipalityCode": "100015694",
+      "municipality": "Alūksnes novads"
+    },
+    {
+      "code": "103776828",
+      "label": "\"Ainas\", Zeltiņu pag., Alūksnes nov., LV-4345",
+      "municipalityCode": "100015694",
+      "municipality": "Alūksnes novads"
+    },
+    {
+      "code": "104002731",
+      "label": "\"1\", Birkineļu dārziņi, Kalkūnes pag., Augšdaugavas nov., LV-5449",
+      "municipalityCode": "100016462",
+      "municipality": "Augšdaugavas novads"
+    },
+    {
+      "code": "104012010",
+      "label": "\"1\", Celtnieks, Kalkūnes pag., Augšdaugavas nov., LV-5449",
+      "municipalityCode": "100016462",
+      "municipality": "Augšdaugavas novads"
+    },
+    {
+      "code": "103977016",
+      "label": "\"1\", Cīrulīši, Tabores pag., Augšdaugavas nov., LV-5465",
+      "municipalityCode": "100016462",
+      "municipality": "Augšdaugavas novads"
+    },
+    {
+      "code": "104391702",
+      "label": "\"1\", Eglīte, Naujenes pag., Augšdaugavas nov., LV-5458",
+      "municipalityCode": "100016462",
+      "municipality": "Augšdaugavas novads"
+    },
+    {
+      "code": "104093733",
+      "label": "\"1\", Elektrons, Sventes pag., Augšdaugavas nov., LV-5473",
+      "municipalityCode": "100016462",
+      "municipality": "Augšdaugavas novads"
+    },
+    {
+      "code": "106233562",
+      "label": "\"Acālijas\", Lazdukalna pag., Balvu nov., LV-4577",
+      "municipalityCode": "100016438",
+      "municipality": "Balvu novads"
+    },
+    {
+      "code": "105526011",
+      "label": "\"Administratīvā ēka\", Egļuciems, Lazdulejas pag., Balvu nov., LV-4592",
+      "municipalityCode": "100016438",
+      "municipality": "Balvu novads"
+    },
+    {
+      "code": "105299071",
+      "label": "\"Adzeliks\", Mežupe, Krišjāņu pag., Balvu nov., LV-4573",
+      "municipalityCode": "100016438",
+      "municipality": "Balvu novads"
+    },
+    {
+      "code": "104808768",
+      "label": "\"Agapi\", Balvu pag., Balvu nov., LV-4501",
+      "municipalityCode": "100016438",
+      "municipality": "Balvu novads"
+    },
+    {
+      "code": "106250796",
+      "label": "\"Agatas\", Morkova, Baltinavas pag., Balvu nov., LV-4594",
+      "municipalityCode": "100016438",
+      "municipality": "Balvu novads"
+    },
+    {
+      "code": "106018287",
+      "label": "\"\"Gaņģi\" TP-4356\", Mūsa, Ceraukstes pag., Bauskas nov., LV-3901",
+      "municipalityCode": "100016575",
+      "municipality": "Bauskas novads"
+    },
+    {
+      "code": "106018262",
+      "label": "\"\"Mazzeltiņi\" TP-4814\", Janeikas, Ceraukstes pag., Bauskas nov., LV-3901",
+      "municipalityCode": "100016575",
+      "municipality": "Bauskas novads"
+    },
+    {
+      "code": "106018270",
+      "label": "\"\"Mazzeltiņi\" TP-4839\", Janeikas, Ceraukstes pag., Bauskas nov., LV-3901",
+      "municipalityCode": "100016575",
+      "municipality": "Bauskas novads"
+    },
+    {
+      "code": "106711171",
+      "label": "\"Abavas\", Iecavas pag., Bauskas nov., LV-3913",
+      "municipalityCode": "100016575",
+      "municipality": "Bauskas novads"
+    },
+    {
+      "code": "106153480",
+      "label": "\"Abačas\", Iecavas pag., Bauskas nov., LV-3913",
+      "municipalityCode": "100016575",
+      "municipality": "Bauskas novads"
+    },
+    {
+      "code": "106971885",
+      "label": "\"1\", Bērziņi, Raiskuma pag., Cēsu nov., LV-4146",
+      "municipalityCode": "100016487",
+      "municipality": "Cēsu novads"
+    },
+    {
+      "code": "103875368",
+      "label": "\"1\", Gundegas, Raiskuma pag., Cēsu nov., LV-4146",
+      "municipalityCode": "100016487",
+      "municipality": "Cēsu novads"
+    },
+    {
+      "code": "103873645",
+      "label": "\"10\", Bērziņi, Raiskuma pag., Cēsu nov., LV-4146",
+      "municipalityCode": "100016487",
+      "municipality": "Cēsu novads"
+    },
+    {
+      "code": "103874872",
+      "label": "\"10\", Gundegas, Raiskuma pag., Cēsu nov., LV-4146",
+      "municipalityCode": "100016487",
+      "municipality": "Cēsu novads"
+    },
+    {
+      "code": "103873678",
+      "label": "\"100\", Bērziņi, Raiskuma pag., Cēsu nov., LV-4146",
+      "municipalityCode": "100016487",
+      "municipality": "Cēsu novads"
+    },
+    {
+      "code": "104609747",
+      "label": "\"386,6. km\", Daugavpils, LV-5401",
+      "municipalityCode": "100003011",
+      "municipality": "Daugavpils"
+    },
+    {
+      "code": "104609755",
+      "label": "\"387. km\", Daugavpils, LV-5401",
+      "municipalityCode": "100003011",
+      "municipality": "Daugavpils"
+    },
+    {
+      "code": "104609722",
+      "label": "\"524. km\", Daugavpils, LV-5456",
+      "municipalityCode": "100003011",
+      "municipality": "Daugavpils"
+    },
+    {
+      "code": "104609714",
+      "label": "\"524.2. km\", Daugavpils, LV-5456",
+      "municipalityCode": "100003011",
+      "municipality": "Daugavpils"
+    },
+    {
+      "code": "104609763",
+      "label": "\"530,2. km\", Daugavpils, LV-5422",
+      "municipalityCode": "100003011",
+      "municipality": "Daugavpils"
+    },
+    {
+      "code": "107107621",
+      "label": "\"Abriņas\", Ziemupe, Vērgales pag., Dienvidkurzemes nov., LV-3463",
+      "municipalityCode": "100016495",
+      "municipality": "Dienvidkurzemes novads"
+    },
+    {
+      "code": "103817201",
+      "label": "\"Adatiņas\", Virga, Virgas pag., Dienvidkurzemes nov., LV-3433",
+      "municipalityCode": "100016495",
+      "municipality": "Dienvidkurzemes novads"
+    },
+    {
+      "code": "106673617",
+      "label": "\"Adeles\", Grobiņas pag., Dienvidkurzemes nov., LV-3430",
+      "municipalityCode": "100016495",
+      "municipality": "Dienvidkurzemes novads"
+    },
+    {
+      "code": "103629636",
+      "label": "\"Adieņi\", Bārtas pag., Dienvidkurzemes nov., LV-3482",
+      "municipalityCode": "100016495",
+      "municipality": "Dienvidkurzemes novads"
+    },
+    {
+      "code": "103981860",
+      "label": "\"Adieņi\", Lieģi, Tadaiķu pag., Dienvidkurzemes nov., LV-3447",
+      "municipalityCode": "100016495",
+      "municipality": "Dienvidkurzemes novads"
+    },
+    {
+      "code": "102824260",
+      "label": "\"99. km māja\", Bikstu pag., Dobeles nov., LV-3713",
+      "municipalityCode": "100016622",
+      "municipality": "Dobeles novads"
+    },
+    {
+      "code": "104607108",
+      "label": "\"Abavieši\", Bikstu pag., Dobeles nov., LV-3713",
+      "municipalityCode": "100016622",
+      "municipality": "Dobeles novads"
+    },
+    {
+      "code": "102846157",
+      "label": "\"Abrakaši\", Penkules pag., Dobeles nov., LV-3725",
+      "municipalityCode": "100016622",
+      "municipality": "Dobeles novads"
+    },
+    {
+      "code": "105624232",
+      "label": "\"Adatiņa 1\", Auri, Auru pag., Dobeles nov., LV-3710",
+      "municipalityCode": "100016622",
+      "municipality": "Dobeles novads"
+    },
+    {
+      "code": "105624224",
+      "label": "\"Adatiņa\", Auri, Auru pag., Dobeles nov., LV-3710",
+      "municipalityCode": "100016622",
+      "municipality": "Dobeles novads"
+    },
+    {
+      "code": "103726791",
+      "label": "\"115,3. km\", Litenes pag., Gulbenes nov., LV-4405",
+      "municipalityCode": "100015854",
+      "municipality": "Gulbenes novads"
+    },
+    {
+      "code": "104964696",
+      "label": "\"116,8. km\", Litenes pag., Gulbenes nov., LV-4405",
+      "municipalityCode": "100015854",
+      "municipality": "Gulbenes novads"
+    },
+    {
+      "code": "103061494",
+      "label": "\"79,6. km ēka\", Lizuma pag., Gulbenes nov., LV-4425",
+      "municipalityCode": "100015854",
+      "municipality": "Gulbenes novads"
+    },
+    {
+      "code": "103061500",
+      "label": "\"79,8. km ēka\", Lizuma pag., Gulbenes nov., LV-4425",
+      "municipalityCode": "100015854",
+      "municipality": "Gulbenes novads"
+    },
+    {
+      "code": "105683302",
+      "label": "\"92,1. km\", Galgauskas pag., Gulbenes nov., LV-4428",
+      "municipalityCode": "100015854",
+      "municipality": "Gulbenes novads"
+    },
+    {
+      "code": "107090007",
+      "label": "1. līnija 1, Jelgava, LV-3007",
+      "municipalityCode": "100003028",
+      "municipality": "Jelgava"
+    },
+    {
+      "code": "101751076",
+      "label": "1. līnija 11, Jelgava, LV-3007",
+      "municipalityCode": "100003028",
+      "municipality": "Jelgava"
+    },
+    {
+      "code": "102493948",
+      "label": "1. līnija 13, Jelgava, LV-3007",
+      "municipalityCode": "100003028",
+      "municipality": "Jelgava"
+    },
+    {
+      "code": "106870554",
+      "label": "1. līnija 15, Jelgava, LV-3007",
+      "municipalityCode": "100003028",
+      "municipality": "Jelgava"
+    },
+    {
+      "code": "106870562",
+      "label": "1. līnija 17, Jelgava, LV-3007",
+      "municipalityCode": "100003028",
+      "municipality": "Jelgava"
+    },
+    {
+      "code": "105496111",
+      "label": "\"1. masīvs 1\", Kalnciema pag., Jelgavas nov., LV-3016",
+      "municipalityCode": "100016534",
+      "municipality": "Jelgavas novads"
+    },
+    {
+      "code": "105496185",
+      "label": "\"1. masīvs 10\", Kalnciema pag., Jelgavas nov., LV-3016",
+      "municipalityCode": "100016534",
+      "municipality": "Jelgavas novads"
+    },
+    {
+      "code": "105497195",
+      "label": "\"1. masīvs 100\", Kalnciema pag., Jelgavas nov., LV-3016",
+      "municipalityCode": "100016534",
+      "municipality": "Jelgavas novads"
+    },
+    {
+      "code": "105497201",
+      "label": "\"1. masīvs 101\", Kalnciema pag., Jelgavas nov., LV-3016",
+      "municipalityCode": "100016534",
+      "municipality": "Jelgavas novads"
+    },
+    {
+      "code": "105497218",
+      "label": "\"1. masīvs 102\", Kalnciema pag., Jelgavas nov., LV-3016",
+      "municipalityCode": "100016534",
+      "municipality": "Jelgavas novads"
+    },
+    {
+      "code": "106258376",
+      "label": "\"Aceri\", Variešu pag., Jēkabpils nov., LV-5209",
+      "municipalityCode": "100016421",
+      "municipality": "Jēkabpils novads"
+    },
+    {
+      "code": "102958113",
+      "label": "\"Adumāni\", Kalna pag., Jēkabpils nov., LV-5220",
+      "municipalityCode": "100016421",
+      "municipality": "Jēkabpils novads"
+    },
+    {
+      "code": "102962435",
+      "label": "\"Adītāji\", Dunavas pag., Jēkabpils nov., LV-5216",
+      "municipalityCode": "100016421",
+      "municipality": "Jēkabpils novads"
+    },
+    {
+      "code": "105188621",
+      "label": "\"Aerodroms\", Aknīstes pag., Jēkabpils nov., LV-5208",
+      "municipalityCode": "100016421",
+      "municipality": "Jēkabpils novads"
+    },
+    {
+      "code": "105468871",
+      "label": "\"Agrāri\", Rubeņi, Rubenes pag., Jēkabpils nov., LV-5229",
+      "municipalityCode": "100016421",
+      "municipality": "Jēkabpils novads"
+    },
+    {
+      "code": "103243111",
+      "label": "\"Akmeņbeltes\", Jūrmala, LV-2011",
+      "municipalityCode": "100003036",
+      "municipality": "Jūrmala"
+    },
+    {
+      "code": "104355483",
+      "label": "\"Auziņas\", Jūrmala, LV-2010",
+      "municipalityCode": "100003036",
+      "municipality": "Jūrmala"
+    },
+    {
+      "code": "105715046",
+      "label": "\"Bažciems 0112\", Jūrmala, LV-2011",
+      "municipalityCode": "100003036",
+      "municipality": "Jūrmala"
+    },
+    {
+      "code": "105941037",
+      "label": "\"Bažciems 0511\", Jūrmala, LV-2011",
+      "municipalityCode": "100003036",
+      "municipality": "Jūrmala"
+    },
+    {
+      "code": "103175784",
+      "label": "\"Bražas 1\", Jūrmala, LV-2010",
+      "municipalityCode": "100003036",
+      "municipality": "Jūrmala"
+    },
+    {
+      "code": "105683624",
+      "label": "\"1\", Borovka, Ūdrīšu pag., Krāslavas nov., LV-5651",
+      "municipalityCode": "100016743",
+      "municipality": "Krāslavas novads"
+    },
+    {
+      "code": "106686207",
+      "label": "\"1\", Stacija \"Krāslava\", Ūdrīšu pag., Krāslavas nov., LV-5601",
+      "municipalityCode": "100016743",
+      "municipality": "Krāslavas novads"
+    },
+    {
+      "code": "104799561",
+      "label": "\"1\", Veterovka, Skaistas pag., Krāslavas nov., LV-5671",
+      "municipalityCode": "100016743",
+      "municipality": "Krāslavas novads"
+    },
+    {
+      "code": "105633241",
+      "label": "\"10\", Stacija \"Krāslava\", Ūdrīšu pag., Krāslavas nov., LV-5601",
+      "municipalityCode": "100016743",
+      "municipality": "Krāslavas novads"
+    },
+    {
+      "code": "106768743",
+      "label": "\"11\", Stacija \"Krāslava\", Ūdrīšu pag., Krāslavas nov., LV-5601",
+      "municipalityCode": "100016743",
+      "municipality": "Krāslavas novads"
+    },
+    {
+      "code": "103392774",
+      "label": "\"Abavas pagrabiņš\", Renda, Rendas pag., Kuldīgas nov., LV-3319",
+      "municipalityCode": "100016696",
+      "municipality": "Kuldīgas novads"
+    },
+    {
+      "code": "106280931",
+      "label": "\"Abavas\", Padures pag., Kuldīgas nov., LV-3321",
+      "municipalityCode": "100016696",
+      "municipality": "Kuldīgas novads"
+    },
+    {
+      "code": "103393333",
+      "label": "\"Abavas\", Rendas pag., Kuldīgas nov., LV-3319",
+      "municipalityCode": "100016696",
+      "municipality": "Kuldīgas novads"
+    },
+    {
+      "code": "105021185",
+      "label": "\"Abavlejas\", Rendas pag., Kuldīgas nov., LV-3319",
+      "municipalityCode": "100016696",
+      "municipality": "Kuldīgas novads"
+    },
+    {
+      "code": "103390408",
+      "label": "\"Abavnieki\", Rendas pag., Kuldīgas nov., LV-3319",
+      "municipalityCode": "100016696",
+      "municipality": "Kuldīgas novads"
+    },
+    {
+      "code": "104631933",
+      "label": "\"Brīvostas teritorija 1\", Liepāja, LV-3405",
+      "municipalityCode": "100003044",
+      "municipality": "Liepāja"
+    },
+    {
+      "code": "105256545",
+      "label": "\"Jūrmalas parks 2\", Liepāja, LV-3401",
+      "municipalityCode": "100003044",
+      "municipality": "Liepāja"
+    },
+    {
+      "code": "104765482",
+      "label": "\"Jūrmalas parks 3\", Liepāja, LV-3401",
+      "municipalityCode": "100003044",
+      "municipality": "Liepāja"
+    },
+    {
+      "code": "106401790",
+      "label": "\"Jūrmalas parks 3A\", Liepāja, LV-3401",
+      "municipalityCode": "100003044",
+      "municipality": "Liepāja"
+    },
+    {
+      "code": "106659993",
+      "label": "\"Jūrmalas parks 4\", Liepāja, LV-3401",
+      "municipalityCode": "100003044",
+      "municipality": "Liepāja"
+    },
+    {
+      "code": "104941170",
+      "label": "\"Abavas\", Liepupes pag., Limbažu nov., LV-4023",
+      "municipalityCode": "100016606",
+      "municipality": "Limbažu novads"
+    },
+    {
+      "code": "103849697",
+      "label": "\"Adelaida\", Salacgrīvas pag., Limbažu nov., LV-4033",
+      "municipalityCode": "100016606",
+      "municipality": "Limbažu novads"
+    },
+    {
+      "code": "106843752",
+      "label": "\"Adelīna\", Lembuži, Liepupes pag., Limbažu nov., LV-4023",
+      "municipalityCode": "100016606",
+      "municipality": "Limbažu novads"
+    },
+    {
+      "code": "103849736",
+      "label": "\"Adināji\", Salacgrīvas pag., Limbažu nov., LV-4033",
+      "municipalityCode": "100016606",
+      "municipality": "Limbažu novads"
+    },
+    {
+      "code": "106453902",
+      "label": "\"Agitas\", Skulte, Skultes pag., Limbažu nov., LV-4025",
+      "municipalityCode": "100016606",
+      "municipality": "Limbažu novads"
+    },
+    {
+      "code": "105887927",
+      "label": "\"678. km\", Putrinieki, Cirmas pag., Ludzas nov., LV-5735",
+      "municipalityCode": "100016751",
+      "municipality": "Ludzas novads"
+    },
+    {
+      "code": "103615788",
+      "label": "\"Abava\", Lielā Pīkova, Briģu pag., Ludzas nov., LV-5707",
+      "municipalityCode": "100016751",
+      "municipality": "Ludzas novads"
+    },
+    {
+      "code": "104782972",
+      "label": "\"Abiņi\", Ruļeva, Rundēnu pag., Ludzas nov., LV-5739",
+      "municipalityCode": "100016751",
+      "municipality": "Ludzas novads"
+    },
+    {
+      "code": "103751106",
+      "label": "\"Abrupe\", Mortuzāni, Mežvidu pag., Ludzas nov., LV-5737",
+      "municipalityCode": "100016751",
+      "municipality": "Ludzas novads"
+    },
+    {
+      "code": "105919718",
+      "label": "\"Acaines\", Otrie Mežvidi, Mežvidu pag., Ludzas nov., LV-5737",
+      "municipalityCode": "100016751",
+      "municipality": "Ludzas novads"
+    },
+    {
+      "code": "103867336",
+      "label": "\"Adanaite\", Iztekas, Jersikas pag., Līvānu nov., LV-5315",
+      "municipalityCode": "100015243",
+      "municipality": "Līvānu novads"
+    },
+    {
+      "code": "105847844",
+      "label": "\"Adenaites\", Iztekas, Jersikas pag., Līvānu nov., LV-5315",
+      "municipalityCode": "100015243",
+      "municipality": "Līvānu novads"
+    },
+    {
+      "code": "106467920",
+      "label": "\"Afanasevka\", Sanaude, Sutru pag., Līvānu nov., LV-5334",
+      "municipalityCode": "100015243",
+      "municipality": "Līvānu novads"
+    },
+    {
+      "code": "102930263",
+      "label": "\"Aigas\", Kūkusiliņi, Rožupes pag., Līvānu nov., LV-5316",
+      "municipalityCode": "100015243",
+      "municipality": "Līvānu novads"
+    },
+    {
+      "code": "105693178",
+      "label": "\"Aijas\", Dimanti, Jersikas pag., Līvānu nov., LV-5315",
+      "municipalityCode": "100015243",
+      "municipality": "Līvānu novads"
+    },
+    {
+      "code": "104471005",
+      "label": "\"Abora\", Sarkaņu pag., Madonas nov., LV-4870",
+      "municipalityCode": "100016671",
+      "municipality": "Madonas novads"
+    },
+    {
+      "code": "103286755",
+      "label": "\"Abrienas\", Bērzaunes pag., Madonas nov., LV-4853",
+      "municipalityCode": "100016671",
+      "municipality": "Madonas novads"
+    },
+    {
+      "code": "102975306",
+      "label": "\"Aburtdzirnavas\", Ļaudonas pag., Madonas nov., LV-4863",
+      "municipalityCode": "100016671",
+      "municipality": "Madonas novads"
+    },
+    {
+      "code": "102975556",
+      "label": "\"Aburti\", Ļaudonas pag., Madonas nov., LV-4863",
+      "municipalityCode": "100016671",
+      "municipality": "Madonas novads"
+    },
+    {
+      "code": "102975597",
+      "label": "\"Aburtu Austriņi\", Ļaudonas pag., Madonas nov., LV-4863",
+      "municipalityCode": "100016671",
+      "municipality": "Madonas novads"
+    },
+    {
+      "code": "104920452",
+      "label": "\"Abavas\", Mārupes pag., Mārupes nov., LV-2167",
+      "municipalityCode": "100016583",
+      "municipality": "Mārupes novads"
+    },
+    {
+      "code": "105380107",
+      "label": "\"Acālijas\", Mārupes pag., Mārupes nov., LV-2166",
+      "municipalityCode": "100016583",
+      "municipality": "Mārupes novads"
+    },
+    {
+      "code": "105179034",
+      "label": "\"Acālijas\", Straupciems, Salas pag., Mārupes nov., LV-2105",
+      "municipalityCode": "100016583",
+      "municipality": "Mārupes novads"
+    },
+    {
+      "code": "104920460",
+      "label": "\"Adieņi\", Mārupes pag., Mārupes nov., LV-2166",
+      "municipalityCode": "100016583",
+      "municipality": "Mārupes novads"
+    },
+    {
+      "code": "105249363",
+      "label": "\"Admirāļi\", Babītes pag., Mārupes nov., LV-2107",
+      "municipalityCode": "100016583",
+      "municipality": "Mārupes novads"
+    },
+    {
+      "code": "102714066",
+      "label": "\"ABpark\", Lēdmanes pag., Ogres nov., LV-5011",
+      "municipalityCode": "100016688",
+      "municipality": "Ogres novads"
+    },
+    {
+      "code": "104407995",
+      "label": "\"ATC ēka\", Madliena, Madlienas pag., Ogres nov., LV-5045",
+      "municipalityCode": "100016688",
+      "municipality": "Ogres novads"
+    },
+    {
+      "code": "106698334",
+      "label": "\"Abavas\", Tīnūžu pag., Ogres nov., LV-5052",
+      "municipalityCode": "100016688",
+      "municipality": "Ogres novads"
+    },
+    {
+      "code": "102968993",
+      "label": "\"Abzes\", Suntaži, Suntažu pag., Ogres nov., LV-5060",
+      "municipalityCode": "100016688",
+      "municipality": "Ogres novads"
+    },
+    {
+      "code": "105773854",
+      "label": "\"Acālijas\", Kaibala, Lielvārdes pag., Ogres nov., LV-5070",
+      "municipalityCode": "100016688",
+      "municipality": "Ogres novads"
+    },
+    {
+      "code": "107006887",
+      "label": "\"110kV apakšstacija \"Jaunolaine\"\", Jaunolaine, Olaines pag., Olaines nov., LV-2127",
+      "municipalityCode": "100016077",
+      "municipality": "Olaines novads"
+    },
+    {
+      "code": "105473061",
+      "label": "\"Adatas\", Olaines pag., Olaines nov., LV-2127",
+      "municipalityCode": "100016077",
+      "municipality": "Olaines novads"
+    },
+    {
+      "code": "104124186",
+      "label": "\"Agronoliktava\", Pārolaine, Olaines pag., Olaines nov., LV-2127",
+      "municipalityCode": "100016077",
+      "municipality": "Olaines novads"
+    },
+    {
+      "code": "104122703",
+      "label": "\"Ainas\", Stūnīši, Olaines pag., Olaines nov., LV-2127",
+      "municipalityCode": "100016077",
+      "municipality": "Olaines novads"
+    },
+    {
+      "code": "106223615",
+      "label": "\"Ainavas\", Jaunolaine, Olaines pag., Olaines nov., LV-2127",
+      "municipalityCode": "100016077",
+      "municipality": "Olaines novads"
+    },
+    {
+      "code": "104373042",
+      "label": "\"1\", Gaiļmuiža, Rušonas pag., Preiļu nov., LV-5329",
+      "municipalityCode": "100016727",
+      "municipality": "Preiļu novads"
+    },
+    {
+      "code": "104373050",
+      "label": "\"2\", Gaiļmuiža, Rušonas pag., Preiļu nov., LV-5329",
+      "municipalityCode": "100016727",
+      "municipality": "Preiļu novads"
+    },
+    {
+      "code": "106334112",
+      "label": "\"Acālijas\", Bojāri, Stabulnieku pag., Preiļu nov., LV-5333",
+      "municipalityCode": "100016727",
+      "municipality": "Preiļu novads"
+    },
+    {
+      "code": "107018120",
+      "label": "\"Adelīnas\", Ezera Ukini, Aglonas pag., Preiļu nov., LV-5304",
+      "municipalityCode": "100016727",
+      "municipality": "Preiļu novads"
+    },
+    {
+      "code": "106190888",
+      "label": "\"Adiņi\", Jonāni, Aglonas pag., Preiļu nov., LV-5304",
+      "municipalityCode": "100016727",
+      "municipality": "Preiļu novads"
+    },
+    {
+      "code": "104138106",
+      "label": "\"Abaris\", Upesciems, Garkalnes pag., Ropažu nov., LV-2137",
+      "municipalityCode": "100016784",
+      "municipality": "Ropažu novads"
+    },
+    {
+      "code": "104916307",
+      "label": "\"Acones stacija\", Stopiņu pag., Ropažu nov., LV-2130",
+      "municipalityCode": "100016784",
+      "municipality": "Ropažu novads"
+    },
+    {
+      "code": "106767315",
+      "label": "\"Agni\", Ūlupji, Ropažu pag., Ropažu nov., LV-2118",
+      "municipalityCode": "100016784",
+      "municipality": "Ropažu novads"
+    },
+    {
+      "code": "106859268",
+      "label": "\"Aidas\", Ropažu pag., Ropažu nov., LV-2135",
+      "municipalityCode": "100016784",
+      "municipality": "Ropažu novads"
+    },
+    {
+      "code": "102729318",
+      "label": "\"Aigari\", Podkājas, Ropažu pag., Ropažu nov., LV-2135",
+      "municipalityCode": "100016784",
+      "municipality": "Ropažu novads"
+    },
+    {
+      "code": "102385933",
+      "label": "18. novembra iela 1, Rēzekne, LV-4601",
+      "municipalityCode": "100003052",
+      "municipality": "Rēzekne"
+    },
+    {
+      "code": "101664591",
+      "label": "18. novembra iela 10, Rēzekne, LV-4601",
+      "municipalityCode": "100003052",
+      "municipality": "Rēzekne"
+    },
+    {
+      "code": "101664606",
+      "label": "18. novembra iela 10B, Rēzekne, LV-4601",
+      "municipalityCode": "100003052",
+      "municipality": "Rēzekne"
+    },
+    {
+      "code": "105780755",
+      "label": "18. novembra iela 11, Rēzekne, LV-4601",
+      "municipalityCode": "100003052",
+      "municipality": "Rēzekne"
+    },
+    {
+      "code": "102385941",
+      "label": "18. novembra iela 12, Rēzekne, LV-4601",
+      "municipalityCode": "100003052",
+      "municipality": "Rēzekne"
+    },
+    {
+      "code": "104251403",
+      "label": "\"1\", Bekši, Ozolaines pag., Rēzeknes nov., LV-4633",
+      "municipalityCode": "100016542",
+      "municipality": "Rēzeknes novads"
+    },
+    {
+      "code": "103358034",
+      "label": "\"1\", Djogi, Vērēmu pag., Rēzeknes nov., LV-4604",
+      "municipalityCode": "100016542",
+      "municipality": "Rēzeknes novads"
+    },
+    {
+      "code": "103217416",
+      "label": "\"1\", Feimaņi, Feimaņu pag., Rēzeknes nov., LV-4623",
+      "municipalityCode": "100016542",
+      "municipality": "Rēzeknes novads"
+    },
+    {
+      "code": "104839431",
+      "label": "\"1\", Liuzinīki, Lendžu pag., Rēzeknes nov., LV-4625",
+      "municipalityCode": "100016542",
+      "municipality": "Rēzeknes novads"
+    },
+    {
+      "code": "103596601",
+      "label": "\"1\", Nagļi, Nagļu pag., Rēzeknes nov., LV-4631",
+      "municipalityCode": "100016542",
+      "municipality": "Rēzeknes novads"
+    },
+    {
+      "code": "101847436",
+      "label": "11. novembra krastmala 15, Rīga, LV-1050",
+      "municipalityCode": "100003003",
+      "municipality": "Rīga"
+    },
+    {
+      "code": "103546428",
+      "label": "11. novembra krastmala 17, Rīga, LV-1050",
+      "municipalityCode": "100003003",
+      "municipality": "Rīga"
+    },
+    {
+      "code": "101812476",
+      "label": "11. novembra krastmala 29, Rīga, LV-1050",
+      "municipalityCode": "100003003",
+      "municipality": "Rīga"
+    },
+    {
+      "code": "101812484",
+      "label": "11. novembra krastmala 31, Rīga, LV-1050",
+      "municipalityCode": "100003003",
+      "municipality": "Rīga"
+    },
+    {
+      "code": "105847065",
+      "label": "11. novembra krastmala 33, Rīga, LV-1050",
+      "municipalityCode": "100003003",
+      "municipality": "Rīga"
+    },
+    {
+      "code": "106581914",
+      "label": "\"Abītes\", Salaspils pag., Salaspils nov., LV-2118",
+      "municipalityCode": "100015485",
+      "municipality": "Salaspils novads"
+    },
+    {
+      "code": "104841813",
+      "label": "\"Acone 1\", Acone, Salaspils pag., Salaspils nov., LV-2119",
+      "municipalityCode": "100015485",
+      "municipality": "Salaspils novads"
+    },
+    {
+      "code": "104842165",
+      "label": "\"Acone 2\", Acone, Salaspils pag., Salaspils nov., LV-2119",
+      "municipalityCode": "100015485",
+      "municipality": "Salaspils novads"
+    },
+    {
+      "code": "104842173",
+      "label": "\"Acone 3\", Acone, Salaspils pag., Salaspils nov., LV-2119",
+      "municipalityCode": "100015485",
+      "municipality": "Salaspils novads"
+    },
+    {
+      "code": "104842181",
+      "label": "\"Acone 4\", Acone, Salaspils pag., Salaspils nov., LV-2119",
+      "municipalityCode": "100015485",
+      "municipality": "Salaspils novads"
+    },
+    {
+      "code": "105405962",
+      "label": "\"Abavieši\", Ezeres pag., Saldus nov., LV-3896",
+      "municipalityCode": "100016663",
+      "municipality": "Saldus novads"
+    },
+    {
+      "code": "106855035",
+      "label": "\"Abriņas\", Pampāļi, Pampāļu pag., Saldus nov., LV-3882",
+      "municipalityCode": "100016663",
+      "municipality": "Saldus novads"
+    },
+    {
+      "code": "106645508",
+      "label": "\"Abrupes\", Pampāļu pag., Saldus nov., LV-3882",
+      "municipalityCode": "100016663",
+      "municipality": "Saldus novads"
+    },
+    {
+      "code": "103636690",
+      "label": "\"Abrupji\", Kursīšu pag., Saldus nov., LV-3890",
+      "municipalityCode": "100016663",
+      "municipality": "Saldus novads"
+    },
+    {
+      "code": "106912620",
+      "label": "\"Adiņi\", Saldus pag., Saldus nov., LV-3862",
+      "municipalityCode": "100016663",
+      "municipality": "Saldus novads"
+    },
+    {
+      "code": "105992936",
+      "label": "\"Ainava 12\", Ainava, Saulkrastu pag., Saulkrastu nov., LV-2160",
+      "municipalityCode": "100016550",
+      "municipality": "Saulkrastu novads"
+    },
+    {
+      "code": "104502390",
+      "label": "\"Ainavas\", Sējas pag., Saulkrastu nov., LV-2162",
+      "municipalityCode": "100016550",
+      "municipality": "Saulkrastu novads"
+    },
+    {
+      "code": "104502405",
+      "label": "\"Airītes\", Sējas pag., Saulkrastu nov., LV-2142",
+      "municipalityCode": "100016550",
+      "municipality": "Saulkrastu novads"
+    },
+    {
+      "code": "106967908",
+      "label": "\"Aivarti\", Sējas pag., Saulkrastu nov., LV-2162",
+      "municipalityCode": "100016550",
+      "municipality": "Saulkrastu novads"
+    },
+    {
+      "code": "104502413",
+      "label": "\"Aizupes\", Murjāņi, Sējas pag., Saulkrastu nov., LV-2142",
+      "municipalityCode": "100016550",
+      "municipality": "Saulkrastu novads"
+    },
+    {
+      "code": "103849945",
+      "label": "\"50. km\", Mālpils pag., Siguldas nov., LV-2152",
+      "municipalityCode": "100016768",
+      "municipality": "Siguldas novads"
+    },
+    {
+      "code": "105551621",
+      "label": "\"Adaras\", Allaži, Allažu pag., Siguldas nov., LV-2154",
+      "municipalityCode": "100016768",
+      "municipality": "Siguldas novads"
+    },
+    {
+      "code": "103816232",
+      "label": "\"Adumi\", Inčukalna pag., Siguldas nov., LV-2136",
+      "municipalityCode": "100016768",
+      "municipality": "Siguldas novads"
+    },
+    {
+      "code": "103849978",
+      "label": "\"Afanasjevkas\", Mālpils pag., Siguldas nov., LV-2152",
+      "municipalityCode": "100016768",
+      "municipality": "Siguldas novads"
+    },
+    {
+      "code": "103849994",
+      "label": "\"Agatnieki\", Mālpils pag., Siguldas nov., LV-2152",
+      "municipalityCode": "100016768",
+      "municipality": "Siguldas novads"
+    },
+    {
+      "code": "104166151",
+      "label": "\"1\", Ilgas, Smiltenes pag., Smiltenes nov., LV-4729",
+      "municipalityCode": "100016735",
+      "municipality": "Smiltenes novads"
+    },
+    {
+      "code": "104165840",
+      "label": "\"1\", Kamaldiņa, Smiltenes pag., Smiltenes nov., LV-4729",
+      "municipalityCode": "100016735",
+      "municipality": "Smiltenes novads"
+    },
+    {
+      "code": "104115136",
+      "label": "\"1\", Saltupi, Launkalnes pag., Smiltenes nov., LV-4729",
+      "municipalityCode": "100016735",
+      "municipality": "Smiltenes novads"
+    },
+    {
+      "code": "104166248",
+      "label": "\"10\", Ilgas, Smiltenes pag., Smiltenes nov., LV-4729",
+      "municipalityCode": "100016735",
+      "municipality": "Smiltenes novads"
+    },
+    {
+      "code": "104165904",
+      "label": "\"10\", Kamaldiņa, Smiltenes pag., Smiltenes nov., LV-4729",
+      "municipalityCode": "100016735",
+      "municipality": "Smiltenes novads"
+    },
+    {
+      "code": "106303705",
+      "label": "\"Abavas Ozoli\", Abavas pag., Talsu nov., LV-3294",
+      "municipalityCode": "100016390",
+      "municipality": "Talsu novads"
+    },
+    {
+      "code": "104872993",
+      "label": "\"Abavnieki\", Abavas pag., Talsu nov., LV-3294",
+      "municipalityCode": "100016390",
+      "municipality": "Talsu novads"
+    },
+    {
+      "code": "102889286",
+      "label": "\"Adamoviči\", Mācītājmuiža, Lībagu pag., Talsu nov., LV-3258",
+      "municipalityCode": "100016390",
+      "municipality": "Talsu novads"
+    },
+    {
+      "code": "106320641",
+      "label": "\"Agates\", Lībagu pag., Talsu nov., LV-3258",
+      "municipalityCode": "100016390",
+      "municipality": "Talsu novads"
+    },
+    {
+      "code": "103193858",
+      "label": "\"Agras\", Paugurciems, Laidzes pag., Talsu nov., LV-3201",
+      "municipalityCode": "100016390",
+      "municipality": "Talsu novads"
+    },
+    {
+      "code": "105453031",
+      "label": "\"4 Vēji\", Pienava, Džūkstes pag., Tukuma nov., LV-3147",
+      "municipalityCode": "100016710",
+      "municipality": "Tukuma novads"
+    },
+    {
+      "code": "105719697",
+      "label": "\"ABR \"Zvāre\"\", Tumes pag., Tukuma nov., LV-3139",
+      "municipalityCode": "100016710",
+      "municipality": "Tukuma novads"
+    },
+    {
+      "code": "105342567",
+      "label": "\"Abava\", Irlavas pag., Tukuma nov., LV-3137",
+      "municipalityCode": "100016710",
+      "municipality": "Tukuma novads"
+    },
+    {
+      "code": "105729892",
+      "label": "\"Abava\", Pūres pag., Tukuma nov., LV-3124",
+      "municipalityCode": "100016710",
+      "municipality": "Tukuma novads"
+    },
+    {
+      "code": "105266162",
+      "label": "\"Abavas Līcis\", Kandava, Tukuma nov., LV-3120",
+      "municipalityCode": "100016710",
+      "municipality": "Tukuma novads"
+    },
+    {
+      "code": "103069218",
+      "label": "\"Acītes\", Kārķu pag., Valkas nov., LV-4716",
+      "municipalityCode": "100016286",
+      "municipality": "Valkas novads"
+    },
+    {
+      "code": "103834933",
+      "label": "\"Airītes\", Vijciema pag., Valkas nov., LV-4733",
+      "municipalityCode": "100016286",
+      "municipality": "Valkas novads"
+    },
+    {
+      "code": "105829231",
+      "label": "\"Aivijas\", Vijciema pag., Valkas nov., LV-4733",
+      "municipalityCode": "100016286",
+      "municipality": "Valkas novads"
+    },
+    {
+      "code": "103440081",
+      "label": "\"Aizkalni\", Zvārtavas pag., Valkas nov., LV-4735",
+      "municipalityCode": "100016286",
+      "municipality": "Valkas novads"
+    },
+    {
+      "code": "103442294",
+      "label": "\"Aizkaļņi\", Zvārtavas pag., Valkas nov., LV-4735",
+      "municipalityCode": "100016286",
+      "municipality": "Valkas novads"
+    },
+    {
+      "code": "104622225",
+      "label": "\"Abula\", Brenguļi, Brenguļu pag., Valmieras nov., LV-4245",
+      "municipalityCode": "100016647",
+      "municipality": "Valmieras novads"
+    },
+    {
+      "code": "104788018",
+      "label": "\"Abulas\", Trikātas pag., Valmieras nov., LV-4731",
+      "municipalityCode": "100016647",
+      "municipality": "Valmieras novads"
+    },
+    {
+      "code": "104788001",
+      "label": "\"Abuliņi\", Trikātas pag., Valmieras nov., LV-4731",
+      "municipalityCode": "100016647",
+      "municipality": "Valmieras novads"
+    },
+    {
+      "code": "101000067",
+      "label": "\"Abullejas\", Brenguļu pag., Valmieras nov., LV-4245",
+      "municipalityCode": "100016647",
+      "municipality": "Valmieras novads"
+    },
+    {
+      "code": "105780433",
+      "label": "\"Abullāči\", Brenguļu pag., Valmieras nov., LV-4245",
+      "municipalityCode": "100016647",
+      "municipality": "Valmieras novads"
+    },
+    {
+      "code": "104795304",
+      "label": "\"Brūveri\", Ventspils, LV-3601",
+      "municipalityCode": "100003060",
+      "municipality": "Ventspils"
+    },
+    {
+      "code": "104795851",
+      "label": "\"Bušnieki\", Ventspils, LV-3601",
+      "municipalityCode": "100003060",
+      "municipality": "Ventspils"
+    },
+    {
+      "code": "104795691",
+      "label": "\"Dižkalni\", Ventspils, LV-3601",
+      "municipalityCode": "100003060",
+      "municipality": "Ventspils"
+    },
+    {
+      "code": "104795513",
+      "label": "\"Dūdas\", Ventspils, LV-3601",
+      "municipalityCode": "100003060",
+      "municipality": "Ventspils"
+    },
+    {
+      "code": "104795345",
+      "label": "\"Jezi\", Ventspils, LV-3601",
+      "municipalityCode": "100003060",
+      "municipality": "Ventspils"
+    },
+    {
+      "code": "105404052",
+      "label": "\"Acālijas\", Cirpstene, Vārves pag., Ventspils nov., LV-3623",
+      "municipalityCode": "100016333",
+      "municipality": "Ventspils novads"
+    },
+    {
+      "code": "106395661",
+      "label": "\"Administratīvais korpuss\", Ugāle, Ugāles pag., Ventspils nov., LV-3615",
+      "municipalityCode": "100016333",
+      "municipality": "Ventspils novads"
+    },
+    {
+      "code": "102804585",
+      "label": "\"Agroķīmija\", Tārgales pag., Ventspils nov., LV-3621",
+      "municipalityCode": "100016333",
+      "municipality": "Ventspils novads"
+    },
+    {
+      "code": "102790683",
+      "label": "\"Ailankas\", Ances pag., Ventspils nov., LV-3601",
+      "municipalityCode": "100016333",
+      "municipality": "Ventspils novads"
+    },
+    {
+      "code": "105846231",
+      "label": "\"Ailes\", Ance, Ances pag., Ventspils nov., LV-3612",
+      "municipalityCode": "100016333",
+      "municipality": "Ventspils novads"
+    },
+    {
+      "code": "103120624",
+      "label": "\"19\", Divezeri, Ādažu pag., Ādažu nov., LV-2164",
+      "municipalityCode": "100016501",
+      "municipality": "Ādažu novads"
+    },
+    {
+      "code": "103808797",
+      "label": "\"22. km dzīvojamā māja\", Kalngale, Carnikavas pag., Ādažu nov., LV-2163",
+      "municipalityCode": "100016501",
+      "municipality": "Ādažu novads"
+    },
+    {
+      "code": "103808803",
+      "label": "\"30. km dzelzceļa māja\", Carnikava, Ādažu nov., LV-2163",
+      "municipalityCode": "100016501",
+      "municipality": "Ādažu novads"
+    },
+    {
+      "code": "105035275",
+      "label": "\"Ahāti\", Stapriņi, Ādažu pag., Ādažu nov., LV-2164",
+      "municipalityCode": "100016501",
+      "municipality": "Ādažu novads"
+    },
+    {
+      "code": "105577365",
+      "label": "\"Ainavas\", Gauja, Carnikavas pag., Ādažu nov., LV-2163",
+      "municipalityCode": "100016501",
+      "municipality": "Ādažu novads"
+    },
+    {
+      "code": "106196938",
+      "label": "\"Abras\", Krustkalni, Ķekavas pag., Ķekavas nov., LV-2111",
+      "municipalityCode": "100016470",
+      "municipality": "Ķekavas novads"
+    },
+    {
+      "code": "105444818",
+      "label": "\"Abrasas\", Baldones pag., Ķekavas nov., LV-2125",
+      "municipalityCode": "100016470",
+      "municipality": "Ķekavas novads"
+    },
+    {
+      "code": "105015333",
+      "label": "\"Acālijas\", Ķekava, Ķekavas nov., LV-2123",
+      "municipalityCode": "100016470",
+      "municipality": "Ķekavas novads"
+    },
+    {
+      "code": "105214362",
+      "label": "\"Adamsi\", Ķekava, Ķekavas nov., LV-2123",
+      "municipalityCode": "100016470",
+      "municipality": "Ķekavas novads"
+    },
+    {
+      "code": "104913174",
+      "label": "\"Adatas\", Krogsils, Ķekavas pag., Ķekavas nov., LV-2111",
+      "municipalityCode": "100016470",
+      "municipality": "Ķekavas novads"
+    }
+  ]
+}

@@ -2,3 +2,10 @@
 .env
 .env.*
 !.env.example
+
+# Large, reproducible open-data snapshots; re-import with the documented script.
+data/raw/
+public/data/addresses/
+
+__pycache__/
+*.pyc

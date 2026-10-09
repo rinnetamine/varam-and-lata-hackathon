@@ -1,0 +1,53 @@
+{
+  "source": "https://data.gov.lv/dati/dataset/pasvaldibas-pakalpojumu-apraksti",
+  "license": "CC0-1.0",
+  "retrievedAt": "2026-10-09T13:09:27.730207+00:00",
+  "warning": "Riga-only catalog; publisher warns of incomplete data. Not eligibility rules.",
+  "records": [
+    {
+      "Pašvaldība": "Rīga",
+      "Nosaukums": "Koku ciršanas atļauja",
+      "PPK ID URN": "",
+      "Statuss": "Apturēts",
+      "Izveidots (datums)": "07.06.2021 13:13:57",
+      "Pirmreizēji publicēts (datums)": "08.06.2021 13:08:37",
+      "Apturēts (no-līdz)": "08.06.2021 13:09:32 -"
+    },
+    {
+      "Pašvaldība": "Rīga",
+      "Nosaukums": "Tirdzniecības atļaujas pašvaldības noteiktajās pastāvīgās ielu tirdzniecības vietās",
+      "PPK ID URN": "",
+      "Statuss": "Apturēts",
+      "Izveidots (datums)": "07.06.2021 13:14:04",
+      "Pirmreizēji publicēts (datums)": "08.06.2021 11:39:39",
+      "Apturēts (no-līdz)": "08.06.2021 11:41:43 -"
+    },
+    {
+      "Pašvaldība": "Rīga",
+      "Nosaukums": "Tirdzniecības atļauja ielu tirdzniecības organizēšanai pasākuma laikā",
+      "PPK ID URN": "",
+      "Statuss": "Apturēts",
+      "Izveidots (datums)": "07.06.2021 13:14:10",
+      "Pirmreizēji publicēts (datums)": "08.06.2021 10:21:33",
+      "Apturēts (no-līdz)": "08.06.2021 10:22:15 -"
+    },
+    {
+      "Pašvaldība": "Rīga",
+      "Nosaukums": "Bērna reģistrācija pirmsskolu iestāžu rindā",
+      "PPK ID URN": "",
+      "Statuss": "Apturēts",
+      "Izveidots (datums)": "07.06.2021 13:14:17",
+      "Pirmreizēji publicēts (datums)": "08.06.2021 13:20:39",
+      "Apturēts (no-līdz)": "08.06.2021 13:21:00 -"
+    },
+    {
+      "Pašvaldība": "Rīga",
+      "Nosaukums": "Pašvaldības nodevas par suņa turēšanu nomaksa",
+      "PPK ID URN": "",
+      "Statuss": "Publicēts",
+      "Izveidots (datums)": "07.06.2021 13:11:12",
+      "Pirmreizēji publicēts (datums)": "08.06.2021 11:46:18",
+      "Apturēts (no-līdz)": ""
+    }
+  ]
+}

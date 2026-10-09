@@ -1,0 +1,254 @@
+[
+  {
+    "code": "100016630",
+    "name": "Aizkraukles novads",
+    "addressCount": 11659,
+    "file": "addresses/100016630.json"
+  },
+  {
+    "code": "100015694",
+    "name": "Alūksnes novads",
+    "addressCount": 6980,
+    "file": "addresses/100015694.json"
+  },
+  {
+    "code": "100016462",
+    "name": "Augšdaugavas novads",
+    "addressCount": 19473,
+    "file": "addresses/100016462.json"
+  },
+  {
+    "code": "100016438",
+    "name": "Balvu novads",
+    "addressCount": 10856,
+    "file": "addresses/100016438.json"
+  },
+  {
+    "code": "100016575",
+    "name": "Bauskas novads",
+    "addressCount": 15670,
+    "file": "addresses/100016575.json"
+  },
+  {
+    "code": "100016487",
+    "name": "Cēsu novads",
+    "addressCount": 14855,
+    "file": "addresses/100016487.json"
+  },
+  {
+    "code": "100003011",
+    "name": "Daugavpils",
+    "addressCount": 15221,
+    "file": "addresses/100003011.json"
+  },
+  {
+    "code": "100016495",
+    "name": "Dienvidkurzemes novads",
+    "addressCount": 19442,
+    "file": "addresses/100016495.json"
+  },
+  {
+    "code": "100016622",
+    "name": "Dobeles novads",
+    "addressCount": 9791,
+    "file": "addresses/100016622.json"
+  },
+  {
+    "code": "100015854",
+    "name": "Gulbenes novads",
+    "addressCount": 7734,
+    "file": "addresses/100015854.json"
+  },
+  {
+    "code": "100003028",
+    "name": "Jelgava",
+    "addressCount": 12428,
+    "file": "addresses/100003028.json"
+  },
+  {
+    "code": "100016534",
+    "name": "Jelgavas novads",
+    "addressCount": 13838,
+    "file": "addresses/100016534.json"
+  },
+  {
+    "code": "100016421",
+    "name": "Jēkabpils novads",
+    "addressCount": 14366,
+    "file": "addresses/100016421.json"
+  },
+  {
+    "code": "100003036",
+    "name": "Jūrmala",
+    "addressCount": 13670,
+    "file": "addresses/100003036.json"
+  },
+  {
+    "code": "100016743",
+    "name": "Krāslavas novads",
+    "addressCount": 13280,
+    "file": "addresses/100016743.json"
+  },
+  {
+    "code": "100016696",
+    "name": "Kuldīgas novads",
+    "addressCount": 10894,
+    "file": "addresses/100016696.json"
+  },
+  {
+    "code": "100003044",
+    "name": "Liepāja",
+    "addressCount": 7839,
+    "file": "addresses/100003044.json"
+  },
+  {
+    "code": "100016606",
+    "name": "Limbažu novads",
+    "addressCount": 16027,
+    "file": "addresses/100016606.json"
+  },
+  {
+    "code": "100016751",
+    "name": "Ludzas novads",
+    "addressCount": 12820,
+    "file": "addresses/100016751.json"
+  },
+  {
+    "code": "100015243",
+    "name": "Līvānu novads",
+    "addressCount": 4389,
+    "file": "addresses/100015243.json"
+  },
+  {
+    "code": "100016671",
+    "name": "Madonas novads",
+    "addressCount": 12876,
+    "file": "addresses/100016671.json"
+  },
+  {
+    "code": "100016583",
+    "name": "Mārupes novads",
+    "addressCount": 13695,
+    "file": "addresses/100016583.json"
+  },
+  {
+    "code": "100016688",
+    "name": "Ogres novads",
+    "addressCount": 21296,
+    "file": "addresses/100016688.json"
+  },
+  {
+    "code": "100016077",
+    "name": "Olaines novads",
+    "addressCount": 12083,
+    "file": "addresses/100016077.json"
+  },
+  {
+    "code": "100016727",
+    "name": "Preiļu novads",
+    "addressCount": 8215,
+    "file": "addresses/100016727.json"
+  },
+  {
+    "code": "100016784",
+    "name": "Ropažu novads",
+    "addressCount": 16007,
+    "file": "addresses/100016784.json"
+  },
+  {
+    "code": "100003052",
+    "name": "Rēzekne",
+    "addressCount": 5498,
+    "file": "addresses/100003052.json"
+  },
+  {
+    "code": "100016542",
+    "name": "Rēzeknes novads",
+    "addressCount": 17954,
+    "file": "addresses/100016542.json"
+  },
+  {
+    "code": "100003003",
+    "name": "Rīga",
+    "addressCount": 49075,
+    "file": "addresses/100003003.json"
+  },
+  {
+    "code": "100015485",
+    "name": "Salaspils novads",
+    "addressCount": 7654,
+    "file": "addresses/100015485.json"
+  },
+  {
+    "code": "100016663",
+    "name": "Saldus novads",
+    "addressCount": 11225,
+    "file": "addresses/100016663.json"
+  },
+  {
+    "code": "100016550",
+    "name": "Saulkrastu novads",
+    "addressCount": 9778,
+    "file": "addresses/100016550.json"
+  },
+  {
+    "code": "100016768",
+    "name": "Siguldas novads",
+    "addressCount": 11691,
+    "file": "addresses/100016768.json"
+  },
+  {
+    "code": "100016735",
+    "name": "Smiltenes novads",
+    "addressCount": 8075,
+    "file": "addresses/100016735.json"
+  },
+  {
+    "code": "100016390",
+    "name": "Talsu novads",
+    "addressCount": 13360,
+    "file": "addresses/100016390.json"
+  },
+  {
+    "code": "100016710",
+    "name": "Tukuma novads",
+    "addressCount": 16604,
+    "file": "addresses/100016710.json"
+  },
+  {
+    "code": "100016286",
+    "name": "Valkas novads",
+    "addressCount": 4344,
+    "file": "addresses/100016286.json"
+  },
+  {
+    "code": "100016647",
+    "name": "Valmieras novads",
+    "addressCount": 17461,
+    "file": "addresses/100016647.json"
+  },
+  {
+    "code": "100003060",
+    "name": "Ventspils",
+    "addressCount": 7618,
+    "file": "addresses/100003060.json"
+  },
+  {
+    "code": "100016333",
+    "name": "Ventspils novads",
+    "addressCount": 6941,
+    "file": "addresses/100016333.json"
+  },
+  {
+    "code": "100016501",
+    "name": "Ādažu novads",
+    "addressCount": 13092,
+    "file": "addresses/100016501.json"
+  },
+  {
+    "code": "100016470",
+    "name": "Ķekavas novads",
+    "addressCount": 14911,
+    "file": "addresses/100016470.json"
+  }
+]
