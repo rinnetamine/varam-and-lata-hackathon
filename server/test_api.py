@@ -57,8 +57,10 @@ def main():
                 except Exception:
                     time.sleep(0.1)
 
-            people = sqlite3.connect(db_path).execute('SELECT personas_kods, first_name, last_name FROM people').fetchall()
+            people = sqlite3.connect(db_path).execute("SELECT personas_kods, first_name, last_name FROM people WHERE role = 'person' ORDER BY id").fetchall()
             check('database seeded with 4 showcase people', len(people) == 4, str(len(people)))
+            admin_row = sqlite3.connect(db_path).execute("SELECT personas_kods FROM people WHERE role = 'admin'").fetchall()
+            check('one demo administrator account is seeded', len(admin_row) == 1)
             code, first, last = people[1]
 
             status, _ = call('/api/login', 'POST', {'personasKods': 'abc'})
@@ -187,6 +189,90 @@ def main():
             status, raw = call('/api/vsaa/vacancies', token=unemployed)
             vacancies = json.loads(raw)
             check('vacancies come from the NVA open-data snapshot', status == 200 and vacancies['total'] > 0 and vacancies['source'].startswith('https://data.gov.lv'))
+
+            # --- Audit: benefit rules, eligibility, uniqueness, admin inbox, persistence ---------------
+            legal_status, raw = call('/api/vsaa/legal')
+            legal = json.loads(raw)
+            check('legal references are public and dated', legal_status == 200 and legal['verifiedAt'] == '2026-10-09' and len(legal['benefits']) == 8)
+            check('every benefit cites at least one law or regulation with a likumi.lv link', all(any(r['type'] in ('law', 'regulation') and r['url'].startswith('https://likumi.lv') for r in b['legal']) for b in legal['benefits'].values()))
+            _, raw = call('/api/vsaa/dashboard', token=token)
+            dash2 = json.loads(raw)['dashboard']
+            newborn = dash2['children'][0]
+            birth_amount = next(b for b in newborn['benefits'] if b['code'] == 'berna_piedzimsanas')['estimate']['oneTime']
+            check('childbirth benefit for a 2026 birth is 600 EUR (MK 1546, 2. punkts)', birth_amount == 600)
+            care = next(b for b in newborn['benefits'] if b['code'] == 'berna_kopsanas')['estimate']['schedule']
+            check('childcare benefit is 298 EUR to 1.5 years with the 42.69 EUR transition', care[0]['monthly'] == 298 and care[1]['monthly'] == 42.69)
+            check('maternity benefit is shown to the mother only', next(b for b in newborn['benefits'] if b['code'] == 'maternitates')['status'] != 'nav_attiecas' and newborn['myRole'] == 'māte')
+            check('paternity benefit is marked as the other parent’s', next(b for b in newborn['benefits'] if b['code'] == 'paternitates')['status'] == 'nav_attiecas')
+            check('legal citations travel with each benefit', all(b['legal'] and b['verifiedAt'] for b in newborn['benefits']))
+            _, raw = call('/api/vsaa/dashboard', token=other_parent)
+            father_dash = json.loads(raw)['dashboard']
+            older = next(c for c in father_dash['children'] if c['id'] != newborn['id'])
+            check('father of two children sees both and the family benefit estimate counts two', len(father_dash['children']) == 2 and next(b for b in older['benefits'] if b['code'] == 'gimenes_valsts')['estimate']['children'] == 2)
+            check('2025 birth keeps the 421.17 EUR childbirth amount', next(b for b in older['benefits'] if b['code'] == 'berna_piedzimsanas')['estimate']['oneTime'] == 421.17)
+            check('paternity leave deadline (6 months) is reported as missed for the 11-month-old', next(b for b in older['benefits'] if b['code'] == 'paternitates')['status'] == 'nokavets')
+            status, _ = call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': older['id'], 'iban': father_dash['person']['iban'] or 'LV80BANK0000435195001'}, token=other_parent)
+            check('server refuses an application after the deadline even if the browser asks', status == 400)
+            status, raw = call('/api/vsaa/apply', 'POST', {'benefitCode': 'vecaku', 'childId': newborn['id'], 'options': {'ilgums': '7 mēneši'}, 'iban': __import__('demo_registry').make_iban(2)}, token=token)
+            check('invalid parental-benefit duration is rejected', status == 400 and json.loads(raw)['error'] == 'invalid_option')
+            status, raw = call('/api/vsaa/apply', 'POST', {'benefitCode': 'vecaku', 'childId': newborn['id'], 'options': {'ilgums': '13 mēneši'}, 'iban': __import__('demo_registry').make_iban(2)}, token=token)
+            check('mother applies for parental benefit (13 months)', status == 200)
+            _, raw = call('/api/vsaa/dashboard', token=other_parent)
+            kopsanas = next(b for b in next(c for c in json.loads(raw)['dashboard']['children'] if c['id'] == newborn['id'])['benefits'] if b['code'] == 'berna_kopsanas')
+            check('childcare benefit follows the parental-benefit recipient (VSP likuma 7. panta otrā daļa)', kopsanas['status'] == 'otrs_vecaks')
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+                results = list(pool.map(lambda _: call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': newborn['id'], 'iban': father_dash['person']['iban'] or __import__('demo_registry').make_iban(3)}, token=other_parent)[0], range(6)))
+            stored_count = sqlite3.connect(db_path).execute("SELECT count(*) FROM applications WHERE benefit_code = 'paternitates' AND child_id = ?", (newborn['id'],)).fetchone()[0]
+            check('concurrent duplicate submissions store a single application', stored_count == 1 and results.count(200) == 1, str(results))
+            # Restore the father's profile (the demo panel action) so later isolation checks start clean.
+            status, _ = call('/api/demo/people/3/clear-iban', 'POST')
+            _, raw = call('/api/me', token=other_parent)
+            check('demo panel clears the IBAN the father saved while applying', status == 200 and json.loads(raw)['person']['iban'] is None)
+            status, _ = call('/api/admin/applications')
+            check('admin inbox requires authentication (401)', status == 401)
+            status, _ = call('/api/admin/applications', token=token)
+            check('admin inbox refuses ordinary users (403)', status == 403)
+            status, raw = call('/api/login', 'POST', {'personasKods': admin_row[0][0]})
+            admin_token = json.loads(raw)['token']
+            check('administrator login reports the admin role', status == 200 and json.loads(raw)['person']['role'] == 'admin')
+            status, _ = call('/api/vsaa/dashboard', token=admin_token)
+            check('administrator has no personal dashboard (403)', status == 403)
+            status, raw = call('/api/admin/applications', token=admin_token)
+            register = json.loads(raw)
+            submitted = [a for a in register['applications'] if a['status'] == 'iesniegts' and not a['seeded']]
+            check('admin inbox lists persisted applications with applicant and child', status == 200 and submitted and all(a['applicant']['personasKods'] and (a['child'] or a['sickLeave'] or a['benefitCode'] == 'bezdarbnieka') for a in submitted))
+            target = next(a for a in submitted if a['benefitCode'] == 'vecaku')
+            check('stored application keeps the chosen option', target['details'].get('ilgums') == '13 mēneši')
+            status, raw = call(f"/api/admin/applications/{target['id']}/status", 'POST', {'status': 'pieskirts'}, token=admin_token)
+            decided = next(a for a in json.loads(raw)['applications'] if a['id'] == target['id'])
+            check('administrator decision is persisted', status == 200 and decided['status'] == 'pieskirts' and decided['decidedAt'])
+            status, _ = call(f"/api/admin/applications/{target['id']}/status", 'POST', {'status': 'nonsense'}, token=admin_token)
+            check('invalid decision status rejected', status == 400)
+            _, raw = call('/api/messages', token=token)
+            decision_mail = [m for m in json.loads(raw)['messages'] if m['template'] == 'decision']
+            check('applicant receives the decision in the inbox with a template', decision_mail and decision_mail[0]['params']['status'] == 'pieskirts' and decision_mail[0]['readAt'] is None)
+            _, raw = call('/api/vsaa/dashboard', token=token)
+            check('decision is consistent on the applicant dashboard', next(b for b in json.loads(raw)['dashboard']['children'][0]['benefits'] if b['code'] == 'vecaku')['status'] == 'pieskirts')
+            status, raw = call('/api/login', 'POST', {'personasKods': code}, token=token)
+            switched = json.loads(raw)['token']
+            status2, _ = call('/api/me', token=token)
+            check('logging in again revokes the previous token', status == 200 and status2 == 401)
+            token = switched
+            # Restart the server with the same database: everything must survive.
+            server.terminate(); server.wait(timeout=5)
+            server = subprocess.Popen([sys.executable, str(HERE / 'app.py')], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            for _ in range(50):
+                try:
+                    call('/api/me'); break
+                except Exception:
+                    time.sleep(0.1)
+            status, raw = call('/api/admin/applications', token=admin_token)
+            check('applications and sessions persist across a server restart', status == 200 and any(a['id'] == target['id'] and a['status'] == 'pieskirts' for a in json.loads(raw)['applications']))
+            with_children = sqlite3.connect(db_path)
+            with_children.execute('ATTACH DATABASE ? AS family', (os.path.join(tmp, 'children.db'),))
+            check('restart does not duplicate seeded data', with_children.execute('SELECT count(*) FROM family.children').fetchone()[0] == 3 and with_children.execute("SELECT count(*) FROM people WHERE role = 'admin'").fetchone()[0] == 1)
+            with_children.close()
 
             status, _ = call('/api/iban', 'POST', {'iban': 'LV00TEST0000000000001'})
             check('IBAN requires authentication', status == 401)

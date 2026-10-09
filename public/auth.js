@@ -4,7 +4,9 @@
   const STORAGE_KEY = 'faketvijaSession';
   const LOGIN_PAGE = 'login.html';
   const PROFILE_PAGE = 'profile.html';
-  const destination = session => session.person.iban ? PROFILE_PAGE : 'bank-account.html';
+  const ADMIN_PAGE = 'admin.html';
+  const isAdmin = person => person && person.role === 'admin';
+  const destination = session => (isAdmin(session.person) ? ADMIN_PAGE : session.person.iban ? PROFILE_PAGE : 'bank-account.html');
   const CODE_PATTERN = /^\d{6}-?\d{5}$/;
 
   const readSession = () => {
@@ -103,30 +105,31 @@
       event.preventDefault();
       const personasKods = input.value.trim();
       if (!CODE_PATTERN.test(personasKods)) {
-        setTranslatedStatus(status, 'Ievadi personas kodu formātā 000000-00000.');
+        setTranslatedStatus(status, '', 'auth.format');
         input.focus();
         return;
       }
       submit.disabled = true;
-      setTranslatedStatus(status, 'Notiek pieslēgšanās…');
+      setTranslatedStatus(status, '', 'auth.connecting');
       try {
-        const { ok, httpStatus, data } = await api('login', { method: 'POST', body: { personasKods } });
+        // The previous session token (if any) travels along so the server revokes it on account switch.
+        const { ok, httpStatus, data } = await api('login', { method: 'POST', token: readSession()?.token, body: { personasKods } });
         if (ok) {
           if (writeSession({ token: data.token, person: data.person })) {
-            setTranslatedStatus(status, 'Pieslēgšanās veiksmīga. Notiek pāreja…');
+            setTranslatedStatus(status, '', 'auth.success');
             location.assign(destination({person: data.person}));
             return;
           }
-          setTranslatedStatus(status, 'Pārlūks neļauj saglabāt sesiju. Atļauj vietnes datu glabāšanu un mēģini vēlreiz.');
+          setTranslatedStatus(status, '', 'auth.storage');
         } else if (httpStatus === 401) {
-          setTranslatedStatus(status, 'Šāds personas kods demonstrācijas datubāzē nav atrasts.');
+          setTranslatedStatus(status, '', 'auth.unknown');
         } else if (httpStatus === 400) {
-          setTranslatedStatus(status, 'Ievadi personas kodu formātā 000000-00000.');
+          setTranslatedStatus(status, '', 'auth.format');
         } else {
-          setTranslatedStatus(status, 'Serveris nevarēja apstrādāt pieprasījumu. Mēģini vēlreiz.');
+          setTranslatedStatus(status, '', 'auth.server');
         }
       } catch {
-        setTranslatedStatus(status, 'Neizdevās sazināties ar serveri. Pārbaudi, vai tas darbojas.');
+        setTranslatedStatus(status, '', 'auth.unreachable');
       }
       submit.disabled = false;
     });
@@ -136,6 +139,7 @@
   if (bankForm) {
     currentSession().then(session => {
       if (!session) location.replace(LOGIN_PAGE);
+      else if (isAdmin(session.person)) location.replace(ADMIN_PAGE);
       else if (session.person.iban) location.replace(PROFILE_PAGE);
     });
     bankForm.addEventListener('submit', async event => {
@@ -148,7 +152,7 @@
       input.removeAttribute('aria-invalid');
       if (!/^LV[0-9]{2}[A-Z]{4}[A-Z0-9]{13}$/.test(iban)) {
         input.setAttribute('aria-invalid', 'true');
-        setTranslatedStatus(status, 'IBAN formāts nav pareizs. Tam jāsākas ar LV un jāsatur 21 rakstzīme.');
+        setTranslatedStatus(status, '', 'auth.ibanFormat');
         input.focus();
         return;
       }
@@ -159,7 +163,7 @@
       input.disabled = true;
       bankForm.setAttribute('aria-busy', 'true');
       status.classList.add('bank-checking');
-      setTranslatedStatus(status, 'Pārbauda bankas kontu…');
+      setTranslatedStatus(status, '', 'auth.ibanChecking');
       try {
         // Simulate the bank verification step after local format validation.
         await new Promise(resolve => setTimeout(resolve, 1100));
@@ -169,14 +173,14 @@
           clearSession(); location.replace(LOGIN_PAGE); return;
         }
         if (!result.ok) {
-          const errors = {invalid_iban:'IBAN konts neeksistē vai jums nav tam piekļuves.', bank_account_unavailable:'IBAN konts neeksistē vai jums nav tam piekļuves.'};
-          setTranslatedStatus(status, errors[result.data?.error] || 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.');
+          const errors = {invalid_iban:'err.invalid_iban', bank_account_unavailable:'err.bank_account_unavailable'};
+          setTranslatedStatus(status, '', errors[result.data?.error] || 'auth.ibanSaveFailed');
         } else if (writeSession({...session, person:result.data.person})) {
           location.replace(PROFILE_PAGE);
         } else {
-          setTranslatedStatus(status, 'Neizdevās saglabāt sesiju. Mēģini vēlreiz.');
+          setTranslatedStatus(status, '', 'auth.sessionFailed');
         }
-      } catch { setTranslatedStatus(status, 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.'); }
+      } catch { setTranslatedStatus(status, '', 'auth.ibanSaveFailed'); }
       finally {
         submit.disabled = false;
         input.disabled = false;
@@ -200,14 +204,19 @@
       setText('#profile-iban', person.iban || '—');
     };
 
+    const requiredRole = document.body.dataset.requiresRole || 'person';
+    const misplaced = person => (requiredRole === 'admin' ? !isAdmin(person) : isAdmin(person));
     const cached = readSession();
     if (!cached) {
       location.replace(LOGIN_PAGE);
+    } else if (misplaced(cached.person)) {
+      location.replace(destination(cached));
     } else {
       renderPerson(cached);
       currentSession().then(session => {
         if (!session) location.replace(LOGIN_PAGE);
-        else if (!session.person.iban) location.replace('bank-account.html');
+        else if (misplaced(session.person)) location.replace(destination(session));
+        else if (!isAdmin(session.person) && !session.person.iban) location.replace('bank-account.html');
         else renderPerson(session);
       });
     }
@@ -226,7 +235,7 @@
     const signedOutHref = loginButton.getAttribute('href');
 
     const showSignedIn = ({ person }) => {
-      loginButton.setAttribute('href', person.iban ? PROFILE_PAGE : 'bank-account.html');
+      loginButton.setAttribute('href', destination({person}));
       loginButton.replaceChildren();
       const name = document.createElement('span');
       name.setAttribute('data-no-translate', '');

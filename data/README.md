@@ -1,5 +1,7 @@
 # Open data for the newborn-service prototype
 
+The complete inventory of every dataset the project uses (publisher, catalogue and resource URLs, licence, attribution, retrieval date, local files, transformations, bundling mode, limitations) and the list of generated/fictional data is [OPEN_DATA.md](../OPEN_DATA.md). This file documents the importer.
+
 Run `python3 scripts/import_open_data.py` from the repository root. Python 3 and network access are the only requirements. The importer gets current catalog metadata, checks the declared license against the two reviewed licenses, downloads selected resources and license legal-code pages, validates the files, and generates JSON.
 
 ## Imported sources

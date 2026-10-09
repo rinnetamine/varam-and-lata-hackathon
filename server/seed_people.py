@@ -172,6 +172,35 @@ def connect(path):
     if 'iban' not in columns:
         connection.execute('ALTER TABLE people ADD COLUMN iban TEXT')
         connection.commit()
+    # Account role: 'person' (portal user) or 'admin' (VSAA demo administrator inbox).
+    if 'role' not in columns:
+        connection.execute("ALTER TABLE people ADD COLUMN role TEXT NOT NULL DEFAULT 'person'")
+        connection.commit()
+    message_columns = {row['name'] for row in connection.execute('PRAGMA table_info(messages)')}
+    if 'template' not in message_columns:
+        # Template key + JSON params let the interface render system messages in either language.
+        connection.execute('ALTER TABLE messages ADD COLUMN template TEXT')
+        connection.execute("ALTER TABLE messages ADD COLUMN params TEXT NOT NULL DEFAULT '{}'")
+        connection.commit()
+    application_columns = {row['name'] for row in connection.execute('PRAGMA table_info(applications)')}
+    if 'decided_at' not in application_columns:
+        connection.execute('ALTER TABLE applications ADD COLUMN decided_at TEXT')
+        connection.commit()
+    # Uniqueness: one application per person, benefit and child/certificate, and one per family for
+    # the child benefits the law grants to a single parent. Pre-existing duplicates (older demo
+    # databases) are collapsed to the earliest row before the indexes are created.
+    connection.executescript('''
+        DELETE FROM applications WHERE id NOT IN (
+          SELECT MIN(id) FROM applications GROUP BY person_id, benefit_code, COALESCE(child_id, 0), COALESCE(sick_leave_id, 0));
+        DELETE FROM applications WHERE child_id IS NOT NULL AND benefit_code IN ('berna_piedzimsanas', 'berna_kopsanas', 'vecaku', 'gimenes_valsts')
+          AND status != 'atteikts' AND id NOT IN (
+          SELECT MIN(id) FROM applications WHERE child_id IS NOT NULL AND status != 'atteikts' GROUP BY benefit_code, child_id);
+        CREATE UNIQUE INDEX IF NOT EXISTS applications_unique_person
+          ON applications(person_id, benefit_code, COALESCE(child_id, 0), COALESCE(sick_leave_id, 0));
+        CREATE UNIQUE INDEX IF NOT EXISTS applications_unique_family
+          ON applications(benefit_code, child_id)
+          WHERE child_id IS NOT NULL AND status != 'atteikts' AND benefit_code IN ('berna_piedzimsanas', 'berna_kopsanas', 'vecaku', 'gimenes_valsts');
+    ''')
     demo_registry.attach(connection, path)
     return connection
 
@@ -242,21 +271,32 @@ def seed_vsaa_cases(connection, today=None):
     """Seed fictional employment and sick-leave cases; families live in children.db."""
     today = today or date.today()
     with connection:
-        for person in connection.execute('SELECT id FROM people').fetchall():
+        for person in connection.execute("SELECT id FROM people WHERE role = 'person'").fetchall():
             pid = person['id']
             rng = random.Random(DEFAULT_SEED * 7 + pid)
             employer = EMPLOYERS[pid % len(EMPLOYERS)]
             wage = 900 + rng.randrange(0, 1500)
             gap = 2 if pid % 4 == 0 else 0
-            for back in range(1, 17):
+            for back in range(1, 25):
                 if back > gap:
                     connection.execute('INSERT OR IGNORE INTO contributions (person_id,month,employer,amount) VALUES (?, ?, ?, ?)',
                                        (pid,month_key(today,back),employer,round(wage * 0.3409,2)))
 
 
+# Fictional VSAA administrator for the demo application inbox (no bank account, no benefits).
+ADMIN_ACCOUNT = ('Ilze', 'Vētra', '150975-10001', 'ilze.vetra@example.com', '+371 20 000 001', 'VSAA demonstrācijas nodaļa, Rīga', '1975-09-15')
+
+
+def ensure_admin(connection):
+    with connection:
+        connection.execute("INSERT OR IGNORE INTO people (first_name, last_name, personas_kods, email, phone, address, birth_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, 'admin')", ADMIN_ACCOUNT)
+        connection.execute("UPDATE people SET role = 'admin' WHERE personas_kods = ?", (ADMIN_ACCOUNT[2],))
+
+
 def ensure_seeded(connection):
     if connection.execute('SELECT COUNT(*) FROM people').fetchone()[0] == 0:
         seed(connection)
+    ensure_admin(connection)
     seed_vsaa_cases(connection)
     demo_registry.seed_registries(connection)
 
@@ -289,7 +329,8 @@ def main():
     if args.list:
         scenarios = {1: 'jaundzimušais + slimības lapa', 2: 'otrs vecāks', 3: 'bērns tuvojas 1 gadam', 0: 'iemaksas pārtrauktas'}
         for row in connection.execute('SELECT * FROM people ORDER BY id'):
-            print(f"{row['personas_kods']}  {row['first_name']} {row['last_name']:<14} {row['email']:<34} {row['phone']}  {demo_registry.CASES.get(row['id'], 'papildu demo lietotājs')}")
+            label = 'VSAA administrators (iesniegumu reģistrs)' if row['role'] == 'admin' else demo_registry.CASES.get(row['id'], 'papildu demo lietotājs')
+            print(f"{row['personas_kods']}  {row['first_name']} {row['last_name']:<14} {row['email']:<34} {row['phone']}  {label}")
 
 
 if __name__ == '__main__':

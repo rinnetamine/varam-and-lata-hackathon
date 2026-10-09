@@ -59,8 +59,17 @@ Actions, all confined to the prototype database:
 - `POST /api/vsaa/notify-other-parent` — the other parent's details are never shown (privacy); VSAA sends them an e-address message listing the benefits available to their role and which ones only one parent can receive, so the family can compare.
 - `POST /api/vsaa/profile` — bank account and the "send reminders to e-address" switch. With reminders on, every unclaimed benefit, unpaid certificate and contribution gap is delivered once as an inbox message.
 - `GET /api/vsaa/vacancies` — NVA open-data vacancies for the person's declared municipality.
+- `GET /api/vsaa/legal` — the benefit rules with their legal sources (public).
 
-Benefit rules live in `server/benefits.py` with a source link per benefit; they are simplified summaries of public VSAA pages read on 09.10.2026, not eligibility decisions. Dates in the demo scenarios are generated relative to the first server start; run `python3 server/seed_people.py --reset` to regenerate them.
+Eligibility is decided on the server, never from the browser: role (mother/father), the child's age window, the application deadline (one-time benefits are refused after it; monthly benefits stay open with the law's limited back payment), the social-insurance test for maternity, paternity, parental and sickness benefits (contributions in 3 of the last 6 or 6 of the last 24 months, from the demo contribution history), the "one parent per child" rule, the rule that childcare and parental benefit go to the same person, the 12-of-16-months test for unemployment benefit, and IBAN format, checksum and ownership in the mock bank registry. Unique indexes on `applications` make repeated or concurrent submissions collapse into one stored record. Benefit rules and amounts live in `server/benefits.py` with the law, article and VSAA page for each (verified 09.10.2026, see [docs/design-research.md](docs/design-research.md) and the legal section on `public/data-licenses.html`); they are simplified summaries, not eligibility decisions. Dates in the demo scenarios are generated relative to the first server start; run `python3 server/seed_people.py --reset` to regenerate them.
+
+### Administrator inbox
+
+A demo VSAA administrator account (`role = admin`, personas kods shown in the demo panel; `python3 server/seed_people.py --list` prints it) signs in through the same login page and lands on `public/admin.html`, the application register. `GET /api/admin/applications` reads every persisted application with applicant, child or certificate, status, date and saved details; it answers 401 without a session and 403 for ordinary users. `POST /api/admin/applications/<id>/status` records a decision (`izskatisana`, `pieskirts`, `atteikts`), updates the applicant's dashboard and drops a decision message into their e-address inbox. The administrator has no personal dashboard or bank account. Decisions are a demonstration with no legal effect.
+
+### Language
+
+One mechanism in `public/translations.js` serves every page: the preference is stored under the localStorage key `faketvijaLanguage` (`lv` or `en`; it is a preference, not a credential). The default is `lv`; a missing, invalid or unreadable value falls back to the default in memory. The script loads synchronously in `<head>`, sets `document.documentElement.lang` before the first paint (hiding the body until the DOM is translated when the stored language is not the default) and keeps the choice across reloads, navigation, login, logout and account switching; a `storage` event synchronises open tabs. Markup carries `data-i18n` / `data-i18n-attr` keys and scripts call `i18n.t(key, params)`; dates and numbers use `i18n.formatDate` / `formatNumber` with the matching locale. System messages in the inbox are stored with a template key and parameters and rendered in the selected language; names, personal codes and IBANs are never translated. Older markup is still covered by the Latvian-text → English map at the top of the file.
 
 ## Current interface
 
@@ -69,6 +78,8 @@ Benefit rules live in `server/benefits.py` with a source link per benefit; they 
 - `public/profile.html` — demo profile showing the signed-in person's data and a simulated inbox notice about services related to a child's birth.
 - `public/pakalpojumi.html` — illustrative service list opened from the inbox notice.
 - `public/vsaa.html`, `public/vsaa.js`, `public/vsaa.css` — Mana VSAA dashboard (see above).
+- `public/admin.html`, `public/admin.js` — administrator application register (see above).
+- `public/translations.js` — shared language mechanism and message catalogue (see Language).
 - `public/styles.css` and `public/auth.css` — responsive portal and login styles.
 - `public/app.js` — text-size toggle.
 - `public/auth.js` — login request, token storage, session restore, route guarding and log out.
@@ -88,7 +99,7 @@ This is not government authentication and does not connect to Latvija.gov.lv, eP
 
 Import licensed data snapshots with `python3 scripts/import_open_data.py`. See [data/README.md](data/README.md) for sources, licenses, attribution, generated files and limitations. Import before rebuilding Docker to include nationwide address JSON. The small address sample remains available without the bulk import.
 
-Three further CC0 snapshots converted on 09.10.2026 feed the Mana VSAA dashboard and are committed as JSON: `public/data/vsaa-statistics.json` (VSAA recipients per municipality, 12.2025), `public/data/gimenes-valsts-pabalsts.json` (family state benefit recipients, 06.2026) and `public/data/nva-vacancies.json` (NVA vacancies aggregated per municipality, daily CSV). Sources and licences are listed on `public/data-licenses.html`.
+Three further CC0 snapshots converted on 09.10.2026 feed the Mana VSAA dashboard and are committed as JSON: `public/data/vsaa-statistics.json` (VSAA recipients per municipality, 12.2025), `public/data/gimenes-valsts-pabalsts.json` (family state benefit recipients, 06.2026) and `public/data/nva-vacancies.json` (NVA vacancies aggregated per municipality, daily CSV). [OPEN_DATA.md](OPEN_DATA.md) is the complete inventory of every dataset, licence, retrieval date, local file and transformation, and separates sourced open data from generated demo data; `public/data-licenses.html` carries the visible attribution and the benefit-rule legal references.
 
 ### Demo inbox
 

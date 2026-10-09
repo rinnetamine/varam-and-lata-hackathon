@@ -40,20 +40,20 @@ VSAA services (all end in "piešķiršana un izmaksāšana"):
 
 Other terms used as on the portal: `darbnespējas lapa A/B`, `VPVKAC` (vienotie valsts un pašvaldību klientu apkalpošanas centri), `NVA bezdarbnieka statuss`, `NVA CV un vakanču portāls`, `e-adrese`, `Pieteiktie pakalpojumi`, `Dzīves situācijas`, `Pakalpojumu ieteikumi`.
 
-## 4. Benefit rules used in the prototype (VSAA pages, read 09.10.2026)
+## 4. Benefit rules used in the prototype (likumi.lv and VSAA pages, verified 09.10.2026)
 
 | Benefit | Amount / period | Who | Apply within | Decision |
 | --- | --- | --- | --- | --- |
-| Maternitātes | 80 % of average contribution wage; 56/70 + 56/70 days | mother (employee / self-employed) | 6 months from first day of pregnancy leave | 10 working days |
-| Paternitātes | 80 % × coefficient 1.46; 10 working days, taken by 6 months of age | father | 6 months from first day of leave | 10 working days |
-| Bērna piedzimšanas | one-time 421.17 EUR; decision not before day 8 | one parent | 6 months from birth | 8 working days |
-| Bērna kopšanas | 298 EUR/month to 1.5 years (from 01.01.2026) | one parent, employment irrelevant | 6 months from the right arising | 22 working days |
-| Vecāku | depends on wage; 13 or 19 months; 2 non-transferable months per parent until age 8 | one parent (employee / self-employed) | 6 months from requested start | 10 working days |
-| Ģimenes valsts | 25 / 50 / 75 / 100 EUR per child by number of children; from age 1 to 16 (20 if studying) | one parent | 24 months from first birthday | 10 working days |
+| Maternitātes | 80 % (10. p.); 56 + 56 days, 70 + 56 with early care, +14 for complications or multiple births (5. p.) | mother (employee / self-employed; insurance 3/6 or 6/24 months, 4. p.) | 6 months from the insured event (25. p.) | 10 working days |
+| Paternitātes | 80 % (10.³ p.; VSAA applies coefficient 1.46); 10 working days per child (10.¹ p.); leave granted within 6 months of birth (Darba likuma 155. p.) | father (insurance 3/6 or 6/24 months) | 6 months from first day of leave | 10 working days |
+| Bērna piedzimšanas | one-time 600 EUR for births from 01.01.2026 (MK 1546, 2. p., MK 815/2025); 421.17 EUR for births up to 31.12.2025 | one parent (VSP likuma 8. p.) | 6 months from birth (18. p.) | 8 working days |
+| Bērna kopšanas | 298 EUR/month to 1.5 years (MK 1609, 2. p.); 42.69 EUR/month from 1.5 to 2 years only for children born up to 02.11.2026 (transition) | one parent, employment irrelevant; with parental benefit — the same person (7. p. 2. d.) | 6 months; later claims paid for the previous 6 months only (18. p.) | 22 working days |
+| Vecāku | 60 % (13 months) or 43.75 % (19 months) of the average contribution wage (10.⁶ p.); 75 % of that while working in 2026; 2 non-transferable months per parent until age 8 | one parent (employee / self-employed; insurance 3/6 or 6/24 months) | 6 months from requested start (25. p.) | 10 working days |
+| Ģimenes valsts | 25 EUR for one child, 100 for two, 225 for three, 100 per child for four or more (6. p. 2.² d.); piemaksa 160 EUR for a child with a disability (MK 864, 6. p.); from age 1 to 16 (20 while studying, incl. higher education from 2026) | one parent | 24 months from first birthday; later claims paid for 24 months back (18. p. 1.¹ d.) | 10 working days |
 | Slimības | from day 10 of certificate B (days 1–9 employer, certificate A); max 26 weeks / 52 weeks in 3 years | employee / self-employed | 6 months from first day of incapacity | 10 working days |
-| Bezdarbnieka | by wage and insurance record; 100 % → 75 % → 50 % → 45 % over 8 months | NVA unemployed status + 12 of last 16 months contributions | apply NVA and VSAA the same day | within a month |
+| Bezdarbnieka | 50–65 % of the average wage by insurance record (7. p.); full → 75 % → 50 % → 45 % over 8 months (9. p.) | NVA unemployed status (3. p.), record ≥ 1 year, 12 of last 16 months (5. p.) | granted from the day of application (13. p.) | within a month |
 
-These are simplifications for the demo; see `server/benefits.py` for the source link per benefit.
+These are simplifications for the demo; see `server/benefits.py` for the act, article and URL behind each rule (laws: "Par maternitātes un slimības apdrošināšanu" likumi.lv/ta/id/38051, Valsts sociālo pabalstu likums 68483, Darba likums 26019, "Par apdrošināšanu bezdarba gadījumam" 14595; regulations: MK 1546 → 202714, MK 1609 → 202854 and its 2026 amendment 365450, MK 864 → 328673). The earlier draft of this prototype used 421.17 EUR for the childbirth benefit and an "8th day" rule; both were corrected on 09.10.2026 after checking MK 1546 as amended by MK 815/2025.
 
 ## 5. Open data used
 

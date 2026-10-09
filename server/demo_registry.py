@@ -50,8 +50,8 @@ def seed_registries(db, today=None):
     with db:
         db.execute('DELETE FROM bank.accounts WHERE personas_kods NOT IN (SELECT personas_kods FROM main.people WHERE id <= 4)')
         db.execute('DELETE FROM bank.people WHERE personas_kods NOT IN (SELECT personas_kods FROM main.people WHERE id <= 4)')
-        db.execute('DELETE FROM main.people WHERE id > 4')
-    people = {r['id']:r for r in db.execute('SELECT * FROM people')}
+        db.execute("DELETE FROM main.people WHERE id > 4 AND role = 'person'")
+    people = {r['id']:r for r in db.execute("SELECT * FROM people WHERE role = 'person'")}
     with db:
         for pid, person in people.items():
             db.execute('INSERT OR IGNORE INTO bank.people VALUES (?, ?, ?)', (person['personas_kods'],person['first_name'],person['last_name']))
@@ -105,7 +105,7 @@ def admin_data(db):
     people = []
     for row in db.execute('SELECT * FROM people ORDER BY id'):
         person = dict(row)
-        person['scenario'] = CASES.get(row['id'], 'Otrs vecāks' if row['id'] in (5,8) else 'Papildu demo lietotājs bez bērniem')
+        person['scenario'] = 'VSAA administrators (iesniegumu reģistrs)' if row['role'] == 'admin' else CASES.get(row['id'], 'Otrs vecāks' if row['id'] in (5,8) else 'Papildu demo lietotājs bez bērniem')
         person['children'] = [c for c in children if row['id'] in (c['mother_id'],c['father_id'])]
         person['bankAccounts'] = [dict(r) for r in db.execute('SELECT * FROM bank.accounts WHERE personas_kods = ?', (row['personas_kods'],))]
         people.append(person)

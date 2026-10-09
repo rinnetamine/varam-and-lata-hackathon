@@ -10,6 +10,9 @@ Endpoints (JSON):
     POST /api/vsaa/profile              {"iban", "remindersEnabled"} -> dashboard
     POST /api/vsaa/notify-other-parent  {"childId"} -> e-address message to the other parent + dashboard
     GET  /api/vsaa/vacancies            -> NVA open-data vacancies for the person's municipality
+    GET  /api/vsaa/legal                -> benefit rules with their legal sources (public)
+    GET  /api/admin/applications        -> every stored application (401 without a session, 403 for non-admins)
+    POST /api/admin/applications/<id>/status {"status"} -> decision + applicant notification (admin only)
 
 Only a SHA-256 hash of each token is stored, so a leaked database cannot be
 used to impersonate anyone. This is a prototype: a personas kods alone is not
@@ -66,6 +69,7 @@ def public_person(row):
         'address': row['address'],
         'birthDate': row['birth_date'],
         'iban': row['iban'],
+        'role': row['role'],
     }
 
 
@@ -116,6 +120,10 @@ class Handler(SimpleHTTPRequestHandler):
             return self.handle_vsaa('dashboard')
         if path == '/api/vsaa/vacancies':
             return self.handle_vsaa('vacancies')
+        if path == '/api/vsaa/legal':
+            return self.send_json(HTTPStatus.OK, vsaa.legal())
+        if path == '/api/admin/applications':
+            return self.handle_admin()
         if path.startswith('/api/'):
             return self.send_json(HTTPStatus.NOT_FOUND, {'error': 'not_found'})
         super().do_GET()
@@ -134,6 +142,9 @@ class Handler(SimpleHTTPRequestHandler):
         read_match = re.fullmatch(r'/api/messages/(\d+)/read', path)
         if read_match:
             return self.handle_messages(int(read_match.group(1)))
+        decision_match = re.fullmatch(r'/api/admin/applications/(\d+)/status', path)
+        if decision_match:
+            return self.handle_admin(int(decision_match.group(1)))
         if path == '/api/iban':
             return self.handle_iban()
         if path == '/api/login':
@@ -163,6 +174,8 @@ class Handler(SimpleHTTPRequestHandler):
             person = self.current_person(db)
             if person is None:
                 return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
+            if person['role'] != 'person':
+                return self.send_json(HTTPStatus.FORBIDDEN, {'error': 'forbidden'})
             result = {}
             if action == 'vacancies':
                 data = vsaa.vacancies(vsaa.municipality_of(person['address']))
@@ -204,6 +217,10 @@ class Handler(SimpleHTTPRequestHandler):
             now = int(time.time())
             token = secrets.token_urlsafe(32)
             db.execute('DELETE FROM sessions WHERE expires_at < ?', (now,))
+            # Switching accounts: the browser sends its previous token, which is revoked here.
+            previous = self.bearer_token()
+            if previous:
+                db.execute('DELETE FROM sessions WHERE token_hash = ?', (hash_token(previous),))
             db.execute(
                 'INSERT INTO sessions (token_hash, person_id, created_at, expires_at) VALUES (?, ?, ?, ?)',
                 (hash_token(token), person['id'], now, now + SESSION_TTL_SECONDS),
@@ -273,10 +290,32 @@ class Handler(SimpleHTTPRequestHandler):
             rows = db.execute('SELECT * FROM messages WHERE person_id = ? ORDER BY received_at DESC, id DESC',
                               (person_id,)).fetchall()
             messages = [{'id': row['id'], 'sender': row['sender'], 'subject': row['subject'],
-                         'body': row['body'], 'receivedAt': row['received_at'], 'readAt': row['read_at']}
+                         'body': row['body'], 'receivedAt': row['received_at'], 'readAt': row['read_at'],
+                         'template': row['template'], 'params': json.loads(row['params'] or '{}')}
                         for row in rows]
         self.send_json(HTTPStatus.OK, {'messages': messages,
                                      'unreadCount': sum(item['readAt'] is None for item in messages)})
+
+    def handle_admin(self, application_id=None):
+        """Administrator inbox: 401 without a valid session, 403 for ordinary portal users."""
+        payload = self.read_json() if self.command == 'POST' else None
+        with database() as db:
+            person = self.current_person(db)
+            if person is None:
+                return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
+            if person['role'] != 'admin':
+                return self.send_json(HTTPStatus.FORBIDDEN, {'error': 'forbidden'})
+            if application_id is not None:
+                if payload is None:
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {'error': 'invalid_body'})
+                error = vsaa.admin_decide(db, person, application_id, payload.get('status'))
+                if error == 'not_found':
+                    return self.send_json(HTTPStatus.NOT_FOUND, {'error': error})
+                if error:
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {'error': error})
+            data = vsaa.admin_applications(db)
+            data['admin'] = {'name': f"{person['first_name']} {person['last_name']}"}
+        self.send_json(HTTPStatus.OK, data)
 
     def handle_logout(self):
         token = self.bearer_token()
