@@ -5,58 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Latvija.gov.lv sākumlapas vizuālais makets hakatonam.">
   <title>Sākumlapa – Valsts pārvaldes pakalpojumu portāls · Makets</title>
-  <link rel="stylesheet" href="styles.css?v=portal-2">
-  <script src="app.js?v=portal-3" defer></script>
+  <link rel="stylesheet" href="styles.css?v=upper-layout-1">
+  <script src="translations.js" defer></script><script src="app.js?v=faketvija-1" defer></script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
 <body>
+<div class="prototype-banner">Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.</div>
   <a class="skip-link" href="#saturs">Pāriet uz saturu</a>
   <header class="portal-header">
     <div class="header-inner">
-      <a href="./" aria-label="Sākumlapa"><img class="portal-logo" src="assets/logo.png" alt="Latvija.lv" width="147" height="61"></a>
+      <a href="./" aria-label="Sākumlapa"><span class="fake-logo">Fake<span>tvija</span>.lv<small>HAKATONA PROTOTIPS</small></span></a>
       <nav class="primary-nav" aria-label="Galvenā navigācija"><a href="#pakalpojumi">Pakalpojumi</a><a href="#dzives-situacijas">Dzīves situācijas</a><a href="#e-adrese">E-adrese</a></nav>
       <div class="header-actions">
         <span class="search-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span>Meklēt</span></span>
-        <span class="language-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg>EN</span>
+        <button type="button" class="language-label" data-language-toggle aria-label="Switch to English"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><span data-language-label>EN</span></button>
         <button type="button" class="accessibility-button" aria-label="Palielināt tekstu" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7" r="1"/><path d="M7 10h10m-5 0v4m0 0-3 4m3-4 3 4"/></svg></button>
-        <a class="login-button" id="login-button" href="login.html" style="text-decoration:none">Ienākt Mana Latvija.lv <span aria-hidden="true">→</span></a>
+        <a class="login-button" id="login-button" href="login.html" style="text-decoration:none">Ienākt demo profilā <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </header>
-  <main id="saturs" class="shell">
+  <main id="saturs">
     <section class="hero" aria-labelledby="warning-title">
+      <div class="shell hero-layout">
+      <div class="hero-copy">
       <p class="overline">VALSTS PĀRVALDES PAKALPOJUMU PORTĀLS</p>
       <h1 id="warning-title">Uzmanību!</h1>
       <p class="warning"><strong>Paziņojumi</strong> par jauniem e-adreses ziņojumiem <strong>netiek sūtīti SMS.</strong> Ja saņemat šādu īsziņu, neatveriet tajā esošās saites. Jaunus e-adreses ziņojumus pārbaudiet tikai portālā Latvija.gov.lv.</p>
-      <div class="hero-image"><img src="assets/phone.png" alt="Latvija.lv portāls tālrunī: e-adrese, paziņojumi un personas dati" width="1731" height="1841"></div>
+      </div>
+      <div class="hero-image"><img src="assets/phone-faketvija.png" alt="Faketvija.lv prototips tālrunī: e-adrese, paziņojumi un personas dati" width="1731" height="1841"></div>
+      </div>
     </section>
-    <div class="sections" id="pakalpojumi">
-      <section class="panel heading-panel"><h2>Pakalpojumu ieteikumi</h2></section>
-      <section class="panel heading-panel"><h2>Populārākie pakalpojumi</h2></section>
-      <section class="panel advice" aria-labelledby="advice-title">
-        <h2 id="advice-title">Digitālie padomi</h2>
-        <article><h3>Kur atrast savus un bērna datus?</h3><p>Noskaidro, kā sadaļā “Mani dati” apskatīt savus un pārstāvēto personu datus valsts reģistros.</p><span class="text-link">Uz padomu</span></article>
-        <article><h3>Kā izveidot e-rēķinu?</h3><p>Iepazīsti e-rēķinu iespējas: sagatavo, nosūti, saņem un pārvaldi rēķinus vienuviet Latvija.gov.lv.</p><span class="text-link">Uz padomu</span></article>
-        <article><h3>Kas ir e-adrese un kam tā paredzēta?</h3><p>Uzzini, kā e-adrese nodrošina drošu un oficiālu saziņu ar valsts un pašvaldību iestādēm.</p><span class="text-link">Uz padomu</span></article>
-        <article><h3>Kā laikus uzzināt par jaunu ziņojumu e-adresē?</h3><p>Apstiprini savu e-pasta adresi, lai laikus uzzinātu par jauniem e-adresē saņemtajiem ziņojumiem.</p><span class="text-link">Uz padomu</span></article>
-        <div class="outline-label">Skatīt visus padomus</div>
-      </section>
-      <section id="dzives-situacijas" class="panel heading-panel"><h2>Dzīves situācijas</h2></section>
-      <section class="panel heading-panel"><h2>Dalies ar savu viedokli par portāla jauno versiju</h2></section>
-      <section id="e-adrese" class="panel heading-panel"><h2>Droša saziņa sākas ar e-adresi</h2></section>
-      <section class="panel heading-panel"><h2>Aktualitātes un tehniskie darbi</h2></section>
-<p class="tagline">Latvija.lv kopš 2006. gada - Tavs drošais ceļvedis digitālajā valstī.</p>
-    </div>
+    <p class="tagline shell">Faketvija.lv — hakatona ideja jaunajiem vecākiem.</p>
   </main>
-<footer class="footer shell">
-    <img class="logo" src="assets/logo.png" alt="Latvija.lv" width="147" height="61" loading="lazy">
-    <div class="outline-label language">English</div>
-    <div class="footer-heading">Noderīgi</div>
-    <div class="footer-heading">Noteikumi</div>
-    <div class="footer-heading">Seko mums</div>
-    <div class="social"><span>Youtube</span><span>Facebook</span><span>X</span></div>
-    <section class="contacts"><h2>KONTAKTI</h2><p>© 2026 Valsts digitālās attīstības aģentūra<br>Reģistrācijas numurs: 90001733697</p><p>Tālrunis: <a href="tel:+37167502757">+37167502757</a></p><p>E-pasts: <a href="mailto:portals@vdaa.gov.lv">portals@vdaa.gov.lv</a></p></section>
-    <div class="funds">Izmantotie atbalsta fondi</div>
+<footer class="footer portal-footer">
+  <div class="shell footer-layout">
+  <div class="footer-brand">
+    <a href="./" class="fake-logo">Fake<span>tvija</span>.lv<small>HAKATONA PROTOTIPS</small></a>
+  </div>
+  <div class="footer-content">
+    <button type="button" class="outline-label language" data-language-toggle><span data-language-label>English</span></button>
+    <section class="contacts"><h2>KONTAKTI</h2><p>Oficiālā portāla atbalsta kontakti (nav šī prototipa atbalsts)</p><p><span>Tālrunis:</span> <a href="tel:+37167502757">+37167502757</a></p><p><span>E-pasts:</span> <a href="mailto:portals@vdaa.gov.lv">portals@vdaa.gov.lv</a></p></section>
     <p class="prototype-note">Hakatona dizaina makets · Nav oficiālais portāls · Pakalpojumi un autentifikācija nav pieslēgti.</p>
+    <a href="data-licenses.html">Datu avoti un licences</a>
+  </div>
+  </div>
   </footer>
 </body>
 </html>
