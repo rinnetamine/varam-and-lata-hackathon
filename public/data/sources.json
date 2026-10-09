@@ -1,0 +1,173 @@
+{
+  "retrievedAt": "2026-10-09T13:09:27.730207+00:00",
+  "datasets": [
+    {
+      "id": "6b06a7e8-dedf-4705-a47b-2a7c51177473",
+      "slug": "varis-atvertie-dati",
+      "title": "Valsts adrešu reģistra atvērtie dati",
+      "publisher": "Valsts zemes dienests",
+      "source": "https://data.gov.lv/dati/dataset/varis-atvertie-dati",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "metadataModified": "2026-10-09T08:59:03.926853",
+      "resources": [
+        {
+          "id": "ee02baa4-2bc3-4f77-a6cb-5427a3e9befe",
+          "name": "1. Pilsētas",
+          "url": "https://data.gov.lv/dati/dataset/6b06a7e8-dedf-4705-a47b-2a7c51177473/resource/ee02baa4-2bc3-4f77-a6cb-5427a3e9befe/download/aw_pilseta.csv",
+          "format": "CSV",
+          "lastModified": "2026-10-09T08:19:55.715631",
+          "localPath": "data/raw/varis-atvertie-dati/aw_pilseta.csv",
+          "bytes": 11788,
+          "sha256": "ceee08e463f2aaeb23d2bb1b1d1e9b53c6b155dcc9703fed463d0988ec0be34e"
+        },
+        {
+          "id": "c62c60bb-58d4-4f26-82c0-5b630769f9d1",
+          "name": "2. Novadi",
+          "url": "https://data.gov.lv/dati/dataset/6b06a7e8-dedf-4705-a47b-2a7c51177473/resource/c62c60bb-58d4-4f26-82c0-5b630769f9d1/download/aw_novads.csv",
+          "format": "CSV",
+          "lastModified": "2026-10-09T08:19:50.369847",
+          "localPath": "data/raw/varis-atvertie-dati/aw_novads.csv",
+          "bytes": 22019,
+          "sha256": "3bb10fdb6db1f71d29bbe7cfbd33eb318c1852a2a9e364ab29c37fc765b41847"
+        },
+        {
+          "id": "6ba8c905-27a1-443a-b9c6-256a0777425b",
+          "name": "3. Pagasti ",
+          "url": "https://data.gov.lv/dati/dataset/6b06a7e8-dedf-4705-a47b-2a7c51177473/resource/6ba8c905-27a1-443a-b9c6-256a0777425b/download/aw_pagasts.csv",
+          "format": "CSV",
+          "lastModified": "2026-10-09T08:19:52.932577",
+          "localPath": "data/raw/varis-atvertie-dati/aw_pagasts.csv",
+          "bytes": 84227,
+          "sha256": "b39d3c7c24fd8060635bd4f6d1c8b54499ff31f291f2f91336fe0ca268354201"
+        },
+        {
+          "id": "0d3810f4-1ac0-4fba-8b10-0188084a361b",
+          "name": "4. Ciemi un mazciemi",
+          "url": "https://data.gov.lv/dati/dataset/6b06a7e8-dedf-4705-a47b-2a7c51177473/resource/0d3810f4-1ac0-4fba-8b10-0188084a361b/download/aw_ciems.csv",
+          "format": "CSV",
+          "lastModified": "2026-10-09T08:19:19.378211",
+          "localPath": "data/raw/varis-atvertie-dati/aw_ciems.csv",
+          "bytes": 1676782,
+          "sha256": "a65ef4c049f9dfdbe88a3b6089f468a0c8e427c7bcdc0ec11256b741ea5949b9"
+        },
+        {
+          "id": "3c4ab802-76cf-433c-9c1c-89215e28d833",
+          "name": "5. Ielas",
+          "url": "https://data.gov.lv/dati/dataset/6b06a7e8-dedf-4705-a47b-2a7c51177473/resource/3c4ab802-76cf-433c-9c1c-89215e28d833/download/aw_iela.csv",
+          "format": "CSV",
+          "lastModified": "2026-10-09T08:19:47.703545",
+          "localPath": "data/raw/varis-atvertie-dati/aw_iela.csv",
+          "bytes": 3331018,
+          "sha256": "7bdf52845e8021973e1de91416bae93a57ecb7c89294dd2c520ecec849456941"
+        },
+        {
+          "id": "a510737a-18ce-400f-ad4b-04fce5228272",
+          "name": "6. Ēku un zemes vienību adreses",
+          "url": "https://data.gov.lv/dati/dataset/6b06a7e8-dedf-4705-a47b-2a7c51177473/resource/a510737a-18ce-400f-ad4b-04fce5228272/download/aw_eka.csv",
+          "format": "CSV",
+          "lastModified": "2026-10-09T08:19:40.494978",
+          "localPath": "data/raw/varis-atvertie-dati/aw_eka.csv",
+          "bytes": 141696361,
+          "sha256": "3159905957e641bae91d976a4f01a6eaf59118acf20908cea398705423645af1"
+        }
+      ]
+    },
+    {
+      "id": "87626b5c-3e9a-47f4-a647-ad6562984499",
+      "slug": "pasvaldibas-pakalpojumu-apraksti",
+      "title": "Pašvaldības pakalpojumu apraksti",
+      "publisher": "Rīgas dome",
+      "source": "https://data.gov.lv/dati/dataset/pasvaldibas-pakalpojumu-apraksti",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "metadataModified": "2021-08-30T13:57:16.708600",
+      "resources": [
+        {
+          "id": "b2aa7539-57a2-4d5d-8c4e-2d7de542ef58",
+          "name": " Pašvaldības pakalpojumi.csv",
+          "url": "https://data.gov.lv/dati/dataset/87626b5c-3e9a-47f4-a647-ad6562984499/resource/b2aa7539-57a2-4d5d-8c4e-2d7de542ef58/download/3.datu_kopa_pasvaldibas_pakalpojumi.csv",
+          "format": "CSV",
+          "lastModified": "2021-08-30T13:57:16.691824",
+          "localPath": "data/raw/pasvaldibas-pakalpojumu-apraksti/3.datu_kopa_pasvaldibas_pakalpojumi.csv",
+          "bytes": 795,
+          "sha256": "7d5bd3eb3d34bd1efba978f2ef9472821b305bd8afd041f8a7728cb960e334e1"
+        }
+      ],
+      "recordCount": 5
+    },
+    {
+      "id": "4aad1c1c-835a-45cc-8315-133dfeb9d90c",
+      "slug": "gimenes-valsts-pabalsta-sanemeji",
+      "title": "Ģimenes valsts pabalsta saņēmēji",
+      "publisher": "Valsts sociālās apdrošināšanas aģentūra",
+      "source": "https://data.gov.lv/dati/dataset/gimenes-valsts-pabalsta-sanemeji",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "metadataModified": "2026-07-30T05:53:22.650865",
+      "resources": [
+        {
+          "id": "8ea423c5-ac07-4f29-8592-0fc7123c6a1e",
+          "name": "Gimenes_valsts_pabalsti_06-2026.xlsx",
+          "url": "https://data.gov.lv/dati/dataset/4aad1c1c-835a-45cc-8315-133dfeb9d90c/resource/8ea423c5-ac07-4f29-8592-0fc7123c6a1e/download/gimenes_valsts_pabalsti_06-2026.xlsx",
+          "format": ".xlsx",
+          "lastModified": "2026-07-30T05:53:22.615035",
+          "localPath": "data/raw/gimenes-valsts-pabalsta-sanemeji/gimenes_valsts_pabalsti_06-2026.xlsx",
+          "bytes": 12559,
+          "sha256": "5fa0557a5910a35e8a9f3afd689f39fdb31c70b4d0b958ddbd6e49a7a57530ca"
+        }
+      ]
+    },
+    {
+      "id": "280fef64-8ffd-40f2-897f-23728f2b500e",
+      "slug": "vsaa-adm-pakalpojumu-sanemeju-skaits",
+      "title": "VSAA administrēto pakalpojumu saņēmēju skaits",
+      "publisher": "Labklājības ministrija",
+      "source": "https://data.gov.lv/dati/dataset/vsaa-adm-pakalpojumu-sanemeju-skaits",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "metadataModified": "2026-04-13T11:39:01.394377",
+      "resources": [
+        {
+          "id": "5cb182e0-f7f2-441e-bf5c-3ae27e16ff47",
+          "name": "VSAA_pakalpojumu_sanemeji_12-2025.xlsx",
+          "url": "https://data.gov.lv/dati/dataset/280fef64-8ffd-40f2-897f-23728f2b500e/resource/5cb182e0-f7f2-441e-bf5c-3ae27e16ff47/download/vsaa_pakalpojumu_sanemeji_12-2025.xlsx",
+          "format": ".xlsx",
+          "lastModified": "2026-04-13T11:39:01.358970",
+          "localPath": "data/raw/vsaa-adm-pakalpojumu-sanemeju-skaits/vsaa_pakalpojumu_sanemeji_12-2025.xlsx",
+          "bytes": 16168,
+          "sha256": "25680072a72a56bba729be493f381268cda30c3c1f971440a5de7be52fd0ebff"
+        }
+      ]
+    }
+  ],
+  "licenses": [
+    {
+      "id": "CC-BY-4.0",
+      "url": "https://creativecommons.org/licenses/by/4.0/legalcode.en",
+      "localPath": "data/licenses/CC-BY-4.0.html",
+      "sha256": "58230517b7895aa219ff46a6ed63e67057a1582fb9ea054b16728a8c13525650"
+    },
+    {
+      "id": "CC0-1.0",
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode.en",
+      "localPath": "data/licenses/CC0-1.0.html",
+      "sha256": "b43732f4c1463b087cf10d4daf8d8766514b2bf8f21bc5ef50905f95be227726"
+    }
+  ],
+  "limitations": [
+    "Snapshot data, not a live government integration.",
+    "Building/land addresses only; apartment/unit numbers are not imported.",
+    "VSAA workbooks contain aggregate statistics, not benefit amounts, eligibility rules or personal records.",
+    "Riga catalog covers Riga only and its publisher warns of incomplete data.",
+    "Imported Riga catalog contains five records; its preschool registration record is marked suspended. It does not establish current service availability."
+  ],
+  "addressImport": {
+    "activeBuildings": 550685,
+    "resolvedBuildings": 550685,
+    "municipalities": 42,
+    "unresolvedCount": 0,
+    "unresolvedCodes": [],
+    "transformations": "Filtered STATUSS=EKS; resolved municipality using VKUR_CD parent hierarchy; selected code and STD fields; grouped JSON by municipality."
+  }
+}
