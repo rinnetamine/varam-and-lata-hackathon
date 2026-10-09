@@ -18,8 +18,9 @@
 .vsaa-section{margin:0 0 44px;scroll-margin-top:16px}
 .vsaa-section>header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:14px}
 .vsaa-section>header .section-link{font-size:14px;font-weight:500}
-.vsaa-page a{color:var(--gov-accent);text-decoration:underline;text-underline-offset:3px}
-.vsaa-page a:hover{color:var(--gov-accent-dark)}
+/* Link accents apply only to content links, not navigation or button labels. */
+.vsaa-page .profile-content a:not(.gov-btn):not(.status-tile){color:#2c4f7c;text-decoration:underline;text-underline-offset:3px}
+.vsaa-page .profile-content a:not(.gov-btn):not(.status-tile):hover{color:#193654}
 
 /* Status strip */
 .status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:26px 0 34px}
@@ -40,7 +41,11 @@
 .gov-btn.small{min-height:36px;padding:6px 14px;font-size:14px}
 .gov-btn:disabled{opacity:.55;cursor:not-allowed}
 .gov-btn svg{width:18px;height:18px;flex-shrink:0}
-.vsaa-page a.gov-btn{text-decoration:none}
+.vsaa-page a.gov-btn{color:#fff;text-decoration:none}
+.vsaa-page a.gov-btn:hover{color:#fff}
+.vsaa-page a.gov-btn.secondary{color:var(--gov-text-2)}
+.vsaa-page a.gov-btn.secondary:hover{color:var(--gov-text)}
+.vsaa-page a.status-tile{color:var(--gov-text)}
 
 /* Panels and alerts */
 .gov-panel{border:1px solid var(--gov-outline);border-radius:var(--gov-radius);background:#fff;padding:22px 24px;margin:0 0 16px}

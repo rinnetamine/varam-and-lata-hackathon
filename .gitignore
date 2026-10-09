@@ -14,3 +14,6 @@ server/data/*-shm
 
 __pycache__/
 *.pyc
+
+# Local backups before demo scenario migrations.
+server/data/backups/

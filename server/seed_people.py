@@ -20,9 +20,10 @@ import sqlite3
 import unicodedata
 from pathlib import Path
 from datetime import date, timedelta
+import demo_registry
 
 DEFAULT_DB = Path(__file__).resolve().parent / 'data' / 'people.db'
-DEFAULT_COUNT = 60
+DEFAULT_COUNT = 4
 DEFAULT_SEED = 20240601
 ADDRESS_FILE = Path(os.environ.get('ADDRESS_FILE', Path(__file__).resolve().parent.parent / 'public' / 'data' / 'addresses.json'))
 
@@ -171,6 +172,7 @@ def connect(path):
     if 'iban' not in columns:
         connection.execute('ALTER TABLE people ADD COLUMN iban TEXT')
         connection.commit()
+    demo_registry.attach(connection, path)
     return connection
 
 
@@ -237,97 +239,26 @@ def month_key(day, months_back):
 
 
 def seed_vsaa_cases(connection, today=None):
-    """Create the fictional VSAA situations behind the dashboard.
-
-    Scenario by person id (1-based): 1 newborn plus an unpaid sick-leave
-    certificate, 2 the other parent of that newborn, 3 a child approaching
-    its first birthday with granted benefits, 0 social contributions stopped
-    two months ago (unemployment). Everything is idempotent via seed keys, so
-    an existing demo database gains the tables without losing people,
-    sessions or read status.
-    """
+    """Seed fictional employment and sick-leave cases; families live in children.db."""
     today = today or date.today()
-    if connection.execute('SELECT COUNT(*) FROM children').fetchone()[0]:
-        return
-    people = connection.execute('SELECT id, first_name FROM people ORDER BY id').fetchall()
-    if not people:
-        return
-    partners = [row for row in people if row['id'] % 4 == 2]
-    used = set()
-
-    def pick_partner(person):
-        female = person['first_name'] in FEMALE_NAMES
-        for candidate in partners:
-            if candidate['id'] in used or candidate['id'] <= person['id']:
-                continue
-            if (candidate['first_name'] in FEMALE_NAMES) != female:
-                used.add(candidate['id'])
-                return candidate
-        for candidate in partners:
-            if candidate['id'] not in used and candidate['id'] > person['id']:
-                used.add(candidate['id'])
-                return candidate
-        return None
-
     with connection:
-        for person in people:
+        for person in connection.execute('SELECT id FROM people').fetchall():
             pid = person['id']
             rng = random.Random(DEFAULT_SEED * 7 + pid)
-            scenario = pid % 4
             employer = EMPLOYERS[pid % len(EMPLOYERS)]
             wage = 900 + rng.randrange(0, 1500)
-            gap = 2 if scenario == 0 else 0
+            gap = 2 if pid % 4 == 0 else 0
             for back in range(1, 17):
                 if back > gap:
-                    connection.execute('INSERT OR IGNORE INTO contributions (person_id, month, employer, amount) VALUES (?, ?, ?, ?)',
-                                       (pid, month_key(today, back), employer, round(wage * 0.3409, 2)))
-            role = 'māte' if person['first_name'] in FEMALE_NAMES else 'tēvs'
-            if scenario == 1:
-                birth = today - timedelta(days=18)
-                child = connection.execute('INSERT OR IGNORE INTO children (first_name, birth_date, seed_key) VALUES (?, ?, ?)',
-                                           (CHILD_NAMES[pid % len(CHILD_NAMES)], birth.isoformat(), f'child-{pid}')).lastrowid
-                connection.execute('INSERT OR IGNORE INTO child_parents VALUES (?, ?, ?)', (child, pid, role))
-                partner = pick_partner(person)
-                if partner:
-                    partner_role = 'māte' if partner['first_name'] in FEMALE_NAMES else 'tēvs'
-                    if partner_role == role:
-                        partner_role = 'tēvs' if role == 'māte' else 'māte'
-                    connection.execute('INSERT OR IGNORE INTO child_parents VALUES (?, ?, ?)', (child, partner['id'], partner_role))
-                # Maternity benefit was granted before the birth; it shows as already granted.
-                mother = pid if role == 'māte' else (partner['id'] if partner else None)
-                if mother:
-                    connection.execute('INSERT INTO applications (person_id, benefit_code, child_id, submitted_at, status, details) VALUES (?, ?, ?, ?, ?, ?)',
-                                       (mother, 'maternitates', child, (birth - timedelta(days=60)).isoformat(), 'pieskirts', '{"seed": true}'))
-                connection.execute('INSERT OR IGNORE INTO sick_leaves (person_id, number, kind, date_from, date_to, closed_at, employer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                                   (pid, f'B-{today.year}-{pid:04d}-2', 'B', (today - timedelta(days=41)).isoformat(), (today - timedelta(days=25)).isoformat(), (today - timedelta(days=24)).isoformat(), employer, 'neizmaksata'))
-                connection.execute('INSERT OR IGNORE INTO sick_leaves (person_id, number, kind, date_from, date_to, closed_at, employer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                                   (pid, f'B-{today.year}-{pid:04d}-1', 'B', (today - timedelta(days=200)).isoformat(), (today - timedelta(days=186)).isoformat(), (today - timedelta(days=185)).isoformat(), employer, 'izmaksata'))
-            elif scenario == 3:
-                birth = today - timedelta(days=335)
-                child = connection.execute('INSERT OR IGNORE INTO children (first_name, birth_date, seed_key) VALUES (?, ?, ?)',
-                                           (CHILD_NAMES[(pid + 3) % len(CHILD_NAMES)], birth.isoformat(), f'child-{pid}')).lastrowid
-                connection.execute('INSERT OR IGNORE INTO child_parents VALUES (?, ?, ?)', (child, pid, role))
-                granted = [('berna_piedzimsanas', 12, '{"seed": true}'), ('berna_kopsanas', 20, '{"seed": true}'), ('vecaku', 20, '{"seed": true, "ilgums": "13 mēneši"}'),
-                           ('paternitates', 15, '{"seed": true}') if role == 'tēvs' else ('maternitates', -60, '{"seed": true}')]
-                for code, offset, details in granted:
-                    connection.execute('INSERT INTO applications (person_id, benefit_code, child_id, submitted_at, status, details) VALUES (?, ?, ?, ?, ?, ?)',
-                                       (pid, code, child, (birth + timedelta(days=offset)).isoformat(), 'pieskirts', details))
-                connection.execute('INSERT OR IGNORE INTO sick_leaves (person_id, number, kind, date_from, date_to, closed_at, employer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                                   (pid, f'B-{today.year}-{pid:04d}-1', 'B', (today - timedelta(days=19)).isoformat(), (today - timedelta(days=6)).isoformat(), (today - timedelta(days=5)).isoformat(), employer, 'neizmaksata'))
+                    connection.execute('INSERT OR IGNORE INTO contributions (person_id,month,employer,amount) VALUES (?, ?, ?, ?)',
+                                       (pid,month_key(today,back),employer,round(wage * 0.3409,2)))
 
 
 def ensure_seeded(connection):
     if connection.execute('SELECT COUNT(*) FROM people').fetchone()[0] == 0:
         seed(connection)
-    with connection:
-        connection.execute("""
-            INSERT OR IGNORE INTO messages (person_id, seed_key, sender, subject, body, received_at)
-            SELECT id, 'newborn-demo', 'FAKETVIJA.LV · DEMONSTRĀCIJA',
-              'Par bērna piedzimšanu ir pieejami pakalpojumi',
-              'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.',
-              '2026-10-09T09:00:00+03:00' FROM people WHERE id % 4 != 0
-        """)
     seed_vsaa_cases(connection)
+    demo_registry.seed_registries(connection)
 
 
 def main():
@@ -343,6 +274,10 @@ def main():
     if args.reset:
         with connection:
             connection.execute('DELETE FROM sessions')
+            connection.execute('DELETE FROM family.children')
+            connection.execute('DELETE FROM family.metadata')
+            connection.execute('DELETE FROM bank.accounts')
+            connection.execute('DELETE FROM bank.people')
             connection.execute('DELETE FROM children')
             connection.execute('DELETE FROM people')
         seed(connection, args.count, args.seed)
@@ -354,7 +289,7 @@ def main():
     if args.list:
         scenarios = {1: 'jaundzimušais + slimības lapa', 2: 'otrs vecāks', 3: 'bērns tuvojas 1 gadam', 0: 'iemaksas pārtrauktas'}
         for row in connection.execute('SELECT * FROM people ORDER BY id'):
-            print(f"{row['personas_kods']}  {row['first_name']} {row['last_name']:<14} {row['email']:<34} {row['phone']}  {scenarios[row['id'] % 4]}")
+            print(f"{row['personas_kods']}  {row['first_name']} {row['last_name']:<14} {row['email']:<34} {row['phone']}  {demo_registry.CASES.get(row['id'], 'papildu demo lietotājs')}")
 
 
 if __name__ == '__main__':

@@ -32,7 +32,7 @@
     if (!response.ok) { const error = new Error(data.error || 'request_failed'); error.code = data.error; throw error; }
     return data;
   }
-  const ERRORS = {invalid_iban: 'Konta numurs nav pareizs. Latvijas IBAN ir 21 zīme: LV, 2 cipari, 4 bankas burti, 13 cipari.', not_available: 'Šo pabalstu šobrīd nevar pieteikt (jau pieteikts vai nav pieejams).', not_eligible: 'Nav izpildīts iemaksu nosacījums: 12 mēneši no pēdējiem 16.', unknown_benefit: 'Nezināms pakalpojums.', no_other_parent: 'Otrs vecāks reģistros nav norādīts.'};
+  const ERRORS = {bank_account_unavailable:'IBAN konts neeksistē vai jums nav tam piekļuves.', invalid_iban: 'Konta numurs nav pareizs. Latvijas IBAN ir 21 zīme: LV, 2 cipari, 4 bankas burti, 13 cipari.', not_available: 'Šo pabalstu šobrīd nevar pieteikt (jau pieteikts vai nav pieejams).', not_eligible: 'Nav izpildīts iemaksu nosacījums: 12 mēneši no pēdējiem 16.', unknown_benefit: 'Nezināms pakalpojums.', no_other_parent: 'Otrs vecāks reģistros nav norādīts.'};
   const setStatus = text => setTranslatedStatus(status, text);
 
   function chip(state, text) { return el('span', {class: `chip ${state}`, text}); }
@@ -86,8 +86,9 @@
     }
     root.replaceChildren(...children.map(child => {
       const card = el('article', {class: 'child-card', 'aria-label': `Bērns ${child.firstName}`});
-      card.append(el('header', {}, el('h3', {text: child.firstName, 'data-no-translate': true}),
+      card.append(el('header', {}, el('h3', {text: `${child.firstName} ${child.lastName || ''}`, 'data-no-translate': true}),
         el('div', {class: 'meta'}, el('span', {}, 'Dzimis ', el('span', {text: fmtDate(child.birthDate), 'data-no-translate': true}), ` · ${child.ageText}`),
+          el('span', {}, 'Personas kods: ', el('strong', {text: child.personasKods, 'data-no-translate': true})),
           el('span', {}, 'Jūsu loma: ', el('strong', {text: child.myRole})),
           el('span', {}, 'Deklarētā pašvaldība: ', el('strong', {text: child.municipal.municipality || '—', 'data-no-translate': true})))));
       card.append(el('ul', {class: 'benefit-list'}, child.benefits.map(benefit => benefitRow(child, benefit))));

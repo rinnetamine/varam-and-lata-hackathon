@@ -34,7 +34,7 @@ This serves `public/` and the API at http://127.0.0.1:8080 and creates `server/d
 
 ## Demo login and sessions
 
-- `server/seed_people.py` generates 60 fictional Latvian people (name, surname, e-mail on `example.com`, phone, personas kods in the `DDMMYY-XXXXX` format with fictional birth dates and random suffixes). `python3 server/seed_people.py --list` prints them so you can pick a code; `--reset` regenerates them.
+- `server/seed_people.py` generates 4 fictional Latvian people (name, surname, e-mail on `example.com`, phone, personas kods in the `DDMMYY-XXXXX` format with fictional birth dates and random suffixes). `python3 server/seed_people.py --list` prints them so you can pick a code; `--reset` regenerates them.
 - `POST /api/login` takes `{"personasKods": "..."}`, looks the code up and returns a random bearer token plus the person. Only a SHA-256 hash of the token is stored, and sessions expire after 7 days.
 - `GET /api/me` validates the token; `POST /api/logout` revokes it.
 - `public/auth.js` keeps the token in `localStorage`, so a reload or new tab stays signed in. The profile and services pages redirect to login without a valid session; a rejected token signs the user out, while an unreachable server keeps the cached session.
@@ -97,3 +97,19 @@ SQLite `messages` stores each user's demo notifications, message body, received 
 ### First-login bank account
 
 Users without an IBAN are directed to `bank-account.html` after login and when entering guarded pages. The authenticated `POST /api/iban` endpoint normalizes and validates a Latvian IBAN's format and MOD-97 checksum, then saves it on that user's record. Subsequent logins open the profile directly; the saved IBAN appears in My data. This does not verify account ownership or make payments. Use only demo IBANs. Existing people receive a nullable IBAN column without resetting records.
+
+### Family showcases and mock bank
+
+- `server/data/people.db`: portal users, sessions, inbox, applications and employment history.
+- `server/data/children.db`: three fictional children, first/last names, birth dates, DDMMYY-XXXXX codes, mother/father references and receiving flags per benefit and parent.
+- `server/data/bank.db`: fictional bank customers keyed by personas kods, their test IBANs and active status. This simulates a bank registry; no external bank is contacted.
+
+Fresh databases seed four adult accounts. The first four demonstrate no child, one newborn, two children with already granted benefits, and a mother with no recorded father. Users 2 and 3 share one child; user 3 has a second child, and user 4 has a child with no recorded father. Users beyond the first four and their dependent records are removed. There are three distinct children and four parent-child links. Portal `children` rows retain compatibility IDs for existing application foreign keys; the separate child registry is authoritative for family details and dashboard reads.
+
+First names are sampled from the imported PMLP **Personu vārdi** CC0 statistics (`python3 scripts/import_person_names.py`). Surnames are inherited from the fictional father, or mother when no father is recorded. Family links, birth dates, identifiers and bank records are fictional. Source metadata and transformation notes are saved; the source/licence page includes attribution.
+
+A **Demo panelis** button appears on every HTML page, including login. It lets you inspect people, children, parent benefit flags and bank records and copy each user's personas kods or test IBAN. This is a read-only public demo inspector, not a production administrator login. Set `DEMO_ADMIN_ENABLED=0` to disable its API. Keep these registries fictional.
+
+Both `/api/iban` and VSAA profile/application forms check the bank registry: the IBAN must exist, be active and belong to the signed-in user's personas kods. Use the user's IBAN from the demo panel; an arbitrary checksum-valid account is rejected. Existing profile IBANs that fail this check are cleared once during migration, so those users are asked again on next login.
+
+The separate registries are created beside the configured `DB_PATH`, inside the existing persistent Docker volume. Docker mounts the tracked name snapshot read-only. Startup is idempotent and retains family/payment records; `--reset` explicitly clears all demo registries. Local pre-migration backups are excluded from Git.

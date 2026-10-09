@@ -142,24 +142,47 @@
       event.preventDefault();
       const status = document.querySelector('#bank-status');
       const submit = bankForm.querySelector('[type="submit"]');
+      if (submit.disabled) return;
+      const input = document.querySelector('#bank-iban');
+      const iban = input.value.replace(/\s+/g, '').toUpperCase();
+      input.removeAttribute('aria-invalid');
+      if (!/^LV[0-9]{2}[A-Z]{4}[A-Z0-9]{13}$/.test(iban)) {
+        input.setAttribute('aria-invalid', 'true');
+        setTranslatedStatus(status, 'IBAN formāts nav pareizs. Tam jāsākas ar LV un jāsatur 21 rakstzīme.');
+        input.focus();
+        return;
+      }
       const session = readSession();
       if (!session) return location.replace(LOGIN_PAGE);
+      input.value = iban;
       submit.disabled = true;
+      input.disabled = true;
+      bankForm.setAttribute('aria-busy', 'true');
+      status.classList.add('bank-checking');
+      setTranslatedStatus(status, 'Pārbauda bankas kontu…');
       try {
+        // Simulate the bank verification step after local format validation.
+        await new Promise(resolve => setTimeout(resolve, 1100));
         const result = await api('iban', {method:'POST', token:session.token,
-          body:{iban:document.querySelector('#bank-iban').value}});
+          body:{iban}});
         if (result.httpStatus === 401) {
           clearSession(); location.replace(LOGIN_PAGE); return;
         }
         if (!result.ok) {
-          setTranslatedStatus(status, result.httpStatus === 400 ? 'Ievadi derīgu Latvijas IBAN konta numuru.' : 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.');
+          const errors = {invalid_iban:'IBAN konts neeksistē vai jums nav tam piekļuves.', bank_account_unavailable:'IBAN konts neeksistē vai jums nav tam piekļuves.'};
+          setTranslatedStatus(status, errors[result.data?.error] || 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.');
         } else if (writeSession({...session, person:result.data.person})) {
           location.replace(PROFILE_PAGE);
         } else {
           setTranslatedStatus(status, 'Neizdevās saglabāt sesiju. Mēģini vēlreiz.');
         }
       } catch { setTranslatedStatus(status, 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.'); }
-      submit.disabled = false;
+      finally {
+        submit.disabled = false;
+        input.disabled = false;
+        bankForm.removeAttribute('aria-busy');
+        status.classList.remove('bank-checking');
+      }
     });
   }
 

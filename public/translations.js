@@ -161,6 +161,20 @@ Object.assign(englishTranslations, {
  'Neizdevās saglabāt sesiju. Mēģini vēlreiz.':'Could not save the session. Try again.',
  'Bankas konts — Faketvija.lv demo':'Bank account — Faketvija.lv demo'
 });
+Object.assign(englishTranslations, {
+ 'Šāds konts demo bankā nav atrasts.':'This account was not found in the demo bank.',
+ 'Šis konts nepieder pieslēgtajam lietotājam.':'This account does not belong to the signed-in user.',
+ 'Izmanto šī lietotāja testa IBAN no demo paneļa. Demo banka pārbauda konta esamību un personas kodu. Maksājumi netiek veikti.':'Use this user’s test IBAN from the demo panel. The demo bank checks account existence and personal code. No payments are made.'
+});
+Object.assign(englishTranslations, {
+ 'Norādi savu Latvijas bankas kontu pabalstu saņemšanai.':'Enter your Latvian bank account for benefit payments.',
+ 'Ievadi IBAN konta numuru, kas reģistrēts uz tava vārda.':'Enter an IBAN registered in your name.',
+ 'IBAN konts neeksistē vai jums nav tam piekļuves.':'The IBAN account does not exist or you do not have access to it.'
+});
+Object.assign(englishTranslations, {
+ 'IBAN formāts nav pareizs. Tam jāsākas ar LV un jāsatur 21 rakstzīme.':'Incorrect IBAN format. It must start with LV and contain 21 characters.',
+ 'Pārbauda bankas kontu…':'Checking bank account…'
+});
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}
 const originalText = new WeakMap();

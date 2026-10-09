@@ -45,3 +45,7 @@ This import does not supply current benefit amounts, deadlines, eligibility rule
 ## Demo profile addresses
 
 The people seeder randomly assigns addresses from the tracked `public/data/addresses.json` snapshot using a deterministic seed. These are real public addresses, but the people and their association with those addresses are fictional. Names remain generated from the existing name lists; imported datasets contain no personal name lists. Email addresses use example.com and phone numbers are generated. Profile address attribution links to the existing source and license page. Existing placeholder addresses are upgraded without resetting users, identifiers or sessions. Docker mounts the tracked address snapshot read-only into the API container.
+
+## First-name statistics for children
+
+`python3 scripts/import_person_names.py` imports PMLP's `personu-vardi` dataset only when its declared licence is CC0-1.0. It saves original metadata, resource URL, retrieval time, resource SHA-256 and transformation notes, and keeps the 100 most frequent alphabetic single first names per gender in `public/data/person-names.json`. These are aggregate statistics, not personal records. Children's surnames come from their fictional father, with a fictional mother fallback when no father is recorded. Family assignments and identifiers are generated, not derived from resident records.

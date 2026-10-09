@@ -31,6 +31,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import vsaa
+import demo_registry
 from seed_people import DEFAULT_DB, connect, ensure_seeded
 
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / 'public'
@@ -101,6 +102,12 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split('?', 1)[0]
+        if path == '/api/demo/admin':
+            if os.environ.get('DEMO_ADMIN_ENABLED', '1') != '1':
+                return self.send_json(HTTPStatus.NOT_FOUND, {'error':'not_found'})
+            with database() as db:
+                data = demo_registry.admin_data(db)
+            return self.send_json(HTTPStatus.OK, data)
         if path == '/api/messages':
             return self.handle_messages()
         if path == '/api/me':
@@ -115,6 +122,15 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split('?', 1)[0]
+        reset_match = re.fullmatch(r'/api/demo/people/(\d+)/clear-iban', path)
+        if reset_match:
+            if os.environ.get('DEMO_ADMIN_ENABLED', '1') != '1':
+                return self.send_json(HTTPStatus.NOT_FOUND, {'error':'not_found'})
+            with database() as db:
+                result = db.execute('UPDATE people SET iban = NULL WHERE id = ?', (int(reset_match.group(1)),))
+                if not result.rowcount:
+                    return self.send_json(HTTPStatus.NOT_FOUND, {'error':'not_found'})
+            return self.send_json(HTTPStatus.OK, {'ok':True})
         read_match = re.fullmatch(r'/api/messages/(\d+)/read', path)
         if read_match:
             return self.handle_messages(int(read_match.group(1)))
@@ -229,6 +245,10 @@ class Handler(SimpleHTTPRequestHandler):
                 valid = int(digits) % 97 == 1
             if not valid:
                 return self.send_json(HTTPStatus.BAD_REQUEST, {'error': 'invalid_iban'})
+            owner = db.execute('SELECT personas_kods FROM people WHERE id = ?', (session['person_id'],)).fetchone()
+            error = demo_registry.bank_error(db, owner['personas_kods'], iban)
+            if error:
+                return self.send_json(HTTPStatus.BAD_REQUEST, {'error':error})
             db.execute('UPDATE people SET iban = ? WHERE id = ?', (iban, session['person_id']))
             person = db.execute('SELECT * FROM people WHERE id = ?', (session['person_id'],)).fetchone()
         self.send_json(HTTPStatus.OK, {'person': public_person(person)})

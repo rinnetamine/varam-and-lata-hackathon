@@ -10,6 +10,7 @@ import re
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from demo_registry import bank_error
 from benefits import BENEFITS, LIFE_SITUATIONS, VSAA_ESERVICE, add_months, child_benefit_status
 
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / 'public'
@@ -62,9 +63,9 @@ def dashboard(db, person, today=None):
     my_applications = list(applications.values())
 
     children = []
-    for link in db.execute('SELECT c.*, cp.role FROM children c JOIN child_parents cp ON cp.child_id = c.id WHERE cp.person_id = ? ORDER BY c.birth_date DESC', (pid,)):
+    for link in db.execute('SELECT c.*, cp.role FROM family.children c JOIN family.child_parents cp ON cp.child_id = c.id WHERE cp.person_id = ? ORDER BY c.birth_date DESC', (pid,)):
         birth = date.fromisoformat(link['birth_date'])
-        other = db.execute('SELECT person_id, role FROM child_parents WHERE child_id = ? AND person_id != ?', (link['id'], pid)).fetchone()
+        other = db.execute('SELECT person_id, role FROM family.child_parents WHERE child_id = ? AND person_id != ?', (link['id'], pid)).fetchone()
         other_apps = {}
         if other:
             for row in db.execute('SELECT * FROM applications WHERE person_id = ? AND child_id = ?', (other['person_id'], link['id'])):
@@ -78,7 +79,7 @@ def dashboard(db, person, today=None):
         notified = db.execute("SELECT received_at FROM messages WHERE seed_key LIKE ? ORDER BY received_at DESC LIMIT 1",
                               (f'share-{link["id"]}-{pid}-%',)).fetchone() if other else None
         children.append({
-            'id': link['id'], 'firstName': link['first_name'], 'birthDate': link['birth_date'],
+            'id': link['id'], 'firstName': link['first_name'], 'lastName':link['last_name'], 'personasKods':link['personas_kods'], 'birthDate': link['birth_date'],
             'ageDays': (today - birth).days, 'ageText': age_text(birth, today), 'firstBirthday': add_months(birth, 12).isoformat(),
             'myRole': link['role'],
             'otherParent': {'known': bool(other), 'role': other['role'] if other else None, 'notifiedAt': notified['received_at'] if notified else None},
@@ -205,6 +206,9 @@ def update_profile(db, person, payload):
     iban = str(payload.get('iban', '')).replace(' ', '').upper()
     if iban and not valid_iban(iban):
         return 'invalid_iban'
+    if iban:
+        error = bank_error(db, person['personas_kods'], iban)
+        if error: return error
     reminders = payload.get('remindersEnabled')
     db.execute('UPDATE people SET iban = COALESCE(?, iban), reminders_enabled = COALESCE(?, reminders_enabled) WHERE id = ?',
                (iban if 'iban' in payload else None, None if reminders is None else int(bool(reminders)), person['id']))
@@ -219,6 +223,8 @@ def apply(db, person, payload, today=None):
     iban = str(payload.get('iban') or person['iban'] or '').replace(' ', '').upper()
     if not valid_iban(iban):
         return 'invalid_iban', None
+    error = bank_error(db, person['personas_kods'], iban)
+    if error: return error, None
     details = {key: value for key, value in (payload.get('options') or {}).items() if isinstance(value, str) and len(value) < 80}
     child_id = sick_leave_id = None
     rule = BENEFITS[code]
@@ -259,11 +265,11 @@ def apply(db, person, payload, today=None):
 
 def notify_other_parent(db, person, child_id, today=None):
     today = today or date.today()
-    link = db.execute('SELECT c.*, cp.role FROM children c JOIN child_parents cp ON cp.child_id = c.id WHERE c.id = ? AND cp.person_id = ?',
+    link = db.execute('SELECT c.*, cp.role FROM family.children c JOIN family.child_parents cp ON cp.child_id = c.id WHERE c.id = ? AND cp.person_id = ?',
                       (child_id, person['id'])).fetchone()
     if not link:
         return 'not_found'
-    other = db.execute('SELECT person_id, role FROM child_parents WHERE child_id = ? AND person_id != ?', (child_id, person['id'])).fetchone()
+    other = db.execute('SELECT person_id, role FROM family.child_parents WHERE child_id = ? AND person_id != ?', (child_id, person['id'])).fetchone()
     if not other:
         return 'no_other_parent'
     birth = date.fromisoformat(link['birth_date'])
