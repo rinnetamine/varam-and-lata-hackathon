@@ -151,7 +151,15 @@ Object.assign(englishTranslations, {
  'Iesniegts':'Submitted', 'Detaļas':'Details', 'Šobrīd nav nekā, kas būtu jāpiesaka vai jāatceras.':'Nothing to apply for or remember right now.',
  'Vēl nav iesniegtu pieteikumu. Pieteiktie pakalpojumi un VSAA lēmumi parādīsies šeit un e-adresē.':'No applications yet. Submitted services and VSAA decisions will appear here and in your e-address.',
  'Bankas konts saglabāts. Profils ir pilnībā iestatīts.':'Bank account saved. Your profile is complete.', 'Paziņojums otram vecākam nosūtīts uz e-adresi.':'Notification sent to the other parent’s e-address.', 'Paziņojums šodien jau ir nosūtīts.':'A notification was already sent today.',
- 'Atgādinājumi ieslēgti.':'Reminders enabled.', 'Atgādinājumi uz e-adresi izslēgti.':'Reminders to e-address disabled.', 'Datu avoti un licences':'Data sources and licenses'
+ 'Atgādinājumi ieslēgti.':'Reminders enabled.', 'Atgādinājumi uz e-adresi izslēgti.':'Reminders to e-address disabled.', 'Datu avoti un licences':'Data sources and licenses',
+ 'Bankas konts (IBAN)':'Bank account (IBAN)', 'Pievieno bankas kontu':'Add your bank account',
+ 'Pirmajā pieslēgšanās reizē norādi Latvijas IBAN demonstrācijas kontu.':'Enter a Latvian demo IBAN when signing in for the first time.',
+ 'Izmanto tikai testa IBAN. Konts tiek saglabāts prototipa datubāzē; maksājumi netiek veikti.':'Use only a test IBAN. The account is saved in the prototype database; no payments are made.',
+ 'Saglabāt un turpināt':'Save and continue',
+ 'Ievadi derīgu Latvijas IBAN konta numuru.':'Enter a valid Latvian IBAN.',
+ 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.':'Could not save the account number. Try again.',
+ 'Neizdevās saglabāt sesiju. Mēģini vēlreiz.':'Could not save the session. Try again.',
+ 'Bankas konts — Faketvija.lv demo':'Bank account — Faketvija.lv demo'
 });
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}

@@ -15,7 +15,7 @@ from benefits import BENEFITS, LIFE_SITUATIONS, VSAA_ESERVICE, add_months, child
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / 'public'
 ADDRESS_FILE = Path(os.environ.get('ADDRESS_FILE', PUBLIC_DIR / 'data' / 'addresses.json'))
 VACANCY_FILE = Path(os.environ.get('VACANCY_FILE', PUBLIC_DIR / 'data' / 'nva-vacancies.json'))
-IBAN_PATTERN = re.compile(r'^LV\d{2}[A-Z]{4}\d{13}$')
+IBAN_PATTERN = re.compile(r'^LV[0-9]{2}[A-Z]{4}[A-Z0-9]{13}$')
 SENDER = 'VSAA · DEMONSTRĀCIJA'
 STATUS_TEXT = {'iesniegts': 'Iesniegts VSAA', 'izskatisana': 'Izskatīšanā', 'pieskirts': 'Piešķirts'}
 _municipalities = None
@@ -175,6 +175,14 @@ def dashboard(db, person, today=None):
     }
 
 
+def valid_iban(iban):
+    """Latvian IBAN format plus the ISO 7064 mod-97 checksum, as in /api/iban."""
+    if not IBAN_PATTERN.match(iban):
+        return False
+    rearranged = iban[4:] + iban[:4]
+    return int(''.join(str(ord(char) - 55) if char.isalpha() else char for char in rearranged)) % 97 == 1
+
+
 def mask_iban(iban):
     return f'{iban[:4]} •••• {iban[-4:]}' if iban and len(iban) > 8 else ''
 
@@ -195,7 +203,7 @@ def deliver_reminders(db, person, data):
 
 def update_profile(db, person, payload):
     iban = str(payload.get('iban', '')).replace(' ', '').upper()
-    if iban and not IBAN_PATTERN.match(iban):
+    if iban and not valid_iban(iban):
         return 'invalid_iban'
     reminders = payload.get('remindersEnabled')
     db.execute('UPDATE people SET iban = COALESCE(?, iban), reminders_enabled = COALESCE(?, reminders_enabled) WHERE id = ?',
@@ -209,7 +217,7 @@ def apply(db, person, payload, today=None):
     if code not in BENEFITS:
         return 'unknown_benefit', None
     iban = str(payload.get('iban') or person['iban'] or '').replace(' ', '').upper()
-    if not IBAN_PATTERN.match(iban):
+    if not valid_iban(iban):
         return 'invalid_iban', None
     details = {key: value for key, value in (payload.get('options') or {}).items() if isinstance(value, str) and len(value) < 80}
     child_id = sick_leave_id = None

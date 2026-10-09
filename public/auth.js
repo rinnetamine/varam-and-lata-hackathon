@@ -4,6 +4,7 @@
   const STORAGE_KEY = 'faketvijaSession';
   const LOGIN_PAGE = 'login.html';
   const PROFILE_PAGE = 'profile.html';
+  const destination = session => session.person.iban ? PROFILE_PAGE : 'bank-account.html';
   const CODE_PATTERN = /^\d{6}-?\d{5}$/;
 
   const readSession = () => {
@@ -93,7 +94,7 @@
 
   // Login page: signed-in users skip straight to the profile; otherwise check the code on the server.
   if (numberForm) {
-    currentSession().then(session => { if (session) location.replace(PROFILE_PAGE); });
+    currentSession().then(session => { if (session) location.replace(destination(session)); });
 
     const input = document.querySelector('#user-number');
     const status = document.querySelector('#form-status');
@@ -113,7 +114,7 @@
         if (ok) {
           if (writeSession({ token: data.token, person: data.person })) {
             setTranslatedStatus(status, 'Pieslēgšanās veiksmīga. Notiek pāreja…');
-            location.assign(PROFILE_PAGE);
+            location.assign(destination({person: data.person}));
             return;
           }
           setTranslatedStatus(status, 'Pārlūks neļauj saglabāt sesiju. Atļauj vietnes datu glabāšanu un mēģini vēlreiz.');
@@ -131,6 +132,37 @@
     });
   }
 
+  const bankForm = document.querySelector('#bank-form');
+  if (bankForm) {
+    currentSession().then(session => {
+      if (!session) location.replace(LOGIN_PAGE);
+      else if (session.person.iban) location.replace(PROFILE_PAGE);
+    });
+    bankForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      const status = document.querySelector('#bank-status');
+      const submit = bankForm.querySelector('[type="submit"]');
+      const session = readSession();
+      if (!session) return location.replace(LOGIN_PAGE);
+      submit.disabled = true;
+      try {
+        const result = await api('iban', {method:'POST', token:session.token,
+          body:{iban:document.querySelector('#bank-iban').value}});
+        if (result.httpStatus === 401) {
+          clearSession(); location.replace(LOGIN_PAGE); return;
+        }
+        if (!result.ok) {
+          setTranslatedStatus(status, result.httpStatus === 400 ? 'Ievadi derīgu Latvijas IBAN konta numuru.' : 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.');
+        } else if (writeSession({...session, person:result.data.person})) {
+          location.replace(PROFILE_PAGE);
+        } else {
+          setTranslatedStatus(status, 'Neizdevās saglabāt sesiju. Mēģini vēlreiz.');
+        }
+      } catch { setTranslatedStatus(status, 'Neizdevās saglabāt konta numuru. Mēģini vēlreiz.'); }
+      submit.disabled = false;
+    });
+  }
+
   // Profile and services pages: require a session, fill in the person's data, wire up log out.
   if (guardedPage) {
     const renderPerson = ({ person }) => {
@@ -142,6 +174,7 @@
       setText('#profile-email', person.email);
       setText('#profile-phone', person.phone);
       setText('#profile-address', person.address || '—');
+      setText('#profile-iban', person.iban || '—');
     };
 
     const cached = readSession();
@@ -149,15 +182,20 @@
       location.replace(LOGIN_PAGE);
     } else {
       renderPerson(cached);
-      currentSession().then(session => (session ? renderPerson(session) : location.replace(LOGIN_PAGE)));
+      currentSession().then(session => {
+        if (!session) location.replace(LOGIN_PAGE);
+        else if (!session.person.iban) location.replace('bank-account.html');
+        else renderPerson(session);
+      });
     }
+
+  }
 
     document.querySelector('#logout-button')?.addEventListener('click', async event => {
       event.preventDefault();
       await logout();
       location.assign('index.html');
     });
-  }
 
   // Portal landing page: when signed in, the login button becomes a link to the profile.
   if (loginButton) {
@@ -165,7 +203,7 @@
     const signedOutHref = loginButton.getAttribute('href');
 
     const showSignedIn = ({ person }) => {
-      loginButton.setAttribute('href', PROFILE_PAGE);
+      loginButton.setAttribute('href', person.iban ? PROFILE_PAGE : 'bank-account.html');
       loginButton.replaceChildren();
       const name = document.createElement('span');
       name.setAttribute('data-no-translate', '');
