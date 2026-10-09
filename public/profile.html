@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="lv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Kopā demonstrācijas lietotāja profils un e-pasts.">
+  <title>Mans profils — Kopā demo</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="translations.js" defer></script>
+  <script src="app.js" defer></script>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body data-requires-demo-session>
+  <div class="prototype-notice">DEMONSTRĀCIJA · Šis ir hakatona prototips, nevis oficiāls valsts portāls. Paziņojums un pakalpojumi ir ilustratīvi.</div>
+  <header class="portal-header">
+    <div class="header-inner">
+      <a href="index.html" aria-label="Uz sākumlapu" class="fake-logo">Fake<span>tvija</span>.lv<small>HACKATHON PROTOTYPE</small></a>
+      <nav class="primary-nav" aria-label="Galvenā navigācija">
+        <a href="pakalpojumi.html">Pakalpojumi</a>
+        <a href="profile.html" aria-current="page">Mans profils</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="language-label" data-language-toggle aria-label="Switch to English"><span data-language-label>EN</span></button>
+        <a class="login-button logout-button" id="logout-button" href="login.html">Iziet <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </header>
+  <main class="shell account">
+    <p class="demo-badge">MANS PROFILS · DEMONSTRĀCIJA</p>
+    <h1>Sveiki, demonstrācijas lietotāj!</h1>
+    <p class="account-intro">Šeit redzami tava profila dati un portāla paziņojumi. Šis makets neizmanto īstus personas datus.</p>
+    <p class="profile-status" id="profile-status" role="status" aria-live="polite"></p>
+    <div class="account-grid">
+      <aside class="account-profile panel" aria-label="Profila informācija">
+        <div class="avatar" aria-hidden="true">D</div>
+        <h2>Demonstrācijas profils</h2>
+        <span class="profile-label">Lietotāja numurs</span>
+        <p class="account-number" id="profile-user-number">—</p>
+        <p class="profile-hint">Numurs redzams tikai šajā pārlūka cilnē.</p>
+      </aside>
+      <section class="account-content" aria-labelledby="mail-title">
+        <div class="mail-heading">
+          <div>
+            <p class="demo-badge">E-PASTS</p>
+            <h2 id="mail-title">Iesūtne</h2>
+          </div>
+          <span class="mail-count">1 jauns</span>
+        </div>
+        <a class="mail-notification" href="pakalpojumi.html" aria-label="Atvērt paziņojumu par bērna piedzimšanu un pieejamajiem pakalpojumiem">
+          <span class="mail-icon" aria-hidden="true">✉</span>
+          <span class="mail-copy">
+            <span class="mail-sender">Kopā demo · Automātisks paziņojums</span>
+            <strong>Par bērna piedzimšanu ir pieejami pakalpojumi</strong>
+            <span>Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet.</span>
+          </span>
+          <span class="mail-meta"><span class="mail-warning">Paziņojums</span><time datetime="2026-10-09">09.10.2026</time></span>
+        </a>
+        <p class="mail-footnote">Šis ir tikai informatīvs brīdinājums prototipā, nevis īsts e-pasts vai paziņojums no valsts iestādes.</p>
+      </section>
+    </div>
+  </main>
+  <footer class="footer shell">
+    <p class="prototype-note">Faketvija.lv · Hakatona dizaina makets · Nav oficiālais portāls</p>
+  </footer>
+</body>
+</html>

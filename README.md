@@ -1,6 +1,6 @@
 # Kopā — e-pakalpojumu prototype
 
-A minimal Latvian website exploring how several public services could be combined around one life event. This is a hackathon demo, not an official government portal. All flows are illustrative; there is no authentication, backend, or connection to government systems.
+A minimal Latvian website exploring how several public services could be combined around one life event. This is a hackathon demo, not an official government portal. All flows are illustrative; there is no real authentication, backend, or connection to government systems.
 
 ## Run with Docker
 
@@ -10,7 +10,7 @@ Install Docker with Docker Compose (Docker Desktop includes both), then run:
 docker compose up --build -d
 ```
 
-Open http://localhost:8080/login.html to preview login. The root page is intentionally blank.
+Open http://localhost:8080/login.html to preview the demo login. The root page shows the portal landing-page mockup.
 
 Stop the website:
 
@@ -30,23 +30,21 @@ python3 -m http.server 8080 --directory public
 
 ## Current interface
 
-- `public/index.html` — intentionally blank landing page.
-- `public/login.html` — reference-inspired login selection with one eParaksts mobile option and a required demo acknowledgment.
-- `public/eparaksts-login.html` — separate user-number form with cancel and confirm controls.
-- `public/styles.css` — responsive styles for both login screens and prototype icons.
-- `public/app.js` — demo acknowledgment gating and local form handling. Confirm clears the input and shows a design-only message; it does not authenticate or create a user.
+- `public/index.html` — portal landing-page mockup.
+- `public/login.html` — demo login; any non-empty sequence of digits opens the profile.
+- `public/profile.html` — demo profile with a simulated inbox notice about services related to a child's birth.
+- `public/pakalpojumi.html` — illustrative service list opened from the inbox notice.
+- `public/styles.css` and `public/auth.css` — responsive portal and login styles.
+- `public/app.js` — stores the invented demo number in `sessionStorage` for the current browser tab, guards the profile and services pages, and clears the demo session on logout.
 - `Dockerfile`, `nginx.conf`, and `compose.yaml` — Dockerized static hosting.
 
-Both login pages display clear prototype notices. They do not use official logos, send phone notifications, connect to eParaksts, persist input, or access a database. Use invented user numbers only.
+This is not government authentication and does not connect to Latvija.gov.lv, eParaksts, email, or a database. The demo number is kept only for the current browser tab; use invented digits only. The profile notice and service descriptions are illustrative and do not confirm eligibility or submit applications.
 
-## Next steps
+## Further work
 
-1. Design the newborn service page and shared application flow on the currently blank landing page.
-2. Define the demo user model, database schema, and account/session behavior before connecting the login mockup. Keep demo identities separate from real authentication.
-3. Add the demo profile and explicit simulated approval/result screens.
-4. Integrate address selection and municipality lookup using the imported open data.
-5. Verify official benefit amounts, deadlines, eligibility conditions, and municipal grant rules before implementing recommendations.
-6. Verify the complete flow in Docker once the Docker daemon is running.
+1. Add real service application flows only after verifying official eligibility, deadlines, and requirements.
+2. Integrate address selection and municipality lookup using the imported open data.
+3. Verify the complete flow in Docker once the Docker daemon is running.
 
 ## Open data
 
