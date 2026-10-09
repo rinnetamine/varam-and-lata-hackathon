@@ -94,6 +94,8 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split('?', 1)[0]
+        if path == '/api/messages':
+            return self.handle_messages()
         if path == '/api/me':
             return self.handle_me()
         if path.startswith('/api/'):
@@ -102,6 +104,9 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split('?', 1)[0]
+        read_match = re.fullmatch(r'/api/messages/(\d+)/read', path)
+        if read_match:
+            return self.handle_messages(int(read_match.group(1)))
         if path == '/api/login':
             return self.handle_login()
         if path == '/api/logout':
@@ -145,6 +150,31 @@ class Handler(SimpleHTTPRequestHandler):
         if person is None:
             return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
         self.send_json(HTTPStatus.OK, {'person': public_person(person)})
+
+    def handle_messages(self, message_id=None):
+        token = self.bearer_token()
+        with database() as db:
+            session = db.execute(
+                'SELECT person_id FROM sessions WHERE token_hash = ? AND expires_at > ?',
+                (hash_token(token), int(time.time())),
+            ).fetchone() if token else None
+            if session is None:
+                return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
+            person_id = session['person_id']
+            if message_id is not None:
+                result = db.execute(
+                    'UPDATE messages SET read_at = COALESCE(read_at, ?) WHERE id = ? AND person_id = ?',
+                    (int(time.time()), message_id, person_id),
+                )
+                if result.rowcount == 0:
+                    return self.send_json(HTTPStatus.NOT_FOUND, {'error': 'not_found'})
+            rows = db.execute('SELECT * FROM messages WHERE person_id = ? ORDER BY received_at DESC, id DESC',
+                              (person_id,)).fetchall()
+            messages = [{'id': row['id'], 'sender': row['sender'], 'subject': row['subject'],
+                         'body': row['body'], 'receivedAt': row['received_at'], 'readAt': row['read_at']}
+                        for row in rows]
+        self.send_json(HTTPStatus.OK, {'messages': messages,
+                                     'unreadCount': sum(item['readAt'] is None for item in messages)})
 
     def handle_logout(self):
         token = self.bearer_token()

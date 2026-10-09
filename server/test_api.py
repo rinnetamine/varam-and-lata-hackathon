@@ -85,6 +85,28 @@ def main():
             status, _ = call('/api/me')
             check('/api/me no token -> 401', status == 401, str(status))
 
+            status, _ = call('/api/messages')
+            check('inbox requires authentication', status == 401)
+            status, raw = call('/api/messages', token=token)
+            inbox = json.loads(raw)
+            check('new user has unread demo mail', status == 200 and inbox['unreadCount'] == 1)
+            message_id = inbox['messages'][0]['id']
+            _, other_raw = call('/api/login', 'POST', {'personasKods': people[1][0]})
+            other_token = json.loads(other_raw)['token']
+            status, _ = call(f'/api/messages/{message_id}/read', 'POST', token=other_token)
+            check('other user cannot mark this message read', status == 404)
+            status, raw = call(f'/api/messages/{message_id}/read', 'POST', token=token)
+            read_at = json.loads(raw)['messages'][0]['readAt']
+            check('reading mail clears unread count', status == 200 and json.loads(raw)['unreadCount'] == 0 and read_at is not None)
+            _, raw = call(f'/api/messages/{message_id}/read', 'POST', token=token)
+            check('marking read twice preserves timestamp', json.loads(raw)['messages'][0]['readAt'] == read_at)
+            _, raw = call('/api/messages', token=token)
+            check('read state persists on reload', json.loads(raw)['unreadCount'] == 0)
+            saved = sqlite3.connect(db_path).execute('SELECT read_at FROM messages WHERE id = ?', (message_id,)).fetchone()[0]
+            check('read state stored in SQLite', saved == read_at)
+            _, raw = call('/api/messages', token=other_token)
+            check('other user retains unread mail', json.loads(raw)['unreadCount'] == 1)
+
             stored = [row[0] for row in sqlite3.connect(db_path).execute('SELECT token_hash FROM sessions')]
             check('only token hashes are stored', token not in stored and all(len(item) == 64 for item in stored))
 

@@ -44,6 +44,19 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS sessions_expires_at ON sessions(expires_at);
+CREATE TABLE IF NOT EXISTS messages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+  seed_key TEXT NOT NULL,
+  sender TEXT NOT NULL,
+  subject TEXT NOT NULL,
+  body TEXT NOT NULL,
+  received_at TEXT NOT NULL,
+  read_at INTEGER,
+  UNIQUE(person_id, seed_key)
+);
+CREATE INDEX IF NOT EXISTS messages_person ON messages(person_id, received_at);
+
 """
 
 MALE_NAMES = [
@@ -166,6 +179,14 @@ def seed(connection, count=DEFAULT_COUNT, seed_value=DEFAULT_SEED):
 def ensure_seeded(connection):
     if connection.execute('SELECT COUNT(*) FROM people').fetchone()[0] == 0:
         seed(connection)
+    with connection:
+        connection.execute("""
+            INSERT OR IGNORE INTO messages (person_id, seed_key, sender, subject, body, received_at)
+            SELECT id, 'newborn-demo', 'FAKETVIJA.LV · DEMONSTRĀCIJA',
+              'Par bērna piedzimšanu ir pieejami pakalpojumi',
+              'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.',
+              '2026-10-09T09:00:00+03:00' FROM people
+        """)
 
 
 def main():
@@ -183,6 +204,7 @@ def main():
             connection.execute('DELETE FROM sessions')
             connection.execute('DELETE FROM people')
         seed(connection, args.count, args.seed)
+        ensure_seeded(connection)
         print(f'Regenerated {args.count} people in {args.db}')
     else:
         ensure_seeded(connection)

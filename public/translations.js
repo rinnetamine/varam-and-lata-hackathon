@@ -110,6 +110,13 @@ Object.assign(englishTranslations, {
  'Adrese no VZD atvērtajiem datiem; piesaiste šim lietotājam ir izdomāta.': 'Address from VZD open data; its association with this user is fictional.',
  'Avots un licence · CC BY 4.0': 'Source and license · CC BY 4.0'
 });
+Object.assign(englishTranslations, {
+ 'Izlasīts':'Read', 'Ir nelasīti paziņojumi':'You have unread notifications',
+ 'Nav jaunu paziņojumu':'No new notifications',
+ 'Neizdevās saglabāt lasīšanas statusu. Aizver ziņojumu un mēģini vēlreiz.':'Could not save read status. Close the message and try again.',
+ 'Neizdevās ielādēt ziņojumus. Atjauno lapu un mēģini vēlreiz.':'Could not load messages. Refresh the page and try again.',
+ 'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.':'Services related to a child’s birth are collected in one place. Fictional message for the hackathon prototype.'
+});
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}
 const originalText = new WeakMap();
