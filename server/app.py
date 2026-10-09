@@ -5,6 +5,11 @@ Endpoints (JSON):
     POST /api/login   {"personasKods": "320000-00000"} -> {"token", "person"}
     GET  /api/me      Authorization: Bearer <token>    -> {"person"}
     POST /api/logout  Authorization: Bearer <token>    -> {"ok": true}
+    GET  /api/vsaa/dashboard            -> {"dashboard": {...}}  situation overview (children, sick leaves, contributions, reminders)
+    POST /api/vsaa/apply                {"benefitCode", "childId"|"sickLeaveId", "iban", "options"} -> application + dashboard
+    POST /api/vsaa/profile              {"iban", "remindersEnabled"} -> dashboard
+    POST /api/vsaa/notify-other-parent  {"childId"} -> e-address message to the other parent + dashboard
+    GET  /api/vsaa/vacancies            -> NVA open-data vacancies for the person's municipality
 
 Only a SHA-256 hash of each token is stored, so a leaked database cannot be
 used to impersonate anyone. This is a prototype: a personas kods alone is not
@@ -25,6 +30,7 @@ from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import vsaa
 from seed_people import DEFAULT_DB, connect, ensure_seeded
 
 PUBLIC_DIR = Path(__file__).resolve().parent.parent / 'public'
@@ -98,6 +104,10 @@ class Handler(SimpleHTTPRequestHandler):
             return self.handle_messages()
         if path == '/api/me':
             return self.handle_me()
+        if path == '/api/vsaa/dashboard':
+            return self.handle_vsaa('dashboard')
+        if path == '/api/vsaa/vacancies':
+            return self.handle_vsaa('vacancies')
         if path.startswith('/api/'):
             return self.send_json(HTTPStatus.NOT_FOUND, {'error': 'not_found'})
         super().do_GET()
@@ -111,7 +121,55 @@ class Handler(SimpleHTTPRequestHandler):
             return self.handle_login()
         if path == '/api/logout':
             return self.handle_logout()
+        if path in ('/api/vsaa/apply', '/api/vsaa/profile', '/api/vsaa/notify-other-parent'):
+            return self.handle_vsaa(path.rsplit('/', 1)[1])
         self.send_json(HTTPStatus.NOT_FOUND, {'error': 'not_found'})
+
+    def current_person(self, db):
+        token = self.bearer_token()
+        if not token:
+            return None
+        return db.execute(
+            'SELECT people.* FROM sessions JOIN people ON people.id = sessions.person_id '
+            'WHERE sessions.token_hash = ? AND sessions.expires_at > ?',
+            (hash_token(token), int(time.time())),
+        ).fetchone()
+
+    def handle_vsaa(self, action):
+        """Dashboard of the signed-in person's VSAA situation and the demo actions on it."""
+        payload = self.read_json() if self.command == 'POST' else {}
+        if self.command == 'POST' and payload is None:
+            return self.send_json(HTTPStatus.BAD_REQUEST, {'error': 'invalid_body'})
+        with database() as db:
+            person = self.current_person(db)
+            if person is None:
+                return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
+            result = {}
+            if action == 'vacancies':
+                data = vsaa.vacancies(vsaa.municipality_of(person['address']))
+                if data is None:
+                    return self.send_json(HTTPStatus.SERVICE_UNAVAILABLE, {'error': 'vacancies_unavailable'})
+                return self.send_json(HTTPStatus.OK, data)
+            if action == 'apply':
+                error, application_id = vsaa.apply(db, person, payload)
+                if error:
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {'error': error})
+                result['applicationId'] = application_id
+            elif action == 'profile':
+                error = vsaa.update_profile(db, person, payload)
+                if error:
+                    return self.send_json(HTTPStatus.BAD_REQUEST, {'error': error})
+            elif action == 'notify-other-parent':
+                error = vsaa.notify_other_parent(db, person, payload.get('childId'))
+                if error in ('not_found', 'no_other_parent'):
+                    return self.send_json(HTTPStatus.NOT_FOUND, {'error': error})
+                result['notified'] = error is None
+                result['notice'] = error
+            person = db.execute('SELECT * FROM people WHERE id = ?', (person['id'],)).fetchone()
+            data = vsaa.dashboard(db, person)
+            result['remindersDelivered'] = vsaa.deliver_reminders(db, person, data)
+            result['dashboard'] = data
+        self.send_json(HTTPStatus.OK, result)
 
     def handle_login(self):
         data = self.read_json()

@@ -92,6 +92,20 @@
       counts(data); render(); setTranslatedStatus(status, '');
     } catch { setTranslatedStatus(status, 'Neizdevās ielādēt ziņojumus. Atjauno lapu un mēģini vēlreiz.'); }
   }
+  async function loadVsaaSummary() {
+    const target = document.querySelector('#vsaa-summary');
+    if (!target) return;
+    try {
+      const {dashboard} = await request('/api/vsaa/dashboard');
+      const parts = [];
+      if (dashboard.summary.available) parts.push(`${dashboard.summary.available} pieejami pabalsti nav pieteikti`);
+      if (dashboard.summary.unpaidSickLeaves) parts.push(`${dashboard.summary.unpaidSickLeaves} darbnespējas lapa bez pabalsta`);
+      if (dashboard.employment.status === 'iemaksas_partrauktas') parts.push('sociālās iemaksas pārtrauktas');
+      if (dashboard.summary.urgent) parts.push(`${dashboard.summary.urgent} steidzami termiņi`);
+      setTranslatedStatus(target, parts.length ? parts.join(' · ') + '.' : 'Šobrīd nav nepieteiktu pabalstu vai termiņu.');
+    } catch {}
+  }
+  loadVsaaSummary();
   search.addEventListener('input', filter);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
   load();

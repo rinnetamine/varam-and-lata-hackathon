@@ -56,8 +56,54 @@ CREATE TABLE IF NOT EXISTS messages (
   UNIQUE(person_id, seed_key)
 );
 CREATE INDEX IF NOT EXISTS messages_person ON messages(person_id, received_at);
+CREATE TABLE IF NOT EXISTS children (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  birth_date TEXT NOT NULL,
+  seed_key TEXT NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS child_parents (
+  child_id INTEGER NOT NULL REFERENCES children(id) ON DELETE CASCADE,
+  person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+  role TEXT NOT NULL,
+  PRIMARY KEY (child_id, person_id)
+);
+CREATE TABLE IF NOT EXISTS sick_leaves (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+  number TEXT NOT NULL UNIQUE,
+  kind TEXT NOT NULL,
+  date_from TEXT NOT NULL,
+  date_to TEXT NOT NULL,
+  closed_at TEXT,
+  employer TEXT NOT NULL,
+  status TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS contributions (
+  person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+  month TEXT NOT NULL,
+  employer TEXT NOT NULL,
+  amount REAL NOT NULL,
+  PRIMARY KEY (person_id, month)
+);
+CREATE TABLE IF NOT EXISTS applications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  person_id INTEGER NOT NULL REFERENCES people(id) ON DELETE CASCADE,
+  benefit_code TEXT NOT NULL,
+  child_id INTEGER REFERENCES children(id) ON DELETE CASCADE,
+  sick_leave_id INTEGER REFERENCES sick_leaves(id) ON DELETE CASCADE,
+  submitted_at TEXT NOT NULL,
+  status TEXT NOT NULL,
+  details TEXT NOT NULL DEFAULT '{}'
+);
+CREATE INDEX IF NOT EXISTS applications_person ON applications(person_id, benefit_code);
 
 """
+
+# Fictional employers for the contribution history; no real company is meant.
+EMPLOYERS = ['SIA "Demo Būve"', 'AS "Demo Enerģija"', 'SIA "Demo Loģistika"', 'Demo pašvaldības iestāde',
+             'SIA "Demo Veselība"', 'SIA "Demo Tirdzniecība"']
+CHILD_NAMES = ['Marta', 'Emīlija', 'Alise', 'Sofija', 'Roberts', 'Gustavs', 'Jēkabs', 'Oskars']
 
 MALE_NAMES = [
     'Jānis', 'Andris', 'Mārtiņš', 'Edgars', 'Kristaps', 'Raimonds', 'Artūrs', 'Normunds',
@@ -106,6 +152,13 @@ def connect(path):
                                (demo_address(row['id']), row['id']))
     if 'birth_date' not in columns:
         connection.execute("ALTER TABLE people ADD COLUMN birth_date TEXT NOT NULL DEFAULT ''")
+    # VSAA dashboard profile fields: bank account for payouts, reminder opt-in, NVA status.
+    if 'iban' not in columns:
+        connection.execute("ALTER TABLE people ADD COLUMN iban TEXT NOT NULL DEFAULT ''")
+    if 'reminders_enabled' not in columns:
+        connection.execute("ALTER TABLE people ADD COLUMN reminders_enabled INTEGER NOT NULL DEFAULT 0")
+    if 'nva_registered' not in columns:
+        connection.execute("ALTER TABLE people ADD COLUMN nva_registered INTEGER NOT NULL DEFAULT 0")
     with connection:
         used = {row[0] for row in connection.execute('SELECT personas_kods FROM people')}
         for row in connection.execute("SELECT id FROM people WHERE birth_date = ''").fetchall():
@@ -176,6 +229,91 @@ def seed(connection, count=DEFAULT_COUNT, seed_value=DEFAULT_SEED):
         )
 
 
+def month_key(day, months_back):
+    month = day.month - 1 - months_back
+    return f'{day.year + month // 12}-{month % 12 + 1:02d}'
+
+
+def seed_vsaa_cases(connection, today=None):
+    """Create the fictional VSAA situations behind the dashboard.
+
+    Scenario by person id (1-based): 1 newborn plus an unpaid sick-leave
+    certificate, 2 the other parent of that newborn, 3 a child approaching
+    its first birthday with granted benefits, 0 social contributions stopped
+    two months ago (unemployment). Everything is idempotent via seed keys, so
+    an existing demo database gains the tables without losing people,
+    sessions or read status.
+    """
+    today = today or date.today()
+    if connection.execute('SELECT COUNT(*) FROM children').fetchone()[0]:
+        return
+    people = connection.execute('SELECT id, first_name FROM people ORDER BY id').fetchall()
+    if not people:
+        return
+    partners = [row for row in people if row['id'] % 4 == 2]
+    used = set()
+
+    def pick_partner(person):
+        female = person['first_name'] in FEMALE_NAMES
+        for candidate in partners:
+            if candidate['id'] in used or candidate['id'] <= person['id']:
+                continue
+            if (candidate['first_name'] in FEMALE_NAMES) != female:
+                used.add(candidate['id'])
+                return candidate
+        for candidate in partners:
+            if candidate['id'] not in used and candidate['id'] > person['id']:
+                used.add(candidate['id'])
+                return candidate
+        return None
+
+    with connection:
+        for person in people:
+            pid = person['id']
+            rng = random.Random(DEFAULT_SEED * 7 + pid)
+            scenario = pid % 4
+            employer = EMPLOYERS[pid % len(EMPLOYERS)]
+            wage = 900 + rng.randrange(0, 1500)
+            gap = 2 if scenario == 0 else 0
+            for back in range(1, 17):
+                if back > gap:
+                    connection.execute('INSERT OR IGNORE INTO contributions (person_id, month, employer, amount) VALUES (?, ?, ?, ?)',
+                                       (pid, month_key(today, back), employer, round(wage * 0.3409, 2)))
+            role = 'māte' if person['first_name'] in FEMALE_NAMES else 'tēvs'
+            if scenario == 1:
+                birth = today - timedelta(days=18)
+                child = connection.execute('INSERT OR IGNORE INTO children (first_name, birth_date, seed_key) VALUES (?, ?, ?)',
+                                           (CHILD_NAMES[pid % len(CHILD_NAMES)], birth.isoformat(), f'child-{pid}')).lastrowid
+                connection.execute('INSERT OR IGNORE INTO child_parents VALUES (?, ?, ?)', (child, pid, role))
+                partner = pick_partner(person)
+                if partner:
+                    partner_role = 'māte' if partner['first_name'] in FEMALE_NAMES else 'tēvs'
+                    if partner_role == role:
+                        partner_role = 'tēvs' if role == 'māte' else 'māte'
+                    connection.execute('INSERT OR IGNORE INTO child_parents VALUES (?, ?, ?)', (child, partner['id'], partner_role))
+                # Maternity benefit was granted before the birth; it shows as already granted.
+                mother = pid if role == 'māte' else (partner['id'] if partner else None)
+                if mother:
+                    connection.execute('INSERT INTO applications (person_id, benefit_code, child_id, submitted_at, status, details) VALUES (?, ?, ?, ?, ?, ?)',
+                                       (mother, 'maternitates', child, (birth - timedelta(days=60)).isoformat(), 'pieskirts', '{"seed": true}'))
+                connection.execute('INSERT OR IGNORE INTO sick_leaves (person_id, number, kind, date_from, date_to, closed_at, employer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                                   (pid, f'B-{today.year}-{pid:04d}-2', 'B', (today - timedelta(days=41)).isoformat(), (today - timedelta(days=25)).isoformat(), (today - timedelta(days=24)).isoformat(), employer, 'neizmaksata'))
+                connection.execute('INSERT OR IGNORE INTO sick_leaves (person_id, number, kind, date_from, date_to, closed_at, employer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                                   (pid, f'B-{today.year}-{pid:04d}-1', 'B', (today - timedelta(days=200)).isoformat(), (today - timedelta(days=186)).isoformat(), (today - timedelta(days=185)).isoformat(), employer, 'izmaksata'))
+            elif scenario == 3:
+                birth = today - timedelta(days=335)
+                child = connection.execute('INSERT OR IGNORE INTO children (first_name, birth_date, seed_key) VALUES (?, ?, ?)',
+                                           (CHILD_NAMES[(pid + 3) % len(CHILD_NAMES)], birth.isoformat(), f'child-{pid}')).lastrowid
+                connection.execute('INSERT OR IGNORE INTO child_parents VALUES (?, ?, ?)', (child, pid, role))
+                granted = [('berna_piedzimsanas', 12, '{"seed": true}'), ('berna_kopsanas', 20, '{"seed": true}'), ('vecaku', 20, '{"seed": true, "ilgums": "13 mēneši"}'),
+                           ('paternitates', 15, '{"seed": true}') if role == 'tēvs' else ('maternitates', -60, '{"seed": true}')]
+                for code, offset, details in granted:
+                    connection.execute('INSERT INTO applications (person_id, benefit_code, child_id, submitted_at, status, details) VALUES (?, ?, ?, ?, ?, ?)',
+                                       (pid, code, child, (birth + timedelta(days=offset)).isoformat(), 'pieskirts', details))
+                connection.execute('INSERT OR IGNORE INTO sick_leaves (person_id, number, kind, date_from, date_to, closed_at, employer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                                   (pid, f'B-{today.year}-{pid:04d}-1', 'B', (today - timedelta(days=19)).isoformat(), (today - timedelta(days=6)).isoformat(), (today - timedelta(days=5)).isoformat(), employer, 'neizmaksata'))
+
+
 def ensure_seeded(connection):
     if connection.execute('SELECT COUNT(*) FROM people').fetchone()[0] == 0:
         seed(connection)
@@ -185,8 +323,9 @@ def ensure_seeded(connection):
             SELECT id, 'newborn-demo', 'FAKETVIJA.LV · DEMONSTRĀCIJA',
               'Par bērna piedzimšanu ir pieejami pakalpojumi',
               'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.',
-              '2026-10-09T09:00:00+03:00' FROM people
+              '2026-10-09T09:00:00+03:00' FROM people WHERE id % 4 != 0
         """)
+    seed_vsaa_cases(connection)
 
 
 def main():
@@ -202,6 +341,7 @@ def main():
     if args.reset:
         with connection:
             connection.execute('DELETE FROM sessions')
+            connection.execute('DELETE FROM children')
             connection.execute('DELETE FROM people')
         seed(connection, args.count, args.seed)
         ensure_seeded(connection)
@@ -210,8 +350,9 @@ def main():
         ensure_seeded(connection)
 
     if args.list:
+        scenarios = {1: 'jaundzimušais + slimības lapa', 2: 'otrs vecāks', 3: 'bērns tuvojas 1 gadam', 0: 'iemaksas pārtrauktas'}
         for row in connection.execute('SELECT * FROM people ORDER BY id'):
-            print(f"{row['personas_kods']}  {row['first_name']} {row['last_name']:<14} {row['email']:<34} {row['phone']}")
+            print(f"{row['personas_kods']}  {row['first_name']} {row['last_name']:<14} {row['email']:<34} {row['phone']}  {scenarios[row['id'] % 4]}")
 
 
 if __name__ == '__main__':

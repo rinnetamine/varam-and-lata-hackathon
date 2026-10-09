@@ -4,8 +4,10 @@ services:
     volumes:
       - people-data:/data
       - ./public/data/addresses.json:/app/addresses.json:ro
+      - ./public/data/nva-vacancies.json:/app/nva-vacancies.json:ro
     environment:
       ADDRESS_FILE: /app/addresses.json
+      VACANCY_FILE: /app/nva-vacancies.json
     restart: unless-stopped
 
   web:

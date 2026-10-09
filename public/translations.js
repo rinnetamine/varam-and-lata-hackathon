@@ -117,6 +117,42 @@ Object.assign(englishTranslations, {
  'Neizdevās ielādēt ziņojumus. Atjauno lapu un mēģini vēlreiz.':'Could not load messages. Refresh the page and try again.',
  'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.':'Services related to a child’s birth are collected in one place. Fictional message for the hackathon prototype.'
 });
+Object.assign(englishTranslations, {
+ 'Mana VSAA':'My VSAA', 'Mana VSAA — Faketvija.lv demo':'My VSAA — Faketvija.lv demo', 'Atvērt Mana VSAA':'Open My VSAA',
+ 'Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls. VSAA dati šajā lapā ir izdomāti.':'Faketvija.lv · Hackathon prototype, not an official government portal. VSAA data on this page is fictional.',
+ 'Pieejamie pabalsti, darbnespējas lapas un atgādinājumi vienuviet.':'Available benefits, sick-leave certificates and reminders in one place.',
+ 'Aktuālā situācija sociālajā apdrošināšanā: pieejamie pabalsti, neizmaksātās darbnespējas lapas un atgādinājumi vienuviet, bez meklēšanas pakalpojumu katalogā.':'Your current social-insurance situation: available benefits, unpaid sick-leave certificates and reminders in one place, without searching the service catalogue.',
+ 'Ielādē datus…':'Loading…', 'Kopsavilkums':'Summary', 'Pieejami, nepieteikti pabalsti':'Available, not yet claimed', 'Steidzami termiņi':'Urgent deadlines', 'Neizmaksātas darbnespējas lapas':'Unpaid sick-leave certificates', 'Iesniegtie pieteikumi':'Submitted applications',
+ 'Profils nav pilnībā iestatīts':'Profile is not fully set up',
+ 'Vārds, personas kods, deklarētā dzīvesvieta un bērna dati jau ir valsts reģistros. Lai VSAA varētu izmaksāt pabalstus, trūkst tikai bankas konta.':'Your name, personal code, declared address and child data are already in state registers. Only a bank account is missing for VSAA to pay out benefits.',
+ 'Konta numurs (IBAN)':'Account number (IBAN)', 'Saglabāt kontu':'Save account',
+ 'Demonstrācija: izmantojiet izdomātu kontu, piemēram, LV80 BANK 0000 4351 9500 1. Konts tiek saglabāts tikai prototipa datubāzē.':'Demo: use an invented account such as LV80 BANK 0000 4351 9500 1. It is stored only in the prototype database.',
+ 'Bērnu pabalsti':'Child benefits', 'Dzīves situācija Latvija.gov.lv':'Life situation on Latvija.gov.lv',
+ 'Piedzimstot bērnam, vecāki var pieprasīt sešus dažādus VSAA pabalstus, katru ar savu iesniegumu un termiņu. Šeit tie ir apkopoti vienā sarakstā ar oficiālajiem nosaukumiem, lai nebūtu jāmin, kā pakalpojums saucas katalogā.':'When a child is born, parents can claim six different VSAA benefits, each with its own application and deadline. Here they are collected in one list with their official names, so you never have to guess what a service is called in the catalogue.',
+ 'Darbnespējas lapas':'Sick-leave certificates',
+ 'Slimības lapu A (līdz 9 dienām) apmaksā darba devējs. Par lapu B VSAA izmaksā slimības pabalstu no 10. dienas, bet tikai pēc iesnieguma. Noslēgtās lapas B, par kurām pabalsts nav pieprasīts, redzamas šeit.':'Certificate A (up to 9 days) is paid by the employer. For certificate B, VSAA pays sickness benefit from day 10, but only after an application. Closed B certificates with no benefit claimed appear here.',
+ 'Sociālās iemaksas un darbs':'Social contributions and work',
+ 'Ja darba devējs pārstāj veikt sociālās iemaksas, VSAA to redz pirmā. Šeit redzami pēdējie 16 mēneši, bezdarbnieka pabalsta nosacījumi un NVA reģistrētās vakances jūsu pašvaldībā.':'If an employer stops paying social contributions, VSAA sees it first. Here are the last 16 months, the unemployment-benefit conditions and NVA vacancies in your municipality.',
+ 'Atgādinājumi':'Reminders', 'Sūtīt atgādinājumus uz e-adresi':'Send reminders to my e-address',
+ 'VSAA atgādina par pabalstiem, kas ir pieejami, bet nav pieprasīti, un par termiņiem, kas tuvojas. Ieslēdzot sūtīšanu, atgādinājumi nonāk arī e-adreses iesūtnē.':'VSAA reminds you about benefits that are available but unclaimed and about approaching deadlines. When enabled, reminders also land in your e-address inbox.',
+ 'Pieteiktie pakalpojumi':'Submitted services', 'Mana pašvaldība atvērtajos datos':'My municipality in open data',
+ 'Cik cilvēku pašvaldībā saņem tos pašus pabalstus. Dati no VSAA un Labklājības ministrijas atvērto datu kopām data.gov.lv.':'How many people in your municipality receive the same benefits. Data from VSAA and Ministry of Welfare open datasets on data.gov.lv.',
+ 'Pabalstu apraksti, summas un termiņi apkopoti no VSAA un Latvija.gov.lv publiskajām lapām 09.10.2026. un ir vienkāršoti prototipa vajadzībām; tie nav tiesību vai pabalsta apmēra apstiprinājums. Personas, bērni, darbnespējas lapas, iemaksas un iesniegumi šajā lapā ir izdomāti. Nekas netiek nosūtīts VSAA, NVA vai citai iestādei.':'Benefit descriptions, amounts and deadlines were compiled from public VSAA and Latvija.gov.lv pages on 9 Oct 2026 and simplified for the prototype; they do not confirm entitlement or amounts. People, children, certificates, contributions and applications on this page are fictional. Nothing is sent to VSAA, NVA or any institution.',
+ 'Pieteikties':'Apply', 'Par pabalstu':'About the benefit', 'Pieprasīt pabalstu':'Claim benefit', 'Nosūtīt otram vecākam':'Notify the other parent', 'Pašvaldības pabalsti':'Municipal benefits',
+ 'Reģistrēties NVA un pieteikties pabalstam':'Register with NVA and apply', 'Visas vakances NVA portālā':'All vacancies on the NVA portal', 'Pievienot kontu':'Add account',
+ 'Iesniegt VSAA':'Submit to VSAA', 'Atcelt':'Cancel', 'Aizvērt':'Close', 'Iesniegums iesniegts':'Application submitted',
+ 'Pieejams, nav pieteikts':'Available, not claimed', 'Attiecas uz otru vecāku':'Applies to the other parent', 'Pieteicis otrs vecāks':'Claimed by the other parent', 'Iesniegts VSAA':'Submitted to VSAA', 'Piešķirts':'Granted', 'Pieteikšanās termiņš pagājis':'Application deadline passed', 'Pabalsts nav pieprasīts':'Benefit not claimed', 'Pabalsts izmaksāts':'Benefit paid',
+ 'Jūsu loma:':'Your role:', 'Deklarētā pašvaldība:':'Declared municipality:', 'Dzimis':'Born', 'māte':'mother', 'tēvs':'father', 'Periods':'Period', 'Noslēgta':'Closed', 'VSAA apmaksā':'VSAA pays', 'Pieteikties līdz':'Apply by', 'Pieejams no':'Available from', 'Termiņš pagājis':'Deadline passed',
+ 'Iemaksas pēdējos 16 mēnešos':'Contributions in the last 16 months', 'Pēdējais darba devējs':'Last employer', 'Pēdējās iemaksas':'Last contribution', 'NVA bezdarbnieka statuss':'NVA unemployed status', 'Reģistrēts':'Registered', 'Nav reģistrēts':'Not registered',
+ 'Iemaksas tiek veiktas regulāri':'Contributions are paid regularly', 'Reģistrēts bezdarbnieka statuss':'Registered as unemployed',
+ 'Iesniedzējs':'Applicant', 'Personas kods':'Personal code', 'Deklarētā dzīvesvieta':'Declared address', 'Bērns':'Child', 'Darbnespējas lapa':'Sick-leave certificate', 'Iemaksu mēneši':'Contribution months', 'Konts pabalsta izmaksai (IBAN)':'Account for payment (IBAN)', 'Pabalsta ilgums':'Benefit duration',
+ 'Aizpildīts no valsts reģistriem — nav jāievada vēlreiz. Darba devēja ziņas VSAA saņem no VID.':'Prefilled from state registers — no need to enter again. Employer data reaches VSAA from the State Revenue Service.',
+ 'Saglabājas profilā; nākamajiem pieteikumiem to vairs nevajadzēs ievadīt.':'Saved to your profile; later applications will not ask for it again.',
+ 'Iesniegts':'Submitted', 'Detaļas':'Details', 'Šobrīd nav nekā, kas būtu jāpiesaka vai jāatceras.':'Nothing to apply for or remember right now.',
+ 'Vēl nav iesniegtu pieteikumu. Pieteiktie pakalpojumi un VSAA lēmumi parādīsies šeit un e-adresē.':'No applications yet. Submitted services and VSAA decisions will appear here and in your e-address.',
+ 'Bankas konts saglabāts. Profils ir pilnībā iestatīts.':'Bank account saved. Your profile is complete.', 'Paziņojums otram vecākam nosūtīts uz e-adresi.':'Notification sent to the other parent’s e-address.', 'Paziņojums šodien jau ir nosūtīts.':'A notification was already sent today.',
+ 'Atgādinājumi ieslēgti.':'Reminders enabled.', 'Atgādinājumi uz e-adresi izslēgti.':'Reminders to e-address disabled.', 'Datu avoti un licences':'Data sources and licenses'
+});
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}
 const originalText = new WeakMap();

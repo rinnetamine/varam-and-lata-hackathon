@@ -9,6 +9,10 @@ Run `python3 scripts/import_open_data.py` from the repository root. Python 3 and
 3. **Ģimenes valsts pabalsta saņēmēji — publisher recorded in manifest.** Latest appended XLSX resource, preserved unchanged for optional statistical context. These are counts of recipients, not benefit rules. License: CC0 1.0.
 4. **VSAA administrēto pakalpojumu saņēmēju skaits — publisher recorded in manifest.** Latest appended XLSX resource, preserved unchanged for optional statistical context. These are recipient statistics, not applications or eligibility decisions. License: CC0 1.0.
 
+5. **Vakances — Nodarbinātības valsts aģentūra.** Daily CSV of vacancies registered with NVA. Aggregated on 2026-10-09 to counts per municipality and category with up to three sample vacancies each (`public/data/nva-vacancies.json`); the full list stays on the NVA CV and vacancy portal. License: CC0 1.0.
+
+The two VSAA/LM workbooks (sources 3 and 4) were additionally converted on 2026-10-09 to `public/data/vsaa-statistics.json` and `public/data/gimenes-valsts-pabalsts.json` (row arrays with named columns, values unchanged) so the dashboard can show municipality-level context. These three JSON files are manual conversions; the importer does not regenerate them yet.
+
 ## Where files live
 
 - `data/manifest.json`: sources, resource URLs and IDs, retrieval time, licenses, SHA-256 checksums, transformations, coverage and unresolved addresses.

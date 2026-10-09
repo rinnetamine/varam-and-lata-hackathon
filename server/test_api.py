@@ -107,6 +107,65 @@ def main():
             _, raw = call('/api/messages', token=other_token)
             check('other user retains unread mail', json.loads(raw)['unreadCount'] == 1)
 
+            # VSAA dashboard: scenarios, applications, notifications, reminders.
+            status, _ = call('/api/vsaa/dashboard')
+            check('dashboard requires authentication', status == 401)
+            status, raw = call('/api/vsaa/dashboard', token=token)
+            dash = json.loads(raw)['dashboard']
+            check('person 1 has a newborn with six benefits', status == 200 and len(dash['children']) == 1 and len(dash['children'][0]['benefits']) == 6)
+            child = dash['children'][0]
+            available = [b['code'] for b in child['benefits'] if b['status'] in ('pieejams', 'steidzami')]
+            check('newborn benefits are available but unclaimed', 'berna_piedzimsanas' in available and 'berna_kopsanas' in available)
+            check('family state benefit waits for first birthday', next(b for b in child['benefits'] if b['code'] == 'gimenes_valsts')['status'] == 'gaidams')
+            check('official service names are used', all(b['name'].endswith('piešķiršana un izmaksāšana') for b in child['benefits']))
+            check('unpaid sick leave is listed with a deadline', any(l['status'] == 'neizmaksata' and l['deadline'] for l in dash['sickLeaves']))
+            check('reminders cover unclaimed benefits', any(r['benefitCode'] == 'berna_piedzimsanas' for r in dash['reminders']))
+            check('profile reports missing bank account', dash['person']['profileComplete'] is False)
+            check('municipality resolved from address', bool(dash['person']['municipality']))
+
+            status, raw = call('/api/vsaa/apply', 'POST', {'benefitCode': 'berna_piedzimsanas', 'childId': child['id'], 'iban': 'nope'}, token=token)
+            check('application rejects a malformed IBAN', status == 400 and json.loads(raw)['error'] == 'invalid_iban')
+            status, raw = call('/api/vsaa/apply', 'POST', {'benefitCode': 'berna_piedzimsanas', 'childId': child['id'], 'iban': 'LV80 BANK 0000 4351 9500 1'}, token=token)
+            applied = json.loads(raw)['dashboard']
+            check('application is accepted and status changes', status == 200 and next(b for b in applied['children'][0]['benefits'] if b['code'] == 'berna_piedzimsanas')['status'] == 'iesniegts')
+            check('IBAN is stored on the profile', applied['person']['profileComplete'] and applied['person']['ibanMasked'].startswith('LV80'))
+            status, _ = call('/api/vsaa/apply', 'POST', {'benefitCode': 'berna_piedzimsanas', 'childId': child['id']}, token=token)
+            check('same benefit cannot be applied twice', status == 400)
+            _, raw = call('/api/messages', token=token)
+            check('application confirmation lands in the inbox', any(m['subject'].startswith('Iesniegums saņemts') for m in json.loads(raw)['messages']))
+
+            other_code = [p for p in sqlite3.connect(db_path).execute('SELECT personas_kods FROM people WHERE id = 2')][0][0]
+            _, raw = call('/api/login', 'POST', {'personasKods': other_code})
+            other_parent = json.loads(raw)['token']
+            _, raw = call('/api/vsaa/dashboard', token=other_parent)
+            other_dash = json.loads(raw)['dashboard']
+            check('other parent sees the same child from their role', other_dash['children'] and other_dash['children'][0]['id'] == child['id'] and other_dash['children'][0]['myRole'] != child['myRole'])
+            check('one-per-family benefit shows as claimed by the other parent', next(b for b in other_dash['children'][0]['benefits'] if b['code'] == 'berna_piedzimsanas')['status'] == 'otrs_vecaks')
+            status, raw = call('/api/vsaa/notify-other-parent', 'POST', {'childId': child['id']}, token=token)
+            check('notification to the other parent is sent once per day', status == 200 and json.loads(raw)['notified'] is True)
+            status, raw = call('/api/vsaa/notify-other-parent', 'POST', {'childId': child['id']}, token=token)
+            check('repeat notification is reported, not duplicated', status == 200 and json.loads(raw)['notified'] is False)
+            _, raw = call('/api/messages', token=other_parent)
+            check('other parent receives the comparison message', any('salīdziniet' in m['subject'] for m in json.loads(raw)['messages']))
+            check('other parent details are not exposed', 'firstName' not in json.dumps(child['otherParent']))
+
+            status, raw = call('/api/vsaa/profile', 'POST', {'remindersEnabled': True}, token=token)
+            check('enabling reminders delivers them to the inbox', status == 200 and json.loads(raw)['remindersDelivered'] >= 1)
+            _, raw = call('/api/messages', token=token)
+            check('reminder subjects are prefixed', any(m['subject'].startswith('Atgādinājums') for m in json.loads(raw)['messages']))
+
+            unemployed_code = [p for p in sqlite3.connect(db_path).execute('SELECT personas_kods FROM people WHERE id = 4')][0][0]
+            _, raw = call('/api/login', 'POST', {'personasKods': unemployed_code})
+            unemployed = json.loads(raw)['token']
+            _, raw = call('/api/vsaa/dashboard', token=unemployed)
+            employment = json.loads(raw)['dashboard']['employment']
+            check('contribution gap detected for scenario 0', employment['status'] == 'iemaksas_partrauktas' and employment['gapMonths'] == 2 and employment['benefitEligible'])
+            status, raw = call('/api/vsaa/apply', 'POST', {'benefitCode': 'bezdarbnieka', 'iban': 'LV80BANK0000435195001'}, token=unemployed)
+            check('combined NVA + VSAA unemployment application', status == 200 and json.loads(raw)['dashboard']['employment']['status'] == 'bezdarbnieks')
+            status, raw = call('/api/vsaa/vacancies', token=unemployed)
+            vacancies = json.loads(raw)
+            check('vacancies come from the NVA open-data snapshot', status == 200 and vacancies['total'] > 0 and vacancies['source'].startswith('https://data.gov.lv'))
+
             stored = [row[0] for row in sqlite3.connect(db_path).execute('SELECT token_hash FROM sessions')]
             check('only token hashes are stored', token not in stored and all(len(item) == 64 for item in stored))
 
