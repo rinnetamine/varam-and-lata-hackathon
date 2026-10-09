@@ -7,8 +7,10 @@
 data/raw/
 public/data/addresses/
 
-# Local demo database (regenerated automatically; holds hashed session tokens)
-server/data/
+# The demo people database (server/data/people.db) is committed on purpose; SQLite scratch files are not.
+server/data/*-journal
+server/data/*-wal
+server/data/*-shm
 
 __pycache__/
 *.pyc
