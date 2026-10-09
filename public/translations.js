@@ -67,13 +67,13 @@ const englishTranslations = {
  'Profila informācija':'Profile information', 'Demonstrācijas profils':'Demo profile', 'Lietotāja numurs':'User number',
  'Numurs redzams tikai šajā pārlūka cilnē.':'The number is visible only in this browser tab.',
  'E-PASTS':'EMAIL', 'Iesūtne':'Inbox', '1 jauns':'1 new',
- 'Kopā demo · Automātisks paziņojums':'Faketvija demo · Automated notice',
+ 'Faketvija.lv · Automātisks paziņojums':'Faketvija.lv · Automated notice',
  'Par bērna piedzimšanu ir pieejami pakalpojumi':'Services are available following a child’s birth',
  'Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet.':'Services related to the birth of a child are collected in one place.',
  'Paziņojums':'Notice', 'Atvērt paziņojumu par bērna piedzimšanu un pieejamajiem pakalpojumiem':'Open the notice about a child’s birth and available services',
  'Šis ir tikai informatīvs brīdinājums prototipā, nevis īsts e-pasts vai paziņojums no valsts iestādes.':'This is an informational prototype notice, not a real email or notice from a government agency.',
- 'Pieejamie pakalpojumi — Kopā demo':'Available services — Faketvija.lv demo',
- 'Ar bērna piedzimšanu saistīti pakalpojumi Kopā demonstrācijas portālā.':'Services related to a child’s birth in the Faketvija.lv demo portal.',
+ 'Pieejamie pakalpojumi — Faketvija.lv demo':'Available services — Faketvija.lv demo',
+ 'Ar bērna piedzimšanu saistīti pakalpojumi Faketvija.lv demonstrācijas portālā.':'Services related to a child’s birth in the Faketvija.lv demo portal.',
  'DEMONSTRĀCIJA · Šis ir hakatona prototips. Pakalpojumu apraksti ir ilustratīvi, un pieteikumus iesniegt nevar.':'DEMO · This is a hackathon prototype. Service descriptions are illustrative and applications cannot be submitted.',
  '← Atpakaļ uz profilu':'← Back to profile', 'DZĪVES SITUĀCIJA · BĒRNA PIEDZIMŠANA':'LIFE EVENT · CHILDBIRTH',
  'Pieejamie pakalpojumi':'Available services',
@@ -83,7 +83,13 @@ const englishTranslations = {
  'Pabalsti ģimenei':'Family benefits', 'Orientējoša informācija par valsts atbalstu ģimenēm pēc bērna piedzimšanas.':'General information about government support for families after a child’s birth.',
  'Pašvaldības atbalsts':'Municipal support', 'Pārbaudi savas pašvaldības publicēto informāciju par atbalstu bērna piedzimšanas gadījumā.':'Check information published by your municipality about support following a child’s birth.',
  'Šie pakalpojumu piemēri ir paredzēti tikai saskarnes demonstrēšanai. Faktiskā kārtība, termiņi un tiesības jānoskaidro pie atbildīgajām iestādēm.':'These service examples are for interface demonstration only. Confirm actual procedures, deadlines and eligibility with the responsible authorities.',
- 'Faketvija.lv · Hakatona dizaina makets · Nav oficiālais portāls':'Faketvija.lv · Hackathon design mockup · Not an official portal'
+ 'Faketvija.lv · Hakatona dizaina makets · Nav oficiālais portāls':'Faketvija.lv · Hackathon design mockup · Not an official portal',
+ 'Faketvija.lv demonstrācijas lietotāja profils un e-pasts.':'Faketvija.lv demo profile and inbox.',
+ 'Mans profils — Faketvija.lv demo':'My profile — Faketvija.lv demo',
+ 'Pieejamie pakalpojumi — Faketvija.lv demo':'Available services — Faketvija.lv demo',
+ 'Ar bērna piedzimšanu saistīti pakalpojumi Faketvija.lv demonstrācijas portālā.':'Services related to a child’s birth in the Faketvija.lv demo portal.',
+ 'Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.':'Faketvija.lv · Hackathon prototype, not an official government portal.',
+ 'Iziet':'Sign out', 'Faketvija.lv · Automātisks paziņojums':'Faketvija.lv · Automated notice'
 };
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}
