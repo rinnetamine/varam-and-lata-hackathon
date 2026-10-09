@@ -69,6 +69,24 @@
     if (element) element.textContent = text;
   };
 
+  const consent = document.querySelector('#demo-consent');
+  const providerLink = document.querySelector('#provider-link');
+  if (consent && providerLink) {
+    const updateConsent = () => {
+      providerLink.setAttribute('aria-disabled', String(!consent.checked));
+      const status = document.querySelector('#selection-status');
+      if (status) status.hidden = consent.checked;
+    };
+    consent.addEventListener('change', updateConsent);
+    providerLink.addEventListener('click', event => {
+      if (!consent.checked) {
+        event.preventDefault();
+        consent.focus();
+      }
+    });
+    updateConsent();
+  }
+
   const numberForm = document.querySelector('#number-form');
   const guardedPage = document.body.hasAttribute('data-requires-demo-session');
   const loginButton = document.querySelector('#login-button');
@@ -117,11 +135,13 @@
   if (guardedPage) {
     const renderPerson = ({ person }) => {
       setText('#profile-name', person.firstName);
+      setText('#profile-account-name', `${person.firstName} ${person.lastName}`);
       setText('#profile-avatar', person.firstName.charAt(0).toUpperCase());
       setText('#profile-full-name', `${person.firstName} ${person.lastName}`);
       setText('#profile-user-number', person.personasKods);
       setText('#profile-email', person.email);
       setText('#profile-phone', person.phone);
+      setText('#profile-address', person.address || '—');
     };
 
     const cached = readSession();
@@ -135,7 +155,7 @@
     document.querySelector('#logout-button')?.addEventListener('click', async event => {
       event.preventDefault();
       await logout();
-      location.assign(LOGIN_PAGE);
+      location.assign('index.html');
     });
   }
 

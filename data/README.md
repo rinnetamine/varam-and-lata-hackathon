@@ -37,3 +37,7 @@ The project code's licensing is separate. These data licenses do not license Lat
 ## Still needed before benefit recommendations
 
 This import does not supply current benefit amounts, deadlines, eligibility rules or every municipality's newborn grant rules. Those require separately verified official VSAA and municipality sources. Do not treat recipient counts or service names as those rules. Do not invent amounts or claim a family is eligible based on address alone.
+
+## Demo profile addresses
+
+The people seeder randomly assigns addresses from the tracked `public/data/addresses.json` snapshot using a deterministic seed. These are real public addresses, but the people and their association with those addresses are fictional. Names remain generated from the existing name lists; imported datasets contain no personal name lists. Email addresses use example.com and phone numbers are generated. Profile address attribution links to the existing source and license page. Existing placeholder addresses are upgraded without resetting users, identifiers or sessions. Docker mounts the tracked address snapshot read-only into the API container.

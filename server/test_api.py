@@ -72,6 +72,7 @@ def main():
             payload = json.loads(raw)
             token = payload.get('token', '')
             check('valid code -> 200 with token', status == 200 and len(token) >= 32, str(status))
+            check('login returns an imported address', payload['person']['address'] in {item['label'] for item in json.loads((Path(__file__).resolve().parent.parent / 'public/data/addresses.json').read_text())['addresses']})
             check('login returns the right person', payload['person']['firstName'] == first and payload['person']['lastName'] == last)
 
             status, raw = call('/api/login', 'POST', {'personasKods': code.replace('-', '')})

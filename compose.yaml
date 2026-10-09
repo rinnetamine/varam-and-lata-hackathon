@@ -3,6 +3,9 @@ services:
     build: ./server
     volumes:
       - people-data:/data
+      - ./public/data/addresses.json:/app/addresses.json:ro
+    environment:
+      ADDRESS_FILE: /app/addresses.json
     restart: unless-stopped
 
   web:

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Fictional Latvian people for the Faketvija demo database.
 
-Everything here is invented. Names are randomly combined, e-mail addresses use
+People and their associations with addresses are invented. Addresses come from
+the imported VZD open-data snapshot, not residents records. Names are randomly
+combined, e-mail addresses use
 the reserved example.com domain, and phone numbers are random. Personas kodi
-use the post-2017 format (32XXXX-XXXXX), which carries no birth date, so no
-real person's data is encoded. They are demo identifiers only: a random code
+use DDMMYY-XXXXX with fictional birth dates and random five-digit suffixes. They are demo identifiers only: a random code
 or number can still coincide with a real one, so never treat these as real.
 
 Usage:
@@ -12,14 +13,18 @@ Usage:
     python3 server/seed_people.py --reset    # drop and regenerate the people
 """
 import argparse
+import json
+import os
 import random
 import sqlite3
 import unicodedata
 from pathlib import Path
+from datetime import date, timedelta
 
 DEFAULT_DB = Path(__file__).resolve().parent / 'data' / 'people.db'
 DEFAULT_COUNT = 60
 DEFAULT_SEED = 20240601
+ADDRESS_FILE = Path(os.environ.get('ADDRESS_FILE', Path(__file__).resolve().parent.parent / 'public' / 'data' / 'addresses.json'))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS people (
@@ -28,7 +33,9 @@ CREATE TABLE IF NOT EXISTS people (
   last_name TEXT NOT NULL,
   personas_kods TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
-  phone TEXT NOT NULL UNIQUE
+  phone TEXT NOT NULL UNIQUE,
+  address TEXT NOT NULL,
+  birth_date TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash TEXT PRIMARY KEY,
@@ -71,7 +78,48 @@ def connect(path):
     connection.row_factory = sqlite3.Row
     connection.execute('PRAGMA foreign_keys = ON')
     connection.executescript(SCHEMA)
+    # Migrate existing demo databases without resetting people or sessions.
+    columns = {row['name'] for row in connection.execute('PRAGMA table_info(people)')}
+    if 'address' not in columns:
+        connection.execute("ALTER TABLE people ADD COLUMN address TEXT NOT NULL DEFAULT ''")
+    with connection:
+        for row in connection.execute("SELECT id FROM people WHERE address = ''").fetchall():
+            connection.execute('UPDATE people SET address = ? WHERE id = ?',
+                               (demo_address(row['id']), row['id']))
+    # Upgrade only generated placeholder addresses; preserve existing user data.
+    with connection:
+        for row in connection.execute("SELECT id FROM people WHERE address LIKE 'Demonstrācijas iela %'").fetchall():
+            connection.execute('UPDATE people SET address = ? WHERE id = ?',
+                               (demo_address(row['id']), row['id']))
+    if 'birth_date' not in columns:
+        connection.execute("ALTER TABLE people ADD COLUMN birth_date TEXT NOT NULL DEFAULT ''")
+    with connection:
+        used = {row[0] for row in connection.execute('SELECT personas_kods FROM people')}
+        for row in connection.execute("SELECT id FROM people WHERE birth_date = ''").fetchall():
+            rng = random.Random(DEFAULT_SEED + row['id'])
+            birth, code = demo_identity(rng)
+            while code in used:
+                birth, code = demo_identity(rng)
+            used.add(code)
+            connection.execute('UPDATE people SET birth_date = ?, personas_kods = ? WHERE id = ?',
+                               (birth.isoformat(), code, row['id']))
     return connection
+
+
+def demo_identity(rng):
+    start, end = date(1970, 1, 1), date(2006, 12, 31)
+    birth = start + timedelta(days=rng.randrange((end - start).days + 1))
+    return birth, f'{birth:%d%m%y}-{rng.randrange(100000):05d}'
+
+
+def demo_address(index):
+    if not ADDRESS_FILE.is_file():
+        raise FileNotFoundError(f'Imported address snapshot is required: {ADDRESS_FILE}')
+    records = json.loads(ADDRESS_FILE.read_text(encoding='utf-8'))['addresses']
+    if not records:
+        raise ValueError('Imported address snapshot contains no addresses')
+    # A separate deterministic RNG keeps existing demo personas kodi unchanged.
+    return random.Random(DEFAULT_SEED + index).choice(records)['label']
 
 
 def ascii_fold(text):
@@ -88,7 +136,7 @@ def generate_people(count, seed):
         first = rng.choice(FEMALE_NAMES if is_female else MALE_NAMES)
         last = rng.choice(SURNAMES)[1 if is_female else 0]
 
-        code = f'32{rng.randrange(10000):04d}-{rng.randrange(100000):05d}'
+        birth, code = demo_identity(rng)
         local = f'{ascii_fold(first)}.{ascii_fold(last)}'
         email = f'{local}@example.com'
         suffix = 1
@@ -103,14 +151,14 @@ def generate_people(count, seed):
         codes.add(code)
         emails.add(email)
         phones.add(phone)
-        people.append((first, last, code, email, phone))
+        people.append((first, last, code, email, phone, demo_address(len(people) + 1), birth.isoformat()))
     return people
 
 
 def seed(connection, count=DEFAULT_COUNT, seed_value=DEFAULT_SEED):
     with connection:
         connection.executemany(
-            'INSERT INTO people (first_name, last_name, personas_kods, email, phone) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO people (first_name, last_name, personas_kods, email, phone, address, birth_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
             generate_people(count, seed_value),
         )
 

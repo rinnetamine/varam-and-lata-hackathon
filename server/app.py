@@ -56,6 +56,8 @@ def public_person(row):
         'personasKods': row['personas_kods'],
         'email': row['email'],
         'phone': row['phone'],
+        'address': row['address'],
+        'birthDate': row['birth_date'],
     }
 
 

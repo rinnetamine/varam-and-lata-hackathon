@@ -32,7 +32,7 @@ This serves `public/` and the API at http://127.0.0.1:8080 and creates `server/d
 
 ## Demo login and sessions
 
-- `server/seed_people.py` generates 60 fictional Latvian people (name, surname, e-mail on `example.com`, phone, personas kods in the `32XXXX-XXXXX` format). `python3 server/seed_people.py --list` prints them so you can pick a code; `--reset` regenerates them.
+- `server/seed_people.py` generates 60 fictional Latvian people (name, surname, e-mail on `example.com`, phone, personas kods in the `DDMMYY-XXXXX` format with fictional birth dates and random suffixes). `python3 server/seed_people.py --list` prints them so you can pick a code; `--reset` regenerates them.
 - `POST /api/login` takes `{"personasKods": "..."}`, looks the code up and returns a random bearer token plus the person. Only a SHA-256 hash of the token is stored, and sessions expire after 7 days.
 - `GET /api/me` validates the token; `POST /api/logout` revokes it.
 - `public/auth.js` keeps the token in `localStorage`, so a reload or new tab stays signed in. The profile and services pages redirect to login without a valid session; a rejected token signs the user out, while an unreachable server keeps the cached session.
