@@ -7,5 +7,13 @@
 data/raw/
 public/data/addresses/
 
+# The demo people database (server/data/people.db) is committed on purpose; SQLite scratch files are not.
+server/data/*-journal
+server/data/*-wal
+server/data/*-shm
+
 __pycache__/
 *.pyc
+
+# Local backups before demo scenario migrations.
+server/data/backups/

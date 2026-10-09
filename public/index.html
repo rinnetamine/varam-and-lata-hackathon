@@ -1,53 +1,56 @@
 <!doctype html>
 <html lang="lv">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kopā — e-pakalpojumu prototips</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
-  </head>
-  <body>
-    <div class="notice">Hakatona prototips · Nav oficiāls valsts portāls · Visi pakalpojumi ir demonstrācija</div>
-    <header class="container header">
-      <a class="brand" href="./">kopā<span>e-pakalpojumi vienuviet</span></a>
-      <a class="nav-link" href="#pakalpojumi">Pakalpojumi</a>
-    </header>
-    <main class="container">
-      <section class="hero">
-        <p class="eyebrow">MAZĀK SOĻU. VAIRĀK SKAIDRĪBAS.</p>
-        <h1>Viena dzīves situācija.<br>Vairāki pakalpojumi kopā.</h1>
-        <p class="intro">Izvēlies, ko vēlies paveikt. Mēs apvienojam saistītos e-pakalpojumus vienā saprotamā ceļā.</p>
-        <a class="button" href="#pakalpojumi">Apskatīt pakalpojumus <span aria-hidden="true">↓</span></a>
-      </section>
-      <section id="pakalpojumi" aria-labelledby="services-title">
-        <div class="section-heading"><h2 id="services-title">Ar ko sāksim?</h2><p>Pakalpojumu apvienošanas piemēri</p></div>
-        <div class="cards">
-          <article class="card">
-            <span class="number">01</span><h3>Mainu dzīvesvietu</h3>
-            <p>Deklarēšana, pašvaldības informācija un saistīto pakalpojumu aktualizēšana.</p>
-            <button type="button" data-bundle="moving">Apskatīt soļus <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="card">
-            <span class="number">02</span><h3>Ģimenē piedzimis bērns</h3>
-            <p>Dzimšanas reģistrācija, pabalsti un pieteikšanās pašvaldības atbalstam.</p>
-            <button type="button" data-bundle="family">Apskatīt soļus <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="card">
-            <span class="number">03</span><h3>Sāku uzņēmējdarbību</h3>
-            <p>Reģistrācija, nodokļu informācija un pirmie uzņēmējdarbības soļi.</p>
-            <button type="button" data-bundle="business">Apskatīt soļus <span aria-hidden="true">→</span></button>
-          </article>
-        </div>
-      </section>
-      <section id="bundle" class="bundle" aria-labelledby="bundle-title" hidden>
-        <p class="eyebrow">DEMONSTRĀCIJAS PLŪSMA</p>
-        <h2 id="bundle-title" tabindex="-1"></h2>
-        <p>Šie ir ilustratīvi soļi. Prototips neveic pieteikumus un nav savienots ar valsts sistēmām.</p>
-        <ol id="bundle-steps"></ol>
-        <button class="button secondary" id="close-bundle" type="button">Aizvērt</button>
-      </section>
-    </main>
-    <footer class="container">Kopā · Hakatona ideja par apvienotiem e-pakalpojumiem · <a href="data-licenses.html">Datu avoti un licences</a></footer>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Latvija.gov.lv sākumlapas vizuālais makets hakatonam.">
+  <title>Sākumlapa – Valsts pārvaldes pakalpojumu portāls · Makets</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="styles.css?v=vsaa-1">
+  <script src="translations.js" defer></script><script src="app.js?v=faketvija-1" defer></script><script src="auth.js" defer></script>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body>
+<div class="prototype-banner">Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.</div>
+  <a class="skip-link" href="#saturs">Pāriet uz saturu</a>
+  <header class="portal-header">
+    <div class="header-inner">
+      <a href="index.html" aria-label="Sākumlapa"><span class="fake-logo">Fake<span>tvija</span>.lv<small>HAKATONA PROTOTIPS</small></span></a>
+      <nav class="primary-nav" aria-label="Galvenā navigācija"><a href="#pakalpojumi">Pakalpojumi</a><a href="#dzives-situacijas">Dzīves situācijas</a><a href="#e-adrese">E-adrese</a><a href="vsaa.html">Mana VSAA</a></nav>
+      <div class="header-actions">
+        <span class="search-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg><span>Meklēt</span></span>
+        <button type="button" class="language-label" data-language-toggle aria-label="Switch to English"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><span data-language-label>EN</span></button>
+        <button type="button" class="accessibility-button" aria-label="Palielināt tekstu" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="7" r="1"/><path d="M7 10h10m-5 0v4m0 0-3 4m3-4 3 4"/></svg></button>
+        <a class="login-button" id="login-button" href="login.html" style="text-decoration:none">Ienākt demo profilā <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </header>
+  <main id="saturs">
+    <section class="hero" aria-labelledby="warning-title">
+      <div class="shell hero-layout">
+      <div class="hero-copy">
+      <p class="overline">VALSTS PĀRVALDES PAKALPOJUMU PORTĀLS</p>
+      <h1 id="warning-title">Uzmanību!</h1>
+      <p class="warning"><strong>Paziņojumi</strong> par jauniem e-adreses ziņojumiem <strong>netiek sūtīti SMS.</strong> Ja saņemat šādu īsziņu, neatveriet tajā esošās saites. Jaunus e-adreses ziņojumus pārbaudiet tikai portālā Latvija.gov.lv.</p>
+      </div>
+      <div class="hero-image"><img src="assets/phone-faketvija.png" alt="Faketvija.lv prototips tālrunī: e-adrese, paziņojumi un personas dati" width="1731" height="1841"></div>
+      </div>
+    </section>
+    <p class="tagline shell">Faketvija.lv — hakatona ideja: VSAA pabalsti, slimības lapas un atgādinājumi vienā panelī.</p>
+  </main>
+<footer class="footer portal-footer">
+  <div class="shell footer-layout">
+  <div class="footer-brand">
+    <a href="./" class="fake-logo">Fake<span>tvija</span>.lv<small>HAKATONA PROTOTIPS</small></a>
+  </div>
+  <div class="footer-content">
+    <button type="button" class="outline-label language" data-language-toggle><span data-language-label>English</span></button>
+    <section class="contacts"><h2>KONTAKTI</h2><p>Oficiālā portāla atbalsta kontakti (nav šī prototipa atbalsts)</p><p><span>Tālrunis:</span> <a href="tel:+37167502757">+37167502757</a></p><p><span>E-pasts:</span> <a href="mailto:portals@vdaa.gov.lv">portals@vdaa.gov.lv</a></p></section>
+    <p class="prototype-note">Hakatona dizaina makets · Nav oficiālais portāls · Pakalpojumi un autentifikācija nav pieslēgti.</p>
+    <a href="data-licenses.html">Datu avoti un licences</a>
+  </div>
+  </div>
+  </footer>
+<script src="demo-admin.js" defer></script></body>
 </html>

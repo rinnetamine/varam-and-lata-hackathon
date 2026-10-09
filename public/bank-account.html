@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="lv">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bankas konts — Faketvija.lv demo</title><link rel="stylesheet" href="auth.css?v=bank-check-3"><link rel="icon" href="assets/favicon.svg"><script src="translations.js" defer></script><script src="auth.js?v=bank-check-3" defer></script></head>
+<body class="provider-page">
+<div class="prototype-notice">Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.</div>
+<header class="provider-header"><a class="provider-brand" href="index.html"><span class="mini-icon" aria-hidden="true">F</span><span>Faketvija.lv <small>HAKATONA PROTOTIPS</small></span></a><button type="button" data-language-toggle><span data-language-label>EN</span></button></header>
+<main class="provider-main"><section class="number-panel login-panel"><h1>Pievieno bankas kontu</h1><p>Norādi savu Latvijas bankas kontu pabalstu saņemšanai.</p><form id="bank-form"><label for="bank-iban">Bankas konts (IBAN)</label><input id="bank-iban" name="iban" type="text" autocomplete="off" maxlength="32" spellcheck="false" required aria-describedby="bank-help bank-status"><p id="bank-help">Ievadi IBAN konta numuru, kas reģistrēts uz tava vārda.</p><div class="bank-submit-row"><button class="confirm-button" type="submit">Saglabāt un turpināt</button></div><p id="bank-status" class="form-status" role="status" aria-live="polite"></p></form><p><a id="logout-button" href="index.html">Iziet</a></p></section></main>
+<script src="demo-admin.js" defer></script></body></html>

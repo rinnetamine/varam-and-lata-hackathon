@@ -1,6 +1,25 @@
 services:
+  api:
+    build: ./server
+    volumes:
+      - people-data:/data
+      - ./public/data/person-names.json:/app/person-names.json:ro
+      - ./public/data/addresses.json:/app/addresses.json:ro
+      - ./public/data/nva-vacancies.json:/app/nva-vacancies.json:ro
+    environment:
+      NAME_FILE: /app/person-names.json
+      DEMO_ADMIN_ENABLED: "1"
+      ADDRESS_FILE: /app/addresses.json
+      VACANCY_FILE: /app/nva-vacancies.json
+    restart: unless-stopped
+
   web:
     build: .
     ports:
       - "8080:8080"
+    depends_on:
+      - api
     restart: unless-stopped
+
+volumes:
+  people-data:

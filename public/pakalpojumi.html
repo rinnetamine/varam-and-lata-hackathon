@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="lv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ar bērna piedzimšanu saistīti pakalpojumi Faketvija.lv demonstrācijas portālā.">
+  <title>Pieejamie pakalpojumi — Faketvija.lv demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="translations.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="auth.js" defer></script>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body data-requires-demo-session>
+  <div class="prototype-banner">Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.</div>
+  <header class="portal-header">
+    <div class="header-inner">
+      <a href="index.html" aria-label="Uz sākumlapu" class="fake-logo">Fake<span>tvija</span>.lv<small>HACKATHON PROTOTYPE</small></a>
+      <nav class="primary-nav" aria-label="Galvenā navigācija">
+        <a href="pakalpojumi.html" aria-current="page">Pakalpojumi</a>
+        <a href="profile.html">Mans profils</a>
+        <a href="vsaa.html">Mana VSAA</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="language-label" data-language-toggle aria-label="Switch to English"><span data-language-label>EN</span></button>
+        <a class="login-button logout-button" id="logout-button" href="login.html">Iziet <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </header>
+  <main class="shell services-page account">
+    <a class="back-link" href="profile.html">← Atpakaļ uz profilu</a>
+    <p class="demo-badge">DZĪVES SITUĀCIJA · BĒRNA PIEDZIMŠANA</p>
+    <h1>Pieejamie pakalpojumi</h1>
+    <p class="account-intro">Šie ir prototipa piemēri, kas palīdz orientēties darbībās pēc bērna piedzimšanas. Pieejamība un atbilstība konkrētai situācijai nav pārbaudīta.</p>
+    <p class="profile-status" id="profile-status" role="status" aria-live="polite"></p>
+    <section class="service-list" aria-label="Ar bērna piedzimšanu saistītie pakalpojumi">
+      <article class="service-card">
+        <div class="service-card-icon" aria-hidden="true">01</div>
+        <div>
+          <span class="service-status">Pieejams prototipā</span>
+          <h2>Bērna reģistrēšana</h2>
+          <p>Informācija par jaundzimušā reģistrēšanas soļiem un nepieciešamajiem datiem.</p>
+        </div>
+        <span class="service-arrow" aria-hidden="true">→</span>
+      </article>
+      <article class="service-card">
+        <div class="service-card-icon" aria-hidden="true">02</div>
+        <div>
+          <span class="service-status">Pieejams prototipā</span>
+          <h2>Pabalsti ģimenei</h2>
+          <p>Orientējoša informācija par valsts atbalstu ģimenēm pēc bērna piedzimšanas.</p>
+        </div>
+        <span class="service-arrow" aria-hidden="true">→</span>
+      </article>
+      <article class="service-card">
+        <div class="service-card-icon" aria-hidden="true">03</div>
+        <div>
+          <span class="service-status">Pieejams prototipā</span>
+          <h2>Pašvaldības atbalsts</h2>
+          <p>Pārbaudi savas pašvaldības publicēto informāciju par atbalstu bērna piedzimšanas gadījumā.</p>
+        </div>
+        <span class="service-arrow" aria-hidden="true">→</span>
+      </article>
+    </section>
+    <p class="service-disclaimer">Šie pakalpojumu piemēri ir paredzēti tikai saskarnes demonstrēšanai. Faktiskā kārtība, termiņi un tiesības jānoskaidro pie atbildīgajām iestādēm.</p>
+  </main>
+  <footer class="footer shell">
+    <p class="prototype-note">Faketvija.lv · Hakatona dizaina makets · Nav oficiālais portāls</p>
+  </footer>
+<script src="demo-admin.js" defer></script></body>
+</html>

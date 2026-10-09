@@ -1,21 +1,32 @@
 <!doctype html>
 <html lang="lv">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Datu avoti un licences — prototips</title><link rel="stylesheet" href="styles.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Datu avoti un licences — prototips</title><link rel="stylesheet" href="styles.css"><link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
 <body>
 <div class="notice">Hakatona prototips · Nav oficiāls valsts portāls</div>
 <main class="container" style="padding-block:40px;max-width:850px;line-height:1.8">
-<a href="./">Atpakaļ uz prototipu</a>
+<a href="index.html">Atpakaļ uz prototipu</a>
 <h1 style="font-size:36px">Datu avoti un licences</h1>
 <p>Atvērtie dati izmantoti demonstrācijas nolūkiem. Datu publicētāji nav apstiprinājuši šo prototipu.</p>
+<h2>Personu vārdi</h2>
+<p>Avots: <a href="https://data.gov.lv/dati/dataset/personu-vardi">Personu vārdi</a>. Publicētājs: Pilsonības un migrācijas lietu pārvalde. Licence: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Atlasīti 100 biežākie alfabētiskie viena vārda ieraksti katram dzimumam, pārveidoti uz JSON un sākumburta reģistru. Tie ir apkopoti statistikas dati, nevis personu ieraksti. Bērnu uzvārdi mantoti no izdomātā tēva (vai mātes, ja tēvs nav norādīts); personas kodi, ģimenes saites un bankas konti ir izdomāti.</p>
 <h2>Valsts adrešu reģistrs</h2>
 <p>Avots: <a href="https://data.gov.lv/dati/dataset/varis-atvertie-dati">Valsts adrešu reģistra atvērtie dati</a>. Publicētājs: Valsts zemes dienests. Licence: <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International (CC BY 4.0)</a>.</p>
-<p>Izmaiņas: atlasīti aktīvie ieraksti; adreses sasaistītas ar pašvaldībām pēc vecākobjektu kodiem; atlasīti lauki un CSV pārvērsts JSON. Telpu grupu un dzīvokļu adreses nav iekļautas. Neatrisinātās adreses uzskaitītas importēšanas pārskatā.</p>
+<p>Izmaiņas: atlasīti aktīvie ieraksti; adreses sasaistītas ar pašvaldībām pēc vecākobjektu kodiem; atlasīti lauki un CSV pārvērsts JSON. Demonstrācijas profiliem nejauši piešķirtas adreses no atlasītā JSON parauga; lietotāji un viņu saistība ar adresēm ir izdomāti. Valsts zemes dienests neatbalsta un neapstiprina šo prototipu. Telpu grupu un dzīvokļu adreses nav iekļautas. Neatrisinātās adreses uzskaitītas importēšanas pārskatā.</p>
 <h2>Rīgas pašvaldības pakalpojumi</h2>
 <p>Avots: <a href="https://data.gov.lv/dati/dataset/pasvaldibas-pakalpojumu-apraksti">Pašvaldības pakalpojumu apraksti</a>. Publicētājs: Rīgas dome. Licence: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. CSV pārveidots JSON. Avots attiecas uz Rīgu; publicētājs brīdina par iespējami nepilnīgiem datiem. Importētajā datnē ir pieci ieraksti; pirmsskolas pakalpojums atzīmēts kā apturēts. Šī datne neapstiprina pakalpojumu pašreizējo pieejamību.</p>
 <h2>Pabalstu saņēmēju statistika</h2>
 <p>Avoti: <a href="https://data.gov.lv/dati/dataset/gimenes-valsts-pabalsta-sanemeji">Ģimenes valsts pabalsta saņēmēji</a> un <a href="https://data.gov.lv/dati/dataset/vsaa-adm-pakalpojumu-sanemeju-skaits">VSAA administrēto pakalpojumu saņēmēju skaits</a>. Licence: <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Saglabātas oriģinālās XLSX datnes statistikas izpētei.</p>
 <p>Statistika nenosaka pabalstu summas, termiņus vai konkrētas ģimenes tiesības saņemt atbalstu.</p>
+<h2>Mana VSAA paneļa atvērtie dati</h2>
+<p>Panelim <a href="vsaa.html">Mana VSAA</a> 09.10.2026. papildus pārveidoti JSON formātā (bez satura izmaiņām, tikai struktūra):</p>
+<ul>
+<li><a href="https://data.gov.lv/dati/dataset/vsaa-adm-pakalpojumu-sanemeju-skaits">VSAA administrēto pakalpojumu saņēmēju skaits</a> (Labklājības ministrija, CC0 1.0), resurss <code>vsaa_pakalpojumu_sanemeji_12-2025.xlsx</code> → <a href="data/vsaa-statistics.json">data/vsaa-statistics.json</a>.</li>
+<li><a href="https://data.gov.lv/dati/dataset/gimenes-valsts-pabalsta-sanemeji">Ģimenes valsts pabalsta saņēmēji</a> (VSAA, CC0 1.0), resurss <code>gimenes_valsts_pabalsti_06-2026.xlsx</code> → <a href="data/gimenes-valsts-pabalsts.json">data/gimenes-valsts-pabalsts.json</a>.</li>
+<li><a href="https://data.gov.lv/dati/dataset/vakances">Vakances</a> (Nodarbinātības valsts aģentūra, CC0 1.0), resurss <code>vakances-2026-10-09.csv</code> → <a href="data/nva-vacancies.json">data/nva-vacancies.json</a>: saglabāts vakanču skaits pa pašvaldībām un kategorijām un līdz trim paraugiem katrā pašvaldībā; pilns saraksts NVA CV un vakanču portālā.</li>
+</ul>
+<p>Statistika rāda saņēmēju skaitu, nevis pabalstu noteikumus. Vakances ir dienas momentuzņēmums. Pabalstu apraksti panelī apkopoti no <a href="https://www.vsaa.gov.lv/lv/pakalpojumi/vecakiem">VSAA</a> un <a href="https://latvija.gov.lv/LifeSituations/22503">Latvija.gov.lv</a> publiskajām lapām un nav oficiāla informācija.</p>
 <h2>Importēšanas pārskats</h2>
 <p><a href="data/sources.json">Avoti, publicētāji, lejupielādes laiks, resursi, licences un kontrolsummas (JSON)</a>. Saglabātie licenču teksti pieejami projekta mapē <code>data/licenses/</code>.</p>
 </main>
-</body></html>
+<script src="demo-admin.js" defer></script></body></html>

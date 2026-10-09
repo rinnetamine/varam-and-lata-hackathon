@@ -1,0 +1,1012 @@
+{
+  "source": "https://data.gov.lv/dati/dataset/personu-vardi",
+  "publisher": "Pilsonības un migrācijas lietu pārvalde",
+  "license": "CC0-1.0",
+  "resource": "https://data.gov.lv/dati/dataset/ac246d11-d5d6-445e-a6c7-8f5013460335/resource/10f0bb84-dd18-44e9-9a80-dc1515a4b3a9/download/vardi-dz-20260701.csv",
+  "resourceName": "Vardi-dz-20260701.csv",
+  "retrievedAt": "2026-10-09T17:31:50.443751+00:00",
+  "sha256": "ec4159e0d465aec13aabfdf67420e8281acccbf8446bcab468fbb9e3df59a136",
+  "changes": "Top 100 alphabetic single first names per gender; title case; no personal records.",
+  "names": [
+    {
+      "name": "Jeļena",
+      "gender": "SIEVIETE",
+      "count": 20215
+    },
+    {
+      "name": "Tatjana",
+      "gender": "SIEVIETE",
+      "count": 19961
+    },
+    {
+      "name": "Anna",
+      "gender": "SIEVIETE",
+      "count": 19446
+    },
+    {
+      "name": "Svetlana",
+      "gender": "SIEVIETE",
+      "count": 17891
+    },
+    {
+      "name": "Olga",
+      "gender": "SIEVIETE",
+      "count": 17342
+    },
+    {
+      "name": "Irina",
+      "gender": "SIEVIETE",
+      "count": 15046
+    },
+    {
+      "name": "Kristīne",
+      "gender": "SIEVIETE",
+      "count": 14761
+    },
+    {
+      "name": "Inese",
+      "gender": "SIEVIETE",
+      "count": 12790
+    },
+    {
+      "name": "Ludmila",
+      "gender": "SIEVIETE",
+      "count": 12118
+    },
+    {
+      "name": "Inga",
+      "gender": "SIEVIETE",
+      "count": 12115
+    },
+    {
+      "name": "Viktorija",
+      "gender": "SIEVIETE",
+      "count": 11938
+    },
+    {
+      "name": "Marija",
+      "gender": "SIEVIETE",
+      "count": 11898
+    },
+    {
+      "name": "Valentīna",
+      "gender": "SIEVIETE",
+      "count": 11877
+    },
+    {
+      "name": "Ilze",
+      "gender": "SIEVIETE",
+      "count": 11488
+    },
+    {
+      "name": "Nataļja",
+      "gender": "SIEVIETE",
+      "count": 10580
+    },
+    {
+      "name": "Līga",
+      "gender": "SIEVIETE",
+      "count": 10238
+    },
+    {
+      "name": "Dace",
+      "gender": "SIEVIETE",
+      "count": 9863
+    },
+    {
+      "name": "Anastasija",
+      "gender": "SIEVIETE",
+      "count": 9796
+    },
+    {
+      "name": "Ieva",
+      "gender": "SIEVIETE",
+      "count": 9539
+    },
+    {
+      "name": "Laura",
+      "gender": "SIEVIETE",
+      "count": 9480
+    },
+    {
+      "name": "Diāna",
+      "gender": "SIEVIETE",
+      "count": 9045
+    },
+    {
+      "name": "Anita",
+      "gender": "SIEVIETE",
+      "count": 8973
+    },
+    {
+      "name": "Jūlija",
+      "gender": "SIEVIETE",
+      "count": 8860
+    },
+    {
+      "name": "Marina",
+      "gender": "SIEVIETE",
+      "count": 8847
+    },
+    {
+      "name": "Elīna",
+      "gender": "SIEVIETE",
+      "count": 8592
+    },
+    {
+      "name": "Iveta",
+      "gender": "SIEVIETE",
+      "count": 8532
+    },
+    {
+      "name": "Sandra",
+      "gender": "SIEVIETE",
+      "count": 8129
+    },
+    {
+      "name": "Natālija",
+      "gender": "SIEVIETE",
+      "count": 8091
+    },
+    {
+      "name": "Gaļina",
+      "gender": "SIEVIETE",
+      "count": 8074
+    },
+    {
+      "name": "Linda",
+      "gender": "SIEVIETE",
+      "count": 7884
+    },
+    {
+      "name": "Ilona",
+      "gender": "SIEVIETE",
+      "count": 7086
+    },
+    {
+      "name": "Jekaterina",
+      "gender": "SIEVIETE",
+      "count": 7022
+    },
+    {
+      "name": "Nadežda",
+      "gender": "SIEVIETE",
+      "count": 6961
+    },
+    {
+      "name": "Aija",
+      "gender": "SIEVIETE",
+      "count": 6882
+    },
+    {
+      "name": "Alise",
+      "gender": "SIEVIETE",
+      "count": 6577
+    },
+    {
+      "name": "Larisa",
+      "gender": "SIEVIETE",
+      "count": 6485
+    },
+    {
+      "name": "Sofija",
+      "gender": "SIEVIETE",
+      "count": 6364
+    },
+    {
+      "name": "Baiba",
+      "gender": "SIEVIETE",
+      "count": 6310
+    },
+    {
+      "name": "Ināra",
+      "gender": "SIEVIETE",
+      "count": 6301
+    },
+    {
+      "name": "Agnese",
+      "gender": "SIEVIETE",
+      "count": 6276
+    },
+    {
+      "name": "Maija",
+      "gender": "SIEVIETE",
+      "count": 6142
+    },
+    {
+      "name": "Aleksandra",
+      "gender": "SIEVIETE",
+      "count": 6121
+    },
+    {
+      "name": "Marta",
+      "gender": "SIEVIETE",
+      "count": 6103
+    },
+    {
+      "name": "Ņina",
+      "gender": "SIEVIETE",
+      "count": 5725
+    },
+    {
+      "name": "Santa",
+      "gender": "SIEVIETE",
+      "count": 5718
+    },
+    {
+      "name": "Rita",
+      "gender": "SIEVIETE",
+      "count": 5701
+    },
+    {
+      "name": "Oksana",
+      "gender": "SIEVIETE",
+      "count": 5588
+    },
+    {
+      "name": "Zane",
+      "gender": "SIEVIETE",
+      "count": 5500
+    },
+    {
+      "name": "Liene",
+      "gender": "SIEVIETE",
+      "count": 5494
+    },
+    {
+      "name": "Madara",
+      "gender": "SIEVIETE",
+      "count": 5399
+    },
+    {
+      "name": "Inta",
+      "gender": "SIEVIETE",
+      "count": 5371
+    },
+    {
+      "name": "Irēna",
+      "gender": "SIEVIETE",
+      "count": 5365
+    },
+    {
+      "name": "Gunta",
+      "gender": "SIEVIETE",
+      "count": 5315
+    },
+    {
+      "name": "Emīlija",
+      "gender": "SIEVIETE",
+      "count": 5099
+    },
+    {
+      "name": "Sanita",
+      "gender": "SIEVIETE",
+      "count": 5035
+    },
+    {
+      "name": "Alla",
+      "gender": "SIEVIETE",
+      "count": 5002
+    },
+    {
+      "name": "Veronika",
+      "gender": "SIEVIETE",
+      "count": 4960
+    },
+    {
+      "name": "Vera",
+      "gender": "SIEVIETE",
+      "count": 4907
+    },
+    {
+      "name": "Vija",
+      "gender": "SIEVIETE",
+      "count": 4612
+    },
+    {
+      "name": "Lidija",
+      "gender": "SIEVIETE",
+      "count": 4576
+    },
+    {
+      "name": "Katrīna",
+      "gender": "SIEVIETE",
+      "count": 4537
+    },
+    {
+      "name": "Tamāra",
+      "gender": "SIEVIETE",
+      "count": 4526
+    },
+    {
+      "name": "Dzintra",
+      "gender": "SIEVIETE",
+      "count": 4465
+    },
+    {
+      "name": "Jana",
+      "gender": "SIEVIETE",
+      "count": 4427
+    },
+    {
+      "name": "Sarmīte",
+      "gender": "SIEVIETE",
+      "count": 4414
+    },
+    {
+      "name": "Sintija",
+      "gender": "SIEVIETE",
+      "count": 4386
+    },
+    {
+      "name": "Elizabete",
+      "gender": "SIEVIETE",
+      "count": 4139
+    },
+    {
+      "name": "Daina",
+      "gender": "SIEVIETE",
+      "count": 4137
+    },
+    {
+      "name": "Ļubova",
+      "gender": "SIEVIETE",
+      "count": 4130
+    },
+    {
+      "name": "Māra",
+      "gender": "SIEVIETE",
+      "count": 4101
+    },
+    {
+      "name": "Daiga",
+      "gender": "SIEVIETE",
+      "count": 4017
+    },
+    {
+      "name": "Karīna",
+      "gender": "SIEVIETE",
+      "count": 3960
+    },
+    {
+      "name": "Mārīte",
+      "gender": "SIEVIETE",
+      "count": 3889
+    },
+    {
+      "name": "Paula",
+      "gender": "SIEVIETE",
+      "count": 3885
+    },
+    {
+      "name": "Vita",
+      "gender": "SIEVIETE",
+      "count": 3883
+    },
+    {
+      "name": "Evelīna",
+      "gender": "SIEVIETE",
+      "count": 3785
+    },
+    {
+      "name": "Evita",
+      "gender": "SIEVIETE",
+      "count": 3722
+    },
+    {
+      "name": "Žanna",
+      "gender": "SIEVIETE",
+      "count": 3673
+    },
+    {
+      "name": "Evija",
+      "gender": "SIEVIETE",
+      "count": 3625
+    },
+    {
+      "name": "Eva",
+      "gender": "SIEVIETE",
+      "count": 3398
+    },
+    {
+      "name": "Margarita",
+      "gender": "SIEVIETE",
+      "count": 3398
+    },
+    {
+      "name": "Inna",
+      "gender": "SIEVIETE",
+      "count": 3378
+    },
+    {
+      "name": "Darja",
+      "gender": "SIEVIETE",
+      "count": 3341
+    },
+    {
+      "name": "Aina",
+      "gender": "SIEVIETE",
+      "count": 3294
+    },
+    {
+      "name": "Ksenija",
+      "gender": "SIEVIETE",
+      "count": 3261
+    },
+    {
+      "name": "Jolanta",
+      "gender": "SIEVIETE",
+      "count": 3250
+    },
+    {
+      "name": "Regīna",
+      "gender": "SIEVIETE",
+      "count": 3224
+    },
+    {
+      "name": "Silvija",
+      "gender": "SIEVIETE",
+      "count": 3223
+    },
+    {
+      "name": "Lilija",
+      "gender": "SIEVIETE",
+      "count": 3193
+    },
+    {
+      "name": "Ruta",
+      "gender": "SIEVIETE",
+      "count": 3154
+    },
+    {
+      "name": "Amanda",
+      "gender": "SIEVIETE",
+      "count": 3102
+    },
+    {
+      "name": "Samanta",
+      "gender": "SIEVIETE",
+      "count": 3072
+    },
+    {
+      "name": "Ingrīda",
+      "gender": "SIEVIETE",
+      "count": 3043
+    },
+    {
+      "name": "Alīna",
+      "gender": "SIEVIETE",
+      "count": 3025
+    },
+    {
+      "name": "Anete",
+      "gender": "SIEVIETE",
+      "count": 3014
+    },
+    {
+      "name": "Elza",
+      "gender": "SIEVIETE",
+      "count": 2976
+    },
+    {
+      "name": "Biruta",
+      "gender": "SIEVIETE",
+      "count": 2972
+    },
+    {
+      "name": "Ligita",
+      "gender": "SIEVIETE",
+      "count": 2955
+    },
+    {
+      "name": "Ineta",
+      "gender": "SIEVIETE",
+      "count": 2908
+    },
+    {
+      "name": "Antoņina",
+      "gender": "SIEVIETE",
+      "count": 2891
+    },
+    {
+      "name": "Jānis",
+      "gender": "VĪRIETIS",
+      "count": 43151
+    },
+    {
+      "name": "Aleksandrs",
+      "gender": "VĪRIETIS",
+      "count": 31259
+    },
+    {
+      "name": "Sergejs",
+      "gender": "VĪRIETIS",
+      "count": 20244
+    },
+    {
+      "name": "Andrejs",
+      "gender": "VĪRIETIS",
+      "count": 19497
+    },
+    {
+      "name": "Andris",
+      "gender": "VĪRIETIS",
+      "count": 17768
+    },
+    {
+      "name": "Edgars",
+      "gender": "VĪRIETIS",
+      "count": 15248
+    },
+    {
+      "name": "Vladimirs",
+      "gender": "VĪRIETIS",
+      "count": 14650
+    },
+    {
+      "name": "Juris",
+      "gender": "VĪRIETIS",
+      "count": 14168
+    },
+    {
+      "name": "Artūrs",
+      "gender": "VĪRIETIS",
+      "count": 13288
+    },
+    {
+      "name": "Igors",
+      "gender": "VĪRIETIS",
+      "count": 13231
+    },
+    {
+      "name": "Mārtiņš",
+      "gender": "VĪRIETIS",
+      "count": 12688
+    },
+    {
+      "name": "Viktors",
+      "gender": "VĪRIETIS",
+      "count": 12260
+    },
+    {
+      "name": "Māris",
+      "gender": "VĪRIETIS",
+      "count": 12256
+    },
+    {
+      "name": "Dmitrijs",
+      "gender": "VĪRIETIS",
+      "count": 12213
+    },
+    {
+      "name": "Aleksejs",
+      "gender": "VĪRIETIS",
+      "count": 10981
+    },
+    {
+      "name": "Jurijs",
+      "gender": "VĪRIETIS",
+      "count": 10429
+    },
+    {
+      "name": "Roberts",
+      "gender": "VĪRIETIS",
+      "count": 9897
+    },
+    {
+      "name": "Aivars",
+      "gender": "VĪRIETIS",
+      "count": 9626
+    },
+    {
+      "name": "Oļegs",
+      "gender": "VĪRIETIS",
+      "count": 8816
+    },
+    {
+      "name": "Kaspars",
+      "gender": "VĪRIETIS",
+      "count": 8779
+    },
+    {
+      "name": "Maksims",
+      "gender": "VĪRIETIS",
+      "count": 8491
+    },
+    {
+      "name": "Kristaps",
+      "gender": "VĪRIETIS",
+      "count": 8261
+    },
+    {
+      "name": "Nikolajs",
+      "gender": "VĪRIETIS",
+      "count": 7838
+    },
+    {
+      "name": "Mihails",
+      "gender": "VĪRIETIS",
+      "count": 7595
+    },
+    {
+      "name": "Kārlis",
+      "gender": "VĪRIETIS",
+      "count": 7392
+    },
+    {
+      "name": "Ivars",
+      "gender": "VĪRIETIS",
+      "count": 7259
+    },
+    {
+      "name": "Aigars",
+      "gender": "VĪRIETIS",
+      "count": 7108
+    },
+    {
+      "name": "Vitālijs",
+      "gender": "VĪRIETIS",
+      "count": 6959
+    },
+    {
+      "name": "Pēteris",
+      "gender": "VĪRIETIS",
+      "count": 6589
+    },
+    {
+      "name": "Vladislavs",
+      "gender": "VĪRIETIS",
+      "count": 6408
+    },
+    {
+      "name": "Oskars",
+      "gender": "VĪRIETIS",
+      "count": 6346
+    },
+    {
+      "name": "Daniels",
+      "gender": "VĪRIETIS",
+      "count": 6162
+    },
+    {
+      "name": "Artjoms",
+      "gender": "VĪRIETIS",
+      "count": 5951
+    },
+    {
+      "name": "Uldis",
+      "gender": "VĪRIETIS",
+      "count": 5906
+    },
+    {
+      "name": "Raimonds",
+      "gender": "VĪRIETIS",
+      "count": 5875
+    },
+    {
+      "name": "Vadims",
+      "gender": "VĪRIETIS",
+      "count": 5809
+    },
+    {
+      "name": "Eduards",
+      "gender": "VĪRIETIS",
+      "count": 5791
+    },
+    {
+      "name": "Deniss",
+      "gender": "VĪRIETIS",
+      "count": 5672
+    },
+    {
+      "name": "Valdis",
+      "gender": "VĪRIETIS",
+      "count": 5584
+    },
+    {
+      "name": "Anatolijs",
+      "gender": "VĪRIETIS",
+      "count": 5461
+    },
+    {
+      "name": "Ēriks",
+      "gender": "VĪRIETIS",
+      "count": 5414
+    },
+    {
+      "name": "Emīls",
+      "gender": "VĪRIETIS",
+      "count": 5341
+    },
+    {
+      "name": "Toms",
+      "gender": "VĪRIETIS",
+      "count": 5321
+    },
+    {
+      "name": "Normunds",
+      "gender": "VĪRIETIS",
+      "count": 5277
+    },
+    {
+      "name": "Pāvels",
+      "gender": "VĪRIETIS",
+      "count": 5088
+    },
+    {
+      "name": "Rihards",
+      "gender": "VĪRIETIS",
+      "count": 5053
+    },
+    {
+      "name": "Gatis",
+      "gender": "VĪRIETIS",
+      "count": 5017
+    },
+    {
+      "name": "Dainis",
+      "gender": "VĪRIETIS",
+      "count": 4999
+    },
+    {
+      "name": "Armands",
+      "gender": "VĪRIETIS",
+      "count": 4993
+    },
+    {
+      "name": "Ivans",
+      "gender": "VĪRIETIS",
+      "count": 4968
+    },
+    {
+      "name": "Guntis",
+      "gender": "VĪRIETIS",
+      "count": 4907
+    },
+    {
+      "name": "Markuss",
+      "gender": "VĪRIETIS",
+      "count": 4666
+    },
+    {
+      "name": "Valērijs",
+      "gender": "VĪRIETIS",
+      "count": 4657
+    },
+    {
+      "name": "Ralfs",
+      "gender": "VĪRIETIS",
+      "count": 4472
+    },
+    {
+      "name": "Marks",
+      "gender": "VĪRIETIS",
+      "count": 4403
+    },
+    {
+      "name": "Artis",
+      "gender": "VĪRIETIS",
+      "count": 4364
+    },
+    {
+      "name": "Arnis",
+      "gender": "VĪRIETIS",
+      "count": 4211
+    },
+    {
+      "name": "Rolands",
+      "gender": "VĪRIETIS",
+      "count": 4121
+    },
+    {
+      "name": "Arturs",
+      "gender": "VĪRIETIS",
+      "count": 4120
+    },
+    {
+      "name": "Ričards",
+      "gender": "VĪRIETIS",
+      "count": 4105
+    },
+    {
+      "name": "Agris",
+      "gender": "VĪRIETIS",
+      "count": 4088
+    },
+    {
+      "name": "Ņikita",
+      "gender": "VĪRIETIS",
+      "count": 4051
+    },
+    {
+      "name": "Aldis",
+      "gender": "VĪRIETIS",
+      "count": 4032
+    },
+    {
+      "name": "Reinis",
+      "gender": "VĪRIETIS",
+      "count": 3926
+    },
+    {
+      "name": "Vjačeslavs",
+      "gender": "VĪRIETIS",
+      "count": 3897
+    },
+    {
+      "name": "Mareks",
+      "gender": "VĪRIETIS",
+      "count": 3872
+    },
+    {
+      "name": "Gustavs",
+      "gender": "VĪRIETIS",
+      "count": 3803
+    },
+    {
+      "name": "Raivis",
+      "gender": "VĪRIETIS",
+      "count": 3772
+    },
+    {
+      "name": "Andis",
+      "gender": "VĪRIETIS",
+      "count": 3661
+    },
+    {
+      "name": "Iļja",
+      "gender": "VĪRIETIS",
+      "count": 3634
+    },
+    {
+      "name": "Guntars",
+      "gender": "VĪRIETIS",
+      "count": 3544
+    },
+    {
+      "name": "Ainārs",
+      "gender": "VĪRIETIS",
+      "count": 3541
+    },
+    {
+      "name": "Lauris",
+      "gender": "VĪRIETIS",
+      "count": 3528
+    },
+    {
+      "name": "Dāvis",
+      "gender": "VĪRIETIS",
+      "count": 3515
+    },
+    {
+      "name": "Renārs",
+      "gender": "VĪRIETIS",
+      "count": 3504
+    },
+    {
+      "name": "Gunārs",
+      "gender": "VĪRIETIS",
+      "count": 3470
+    },
+    {
+      "name": "Imants",
+      "gender": "VĪRIETIS",
+      "count": 3431
+    },
+    {
+      "name": "Matīss",
+      "gender": "VĪRIETIS",
+      "count": 3415
+    },
+    {
+      "name": "Ģirts",
+      "gender": "VĪRIETIS",
+      "count": 3387
+    },
+    {
+      "name": "Ruslans",
+      "gender": "VĪRIETIS",
+      "count": 3371
+    },
+    {
+      "name": "Adrians",
+      "gender": "VĪRIETIS",
+      "count": 3352
+    },
+    {
+      "name": "Kristers",
+      "gender": "VĪRIETIS",
+      "count": 3312
+    },
+    {
+      "name": "Gints",
+      "gender": "VĪRIETIS",
+      "count": 3303
+    },
+    {
+      "name": "Dzintars",
+      "gender": "VĪRIETIS",
+      "count": 3236
+    },
+    {
+      "name": "Ernests",
+      "gender": "VĪRIETIS",
+      "count": 3147
+    },
+    {
+      "name": "Sandis",
+      "gender": "VĪRIETIS",
+      "count": 3145
+    },
+    {
+      "name": "Valerijs",
+      "gender": "VĪRIETIS",
+      "count": 3099
+    },
+    {
+      "name": "Romāns",
+      "gender": "VĪRIETIS",
+      "count": 2989
+    },
+    {
+      "name": "Antons",
+      "gender": "VĪRIETIS",
+      "count": 2899
+    },
+    {
+      "name": "Jevgeņijs",
+      "gender": "VĪRIETIS",
+      "count": 2883
+    },
+    {
+      "name": "Valters",
+      "gender": "VĪRIETIS",
+      "count": 2812
+    },
+    {
+      "name": "Raitis",
+      "gender": "VĪRIETIS",
+      "count": 2811
+    },
+    {
+      "name": "Vilnis",
+      "gender": "VĪRIETIS",
+      "count": 2779
+    },
+    {
+      "name": "Romans",
+      "gender": "VĪRIETIS",
+      "count": 2773
+    },
+    {
+      "name": "Olivers",
+      "gender": "VĪRIETIS",
+      "count": 2755
+    },
+    {
+      "name": "Jevgenijs",
+      "gender": "VĪRIETIS",
+      "count": 2734
+    },
+    {
+      "name": "Jēkabs",
+      "gender": "VĪRIETIS",
+      "count": 2664
+    },
+    {
+      "name": "Konstantīns",
+      "gender": "VĪRIETIS",
+      "count": 2642
+    },
+    {
+      "name": "Tomass",
+      "gender": "VĪRIETIS",
+      "count": 2563
+    },
+    {
+      "name": "Jevgēnijs",
+      "gender": "VĪRIETIS",
+      "count": 2552
+    }
+  ]
+}

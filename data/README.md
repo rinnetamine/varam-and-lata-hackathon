@@ -9,6 +9,10 @@ Run `python3 scripts/import_open_data.py` from the repository root. Python 3 and
 3. **Ģimenes valsts pabalsta saņēmēji — publisher recorded in manifest.** Latest appended XLSX resource, preserved unchanged for optional statistical context. These are counts of recipients, not benefit rules. License: CC0 1.0.
 4. **VSAA administrēto pakalpojumu saņēmēju skaits — publisher recorded in manifest.** Latest appended XLSX resource, preserved unchanged for optional statistical context. These are recipient statistics, not applications or eligibility decisions. License: CC0 1.0.
 
+5. **Vakances — Nodarbinātības valsts aģentūra.** Daily CSV of vacancies registered with NVA. Aggregated on 2026-10-09 to counts per municipality and category with up to three sample vacancies each (`public/data/nva-vacancies.json`); the full list stays on the NVA CV and vacancy portal. License: CC0 1.0.
+
+The two VSAA/LM workbooks (sources 3 and 4) were additionally converted on 2026-10-09 to `public/data/vsaa-statistics.json` and `public/data/gimenes-valsts-pabalsts.json` (row arrays with named columns, values unchanged) so the dashboard can show municipality-level context. These three JSON files are manual conversions; the importer does not regenerate them yet.
+
 ## Where files live
 
 - `data/manifest.json`: sources, resource URLs and IDs, retrieval time, licenses, SHA-256 checksums, transformations, coverage and unresolved addresses.
@@ -37,3 +41,11 @@ The project code's licensing is separate. These data licenses do not license Lat
 ## Still needed before benefit recommendations
 
 This import does not supply current benefit amounts, deadlines, eligibility rules or every municipality's newborn grant rules. Those require separately verified official VSAA and municipality sources. Do not treat recipient counts or service names as those rules. Do not invent amounts or claim a family is eligible based on address alone.
+
+## Demo profile addresses
+
+The people seeder randomly assigns addresses from the tracked `public/data/addresses.json` snapshot using a deterministic seed. These are real public addresses, but the people and their association with those addresses are fictional. Names remain generated from the existing name lists; imported datasets contain no personal name lists. Email addresses use example.com and phone numbers are generated. Profile address attribution links to the existing source and license page. Existing placeholder addresses are upgraded without resetting users, identifiers or sessions. Docker mounts the tracked address snapshot read-only into the API container.
+
+## First-name statistics for children
+
+`python3 scripts/import_person_names.py` imports PMLP's `personu-vardi` dataset only when its declared licence is CC0-1.0. It saves original metadata, resource URL, retrieval time, resource SHA-256 and transformation notes, and keeps the 100 most frequent alphabetic single first names per gender in `public/data/person-names.json`. These are aggregate statistics, not personal records. Children's surnames come from their fictional father, with a fictional mother fallback when no father is recorded. Family assignments and identifiers are generated, not derived from resident records.

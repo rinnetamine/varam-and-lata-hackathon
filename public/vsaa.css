@@ -1,0 +1,168 @@
+/* Mana VSAA dashboard. Tokens follow the live Latvija.gov.lv portal (Ubuntu type, #1c1c1c text,
+   #a01b36 burgundy, #678cbc outline blue, #e9f2fc band, 6 px radius) so the prototype reads as a
+   section of the state portal rather than a separate product. */
+:root{
+  --gov-text:#1c1c1c;--gov-text-2:#2d313b;--gov-muted:#5f6672;--gov-accent:#a01b36;--gov-accent-dark:#7f1229;
+  --gov-outline:#678cbc;--gov-band:#e9f2fc;--gov-band-line:#c1d2e5;--gov-line:#dae6f3;--gov-panel:#f7f7fa;--gov-error:#e7231f;
+  --gov-ok:#2f6b3f;--gov-ok-bg:#e6f1e9;--gov-wait:#6b5a1e;--gov-wait-bg:#fff4d6;--gov-info-bg:#eef3fa;--gov-urgent-bg:#fbe9ec;
+  --gov-radius:6px;
+}
+.vsaa-page{font-family:Ubuntu,"Segoe UI",Arial,sans-serif;color:var(--gov-text)}
+.vsaa-page .profile-content h2{font-size:clamp(22px,2.4vw,28px);font-weight:700;letter-spacing:-.2px;margin:0 0 6px}
+.vsaa-page .profile-content h3{font-size:18px;font-weight:700;margin:0}
+.vsaa-page .profile-content p{line-height:1.55}
+.vsaa-page .profile-heading{height:auto;min-height:calc(var(--profile-top) + 25px)}
+.vsaa-page .lede{max-width:62ch;font-size:16px;color:var(--gov-text-2);margin:0}
+.vsaa-page .section-intro{max-width:70ch;color:var(--gov-text-2);font-size:15px;margin:0 0 18px}
+.vsaa-page .profile-menu a[aria-current] svg{color:var(--gov-accent)}
+.vsaa-section{margin:0 0 44px;scroll-margin-top:16px}
+.vsaa-section>header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:14px}
+.vsaa-section>header .section-link{font-size:14px;font-weight:500}
+/* Link accents apply only to content links, not navigation or button labels. */
+.vsaa-page .profile-content a:not(.gov-btn):not(.status-tile){color:#2c4f7c;text-decoration:underline;text-underline-offset:3px}
+.vsaa-page .profile-content a:not(.gov-btn):not(.status-tile):hover{color:#193654}
+
+/* Status strip */
+.status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:26px 0 34px}
+.status-tile{border:1px solid var(--gov-line);border-radius:var(--gov-radius);background:#fff;padding:16px 18px;display:grid;gap:4px;align-content:start;text-decoration:none;color:inherit}
+.status-tile:hover{border-color:var(--gov-outline)}
+.vsaa-page a.status-tile,.vsaa-page a.status-tile *{text-decoration:none}
+.vsaa-page a.status-tile:focus-visible{outline:3px solid #2465ad;outline-offset:2px}
+.status-tile .count{font-size:40px;line-height:1;font-weight:700;color:var(--gov-accent);letter-spacing:-1px}
+.status-tile .count.zero{color:var(--gov-muted)}
+.status-tile .label{font-size:14px;font-weight:500;color:var(--gov-text-2)}
+.status-tile.urgent .count{color:var(--gov-error)}
+
+/* Buttons in portal style */
+.gov-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:10px 20px;border-radius:var(--gov-radius);border:1px solid var(--gov-accent);background:var(--gov-accent);color:#fff;font:500 15px/1.2 inherit;cursor:pointer;text-decoration:none;white-space:nowrap}
+.gov-btn:hover{background:var(--gov-accent-dark);border-color:var(--gov-accent-dark);color:#fff}
+.gov-btn.secondary{background:#fff;color:var(--gov-text-2);border-color:var(--gov-outline)}
+.gov-btn.secondary:hover{background:var(--gov-band);color:var(--gov-text)}
+.gov-btn.small{min-height:36px;padding:6px 14px;font-size:14px}
+.gov-btn:disabled{opacity:.55;cursor:not-allowed}
+.gov-btn svg{width:18px;height:18px;flex-shrink:0}
+.vsaa-page a.gov-btn{color:#fff;text-decoration:none}
+.vsaa-page a.gov-btn:hover{color:#fff}
+.vsaa-page a.gov-btn.secondary{color:var(--gov-text-2)}
+.vsaa-page a.gov-btn.secondary:hover{color:var(--gov-text)}
+.vsaa-page a.status-tile{color:var(--gov-text)}
+
+/* Panels and alerts */
+.gov-panel{border:1px solid var(--gov-outline);border-radius:var(--gov-radius);background:#fff;padding:22px 24px;margin:0 0 16px}
+.gov-panel.muted{border-color:var(--gov-line);background:var(--gov-panel)}
+.gov-alert{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;border-left:5px solid var(--gov-accent);border-radius:var(--gov-radius);background:var(--gov-info-bg);padding:18px 20px;margin:0 0 28px}
+.gov-alert svg{width:26px;height:26px;color:var(--gov-accent);margin-top:2px}
+.gov-alert h3{margin-bottom:4px}
+.gov-alert p{margin:0 0 12px;font-size:15px}
+.inline-form{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.inline-form label{display:grid;gap:6px;font-size:14px;font-weight:500;flex:1 1 280px;max-width:420px}
+.inline-form input{font:inherit;font-size:16px;padding:10px 12px;border:1px solid #8894a3;border-radius:4px;min-width:0}
+.inline-form input:focus{outline:3px solid #2465ad;outline-offset:2px;border-color:#2465ad}
+.form-note{font-size:13px;color:var(--gov-muted);margin:8px 0 0;flex-basis:100%}
+
+/* Child card and benefit checklist */
+.child-card{border:1px solid var(--gov-outline);border-radius:var(--gov-radius);background:#fff;margin:0 0 20px;overflow:hidden}
+.child-card>header{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:18px 24px;background:var(--gov-band);border-bottom:1px solid var(--gov-band-line)}
+.child-card>header h3{font-size:22px}
+.child-card>header .meta{font-size:14px;color:var(--gov-text-2);display:flex;flex-wrap:wrap;gap:4px 18px}
+.benefit-list{list-style:none;margin:0;padding:0}
+.benefit{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1fr) auto;gap:10px 22px;align-items:center;padding:18px 24px;border-bottom:1px solid var(--gov-line)}
+.benefit:last-child{border-bottom:0}
+.benefit.inactive{color:var(--gov-muted);background:var(--gov-panel)}
+.benefit .title{font-weight:700;font-size:16px;line-height:1.3}
+.benefit .official{display:block;font-size:12.5px;font-weight:400;color:var(--gov-muted);margin-top:3px}
+.benefit .amount{font-size:14px;line-height:1.45;color:var(--gov-text-2)}
+.benefit .deadline{font-size:13px;display:grid;gap:6px;color:var(--gov-text-2)}
+.benefit .deadline strong{font-weight:500;color:var(--gov-text)}
+.benefit .actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;justify-self:end}
+.window{height:6px;border-radius:3px;background:var(--gov-line);overflow:hidden}
+.window i{display:block;height:100%;background:var(--gov-outline);border-radius:3px}
+.window.urgent i{background:var(--gov-error)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;padding:4px 10px;border-radius:12px;white-space:nowrap}
+.chip::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+.chip.pieejams{background:var(--gov-info-bg);color:#2c4f7c}
+.chip.steidzami{background:var(--gov-urgent-bg);color:#9f1b1b}
+.chip.iesniegts,.chip.izskatisana{background:var(--gov-wait-bg);color:var(--gov-wait)}
+.chip.pieskirts,.chip.izmaksata{background:var(--gov-ok-bg);color:var(--gov-ok)}
+.chip.gaidams,.chip.nav_attiecas,.chip.otrs_vecaks,.chip.nokavets,.chip.neizmaksata{background:#ededf1;color:#4b515b}
+.chip.neizmaksata{background:var(--gov-urgent-bg);color:#9f1b1b}
+.child-card>footer{display:grid;gap:14px;padding:18px 24px;background:var(--gov-panel);border-top:1px solid var(--gov-line)}
+.parent-row{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;justify-content:space-between}
+.parent-row p{margin:0;font-size:14px;max-width:62ch}
+.parent-row .sent{font-size:13px;color:var(--gov-ok);font-weight:500}
+.compare-note{font-size:13.5px;color:var(--gov-text-2);margin:0;padding:10px 14px;border:1px dashed var(--gov-outline);border-radius:var(--gov-radius);background:#fff}
+
+/* Sick leaves */
+.leave-list{display:grid;gap:12px}
+.leave{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto;gap:10px 22px;align-items:center;border:1px solid var(--gov-line);border-radius:var(--gov-radius);padding:16px 20px;background:#fff}
+.leave.open{border-color:var(--gov-outline)}
+.leave .title{font-weight:700}
+.leave .sub{font-size:13px;color:var(--gov-muted);margin-top:3px}
+.leave dl{margin:0;display:grid;gap:2px;font-size:13.5px}
+.leave dt{color:var(--gov-muted)}.leave dd{margin:0;font-weight:500}
+
+/* Contributions strip */
+.months{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;margin:14px 0 8px}
+.months li{list-style:none;display:grid;gap:5px;text-align:center;font-size:10.5px;color:var(--gov-muted)}
+.months li i{display:block;height:34px;border-radius:3px;background:var(--gov-outline)}
+.months li.gap i{background:var(--gov-urgent-bg);border:1px dashed var(--gov-error)}
+.months li.current span{font-weight:700;color:var(--gov-text)}
+.employment-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.9fr);gap:20px;align-items:start}
+.facts{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;font-size:14px}
+.facts dt{color:var(--gov-muted)}.facts dd{margin:0;font-weight:500}
+.vacancy-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.vacancy-list li{border:1px solid var(--gov-line);border-radius:var(--gov-radius);padding:10px 14px;font-size:14px;display:grid;gap:2px}
+.vacancy-list .job{font-weight:700}
+.vacancy-list .where{color:var(--gov-muted);font-size:13px}
+
+/* Reminders */
+.reminder-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.reminder{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid var(--gov-line);border-left-width:5px;border-radius:var(--gov-radius);padding:14px 18px;background:#fff}
+.reminder.steidzami{border-left-color:var(--gov-error)}.reminder.pieejams{border-left-color:var(--gov-outline)}.reminder.info{border-left-color:#b9c4d4}
+.reminder .when{font-size:12.5px;font-weight:700;color:var(--gov-text-2);min-width:64px;text-align:center;line-height:1.3}
+.reminder .when b{display:block;font-size:22px;color:var(--gov-accent)}
+.reminder.steidzami .when b{color:var(--gov-error)}
+.reminder h3{font-size:15px}.reminder p{margin:3px 0 0;font-size:13.5px;color:var(--gov-text-2)}
+.toggle{display:flex;align-items:center;gap:12px;font-size:14.5px;font-weight:500;cursor:pointer}
+.toggle input{width:22px;height:22px;accent-color:var(--gov-accent)}
+
+/* Open-data statistics */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.bars{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:9px}
+.bars li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;font-size:13.5px}
+.bars .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--gov-line);overflow:hidden}
+.bars .bar i{display:block;height:100%;background:var(--gov-accent);border-radius:4px}
+.bars.secondary .bar i{background:var(--gov-outline)}
+.bars .value{font-weight:700;white-space:nowrap}
+.source-note{font-size:12.5px;color:var(--gov-muted);margin:12px 0 0;line-height:1.5}
+
+/* Application dialog */
+.vsaa-page dialog{border:1px solid var(--gov-band-line);border-radius:10px;padding:0;width:min(640px,calc(100% - 32px));color:var(--gov-text);font-family:inherit}
+.vsaa-page dialog form{padding:30px 34px 28px;display:grid;gap:18px}
+.vsaa-page dialog h2{font-size:24px;margin:0;padding-right:36px}
+.vsaa-page dialog .official{font-size:13px;color:var(--gov-muted);margin:-10px 0 0}
+.prefilled{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;padding:16px 18px;border-radius:var(--gov-radius);background:var(--gov-band);font-size:14px}
+.prefilled dt{color:var(--gov-text-2);font-size:12.5px}.prefilled dd{margin:2px 0 0;font-weight:500;overflow-wrap:anywhere}
+.prefilled-note{font-size:12.5px;color:var(--gov-muted);margin:-8px 0 0}
+.field{display:grid;gap:6px;font-size:14px;font-weight:500}
+.field input,.field select{font:inherit;font-size:16px;padding:10px 12px;border:1px solid #8894a3;border-radius:4px;width:100%}
+.field input:focus,.field select:focus{outline:3px solid #2465ad;outline-offset:2px}
+.field .hint{font-size:12.5px;font-weight:400;color:var(--gov-muted)}
+.choice{display:grid;gap:8px}
+.choice label{display:flex;gap:10px;align-items:center;font-weight:400;padding:10px 12px;border:1px solid var(--gov-line);border-radius:var(--gov-radius);cursor:pointer}
+.choice label:has(input:checked){border-color:var(--gov-accent);background:#fff6f8}
+.choice input{accent-color:var(--gov-accent);width:18px;height:18px}
+.dialog-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end;margin-top:6px}
+.dialog-actions .gov-btn.secondary{margin-right:auto}
+.dialog-status{font-size:14px;color:var(--gov-accent);min-height:20px;margin:0}
+.dialog-ok{padding:34px;display:grid;gap:12px;justify-items:start}
+.dialog-ok svg{width:40px;height:40px;color:var(--gov-ok)}
+.page-status{font-size:14px;color:var(--gov-accent);min-height:20px;margin:8px 0 0}
+.empty{color:var(--gov-muted);font-size:15px;margin:0;padding:18px 20px;border:1px dashed var(--gov-line);border-radius:var(--gov-radius)}
+.disclaimer{margin:36px 0 0;border-top:1px solid var(--gov-line);padding-top:14px;font-size:12.5px;color:var(--gov-muted);line-height:1.6}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media(max-width:1100px){.status-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.benefit{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto}.benefit .deadline{grid-column:1/3}.leave{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.leave .actions{grid-column:1/-1;justify-self:start}.employment-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.benefit{grid-template-columns:minmax(0,1fr);padding:16px 18px}.benefit .actions{flex-direction:row;justify-self:start;flex-wrap:wrap}.benefit .deadline{grid-column:auto}.child-card>header,.child-card>footer{padding:16px 18px}.months{grid-template-columns:repeat(8,minmax(0,1fr))}.months li i{height:26px}.prefilled{grid-template-columns:1fr}.vsaa-page dialog form{padding:22px 20px}.status-tile .count{font-size:32px}.facts{grid-template-columns:1fr}.reminder{grid-template-columns:auto minmax(0,1fr)}.reminder .gov-btn{grid-column:2}}
+@media(max-width:420px){.status-strip{grid-template-columns:1fr 1fr;gap:10px}.status-tile{padding:12px}}
+@media(prefers-reduced-motion:no-preference){.window i{transition:width .5s ease}}
