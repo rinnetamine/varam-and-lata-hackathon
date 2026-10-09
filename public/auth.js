@@ -1,0 +1,177 @@
+// Demo session handling: personas kods login against /api, bearer token kept in localStorage.
+// The token survives reloads and other tabs until the user logs out or the server expires it.
+(() => {
+  const STORAGE_KEY = 'faketvijaSession';
+  const LOGIN_PAGE = 'login.html';
+  const PROFILE_PAGE = 'profile.html';
+  const CODE_PATTERN = /^\d{6}-?\d{5}$/;
+
+  const readSession = () => {
+    try {
+      const session = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return session && typeof session.token === 'string' && session.person ? session : null;
+    } catch {
+      return null;
+    }
+  };
+  const writeSession = session => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const clearSession = () => {
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  };
+
+  async function api(path, { method = 'GET', token, body } = {}) {
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    if (body) headers['Content-Type'] = 'application/json';
+    const response = await fetch(`/api/${path}`, { method, headers, body: body && JSON.stringify(body) });
+    let data = null;
+    try { data = await response.json(); } catch {}
+    return { ok: response.ok, httpStatus: response.status, data };
+  }
+
+  // Confirms the stored token with the server. A rejected token ends the session;
+  // an unreachable server keeps the cached one so a brief outage does not log anyone out.
+  async function currentSession() {
+    const session = readSession();
+    if (!session) return null;
+    try {
+      const { ok, httpStatus, data } = await api('me', { token: session.token });
+      if (ok) {
+        const refreshed = { ...session, person: data.person };
+        writeSession(refreshed);
+        return refreshed;
+      }
+      if (httpStatus === 401) {
+        clearSession();
+        return null;
+      }
+    } catch {}
+    return session;
+  }
+
+  async function logout() {
+    const session = readSession();
+    clearSession();
+    if (session) {
+      try { await api('logout', { method: 'POST', token: session.token }); } catch {}
+    }
+  }
+
+  const setText = (selector, text) => {
+    const element = document.querySelector(selector);
+    if (element) element.textContent = text;
+  };
+
+  const numberForm = document.querySelector('#number-form');
+  const guardedPage = document.body.hasAttribute('data-requires-demo-session');
+  const loginButton = document.querySelector('#login-button');
+
+  // Login page: signed-in users skip straight to the profile; otherwise check the code on the server.
+  if (numberForm) {
+    currentSession().then(session => { if (session) location.replace(PROFILE_PAGE); });
+
+    const input = document.querySelector('#user-number');
+    const status = document.querySelector('#form-status');
+    const submit = numberForm.querySelector('[type="submit"]');
+    numberForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      const personasKods = input.value.trim();
+      if (!CODE_PATTERN.test(personasKods)) {
+        setTranslatedStatus(status, 'Ievadi personas kodu formātā 000000-00000.');
+        input.focus();
+        return;
+      }
+      submit.disabled = true;
+      setTranslatedStatus(status, 'Notiek pieslēgšanās…');
+      try {
+        const { ok, httpStatus, data } = await api('login', { method: 'POST', body: { personasKods } });
+        if (ok) {
+          if (writeSession({ token: data.token, person: data.person })) {
+            setTranslatedStatus(status, 'Pieslēgšanās veiksmīga. Notiek pāreja…');
+            location.assign(PROFILE_PAGE);
+            return;
+          }
+          setTranslatedStatus(status, 'Pārlūks neļauj saglabāt sesiju. Atļauj vietnes datu glabāšanu un mēģini vēlreiz.');
+        } else if (httpStatus === 401) {
+          setTranslatedStatus(status, 'Šāds personas kods demonstrācijas datubāzē nav atrasts.');
+        } else if (httpStatus === 400) {
+          setTranslatedStatus(status, 'Ievadi personas kodu formātā 000000-00000.');
+        } else {
+          setTranslatedStatus(status, 'Serveris nevarēja apstrādāt pieprasījumu. Mēģini vēlreiz.');
+        }
+      } catch {
+        setTranslatedStatus(status, 'Neizdevās sazināties ar serveri. Pārbaudi, vai tas darbojas.');
+      }
+      submit.disabled = false;
+    });
+  }
+
+  // Profile and services pages: require a session, fill in the person's data, wire up log out.
+  if (guardedPage) {
+    const renderPerson = ({ person }) => {
+      setText('#profile-name', person.firstName);
+      setText('#profile-avatar', person.firstName.charAt(0).toUpperCase());
+      setText('#profile-full-name', `${person.firstName} ${person.lastName}`);
+      setText('#profile-user-number', person.personasKods);
+      setText('#profile-email', person.email);
+      setText('#profile-phone', person.phone);
+    };
+
+    const cached = readSession();
+    if (!cached) {
+      location.replace(LOGIN_PAGE);
+    } else {
+      renderPerson(cached);
+      currentSession().then(session => (session ? renderPerson(session) : location.replace(LOGIN_PAGE)));
+    }
+
+    document.querySelector('#logout-button')?.addEventListener('click', async event => {
+      event.preventDefault();
+      await logout();
+      location.assign(LOGIN_PAGE);
+    });
+  }
+
+  // Portal landing page: when signed in, the login button becomes a link to the profile.
+  if (loginButton) {
+    const signedOutMarkup = loginButton.innerHTML;
+    const signedOutHref = loginButton.getAttribute('href');
+
+    const showSignedIn = ({ person }) => {
+      loginButton.setAttribute('href', PROFILE_PAGE);
+      loginButton.replaceChildren();
+      const name = document.createElement('span');
+      name.setAttribute('data-no-translate', '');
+      name.style.fontSize = 'inherit';
+      name.textContent = `${person.firstName} ${person.lastName}`;
+      const arrow = document.createElement('span');
+      arrow.setAttribute('aria-hidden', 'true');
+      arrow.textContent = '→';
+      loginButton.append(name, ' ', arrow);
+    };
+    const showSignedOut = () => {
+      loginButton.setAttribute('href', signedOutHref);
+      loginButton.innerHTML = signedOutMarkup;
+      applyLanguage();
+    };
+
+    const cached = readSession();
+    if (cached) showSignedIn(cached);
+    currentSession().then(session => {
+      if (session) showSignedIn(session);
+      else if (cached) showSignedOut();
+    });
+  }
+
+  // Keep other open tabs in step when someone logs in or out.
+  window.addEventListener('storage', event => {
+    if (event.key === STORAGE_KEY && (guardedPage || loginButton)) location.reload();
+  });
+})();

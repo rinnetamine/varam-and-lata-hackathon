@@ -89,7 +89,19 @@ const englishTranslations = {
  'Pieejamie pakalpojumi — Faketvija.lv demo':'Available services — Faketvija.lv demo',
  'Ar bērna piedzimšanu saistīti pakalpojumi Faketvija.lv demonstrācijas portālā.':'Services related to a child’s birth in the Faketvija.lv demo portal.',
  'Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.':'Faketvija.lv · Hackathon prototype, not an official government portal.',
- 'Iziet':'Sign out', 'Faketvija.lv · Automātisks paziņojums':'Faketvija.lv · Automated notice'
+ 'Iziet':'Sign out', 'Faketvija.lv · Automātisks paziņojums':'Faketvija.lv · Automated notice',
+ 'Ievadi demonstrācijas personas kodu, lai atvērtu savu profilu.':'Enter a demo personas kods to open your profile.',
+ 'PERSONAS KODS':'PERSONAS KODS', 'Personas kods':'Personas kods', 'Tālrunis':'Phone',
+ 'Izmanto tikai izdomātu personas kodu no demonstrācijas datubāzes, nevis savu īsto kodu.':'Use only an invented personas kods from the demo database, not your real code.',
+ 'Visi dati ir izdomāti. Sesija saglabājas šajā pārlūkā, līdz izej.':'All data is fictional. The session stays in this browser until you sign out.',
+ 'Sveiki,':'Hello,',
+ 'Ievadi personas kodu formātā 000000-00000.':'Enter the personas kods in the format 000000-00000.',
+ 'Notiek pieslēgšanās…':'Signing in…',
+ 'Pieslēgšanās veiksmīga. Notiek pāreja…':'Login successful. Redirecting…',
+ 'Šāds personas kods demonstrācijas datubāzē nav atrasts.':'This personas kods was not found in the demo database.',
+ 'Serveris nevarēja apstrādāt pieprasījumu. Mēģini vēlreiz.':'The server could not process the request. Please try again.',
+ 'Neizdevās sazināties ar serveri. Pārbaudi, vai tas darbojas.':'Could not reach the server. Check that it is running.',
+ 'Pārlūks neļauj saglabāt sesiju. Atļauj vietnes datu glabāšanu un mēģini vēlreiz.':'The browser does not allow saving the session. Allow site data storage and try again.'
 };
 let interfaceLanguage = 'lv';
 try { interfaceLanguage = sessionStorage.getItem('interfaceLanguage') === 'en' ? 'en' : 'lv'; } catch {}
@@ -100,7 +112,7 @@ function applyLanguage() {
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node;
   while ((node = walker.nextNode())) {
-    if (node.parentElement.closest('script,style,[data-language-label]')) continue;
+    if (node.parentElement.closest('script,style,[data-language-label],[data-no-translate]')) continue;
     if (!originalText.has(node)) originalText.set(node, node.nodeValue);
     const source = originalText.get(node);
     const translation = englishTranslations[source.trim()];

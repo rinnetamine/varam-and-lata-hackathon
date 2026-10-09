@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles.css">
   <script src="translations.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="auth.js" defer></script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
 <body data-requires-demo-session>
@@ -27,16 +28,20 @@
   </header>
   <main class="shell account">
     <p class="demo-badge">MANS PROFILS · DEMONSTRĀCIJA</p>
-    <h1>Sveiki, demonstrācijas lietotāj!</h1>
+    <h1><span>Sveiki,</span> <span id="profile-name" data-no-translate>demonstrācijas lietotāj</span>!</h1>
     <p class="account-intro">Šeit redzami tava profila dati un portāla paziņojumi. Šis makets neizmanto īstus personas datus.</p>
     <p class="profile-status" id="profile-status" role="status" aria-live="polite"></p>
     <div class="account-grid">
       <aside class="account-profile panel" aria-label="Profila informācija">
-        <div class="avatar" aria-hidden="true">D</div>
-        <h2>Demonstrācijas profils</h2>
-        <span class="profile-label">Lietotāja numurs</span>
-        <p class="account-number" id="profile-user-number">—</p>
-        <p class="profile-hint">Numurs redzams tikai šajā pārlūka cilnē.</p>
+        <div class="avatar" id="profile-avatar" aria-hidden="true" data-no-translate>D</div>
+        <h2 id="profile-full-name" data-no-translate>Demonstrācijas profils</h2>
+        <span class="profile-label">Personas kods</span>
+        <p class="account-number" id="profile-user-number" data-no-translate>—</p>
+        <span class="profile-label">E-pasts</span>
+        <p class="account-number profile-contact" id="profile-email" data-no-translate>—</p>
+        <span class="profile-label">Tālrunis</span>
+        <p class="account-number profile-contact" id="profile-phone" data-no-translate>—</p>
+        <p class="profile-hint">Visi dati ir izdomāti. Sesija saglabājas šajā pārlūkā, līdz izej.</p>
       </aside>
       <section class="account-content" aria-labelledby="mail-title">
         <div class="mail-heading">
