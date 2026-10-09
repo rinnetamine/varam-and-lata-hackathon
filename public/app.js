@@ -1,45 +1,26 @@
 // Illustrative bundles only: replace these with real workflows as the project grows.
-const bundles = {
-  moving: {
-    title: "Mainu dzīvesvietu",
-    steps: ["Norādi jauno dzīvesvietu", "Apskati deklarēšanas pakalpojuma piemēru", "Iepazīsties ar jaunās pašvaldības pakalpojumiem"],
-  },
-  family: {
-    title: "Ģimenē piedzimis bērns",
-    steps: ["Apskati dzimšanas reģistrācijas piemēru", "Iepazīsties ar pieejamajiem pabalstiem", "Apskati pašvaldības atbalsta pieteikuma piemēru"],
-  },
-  business: {
-    title: "Sāku uzņēmējdarbību",
-    steps: ["Izvēlies uzņēmējdarbības veidu", "Apskati reģistrācijas pakalpojuma piemēru", "Iepazīsties ar nodokļu un pašvaldības pakalpojumiem"],
-  },
-};
-
-const panel = document.querySelector("#bundle");
-const title = document.querySelector("#bundle-title");
-const steps = document.querySelector("#bundle-steps");
-let activeButton;
-
-document.querySelectorAll("[data-bundle]").forEach((button) => {
-  button.setAttribute("aria-controls", "bundle");
-  button.setAttribute("aria-expanded", "false");
-  button.addEventListener("click", () => {
-    activeButton?.setAttribute("aria-expanded", "false");
-    activeButton = button;
-    const bundle = bundles[button.dataset.bundle];
-    title.textContent = bundle.title;
-    steps.replaceChildren(...bundle.steps.map((step) => {
-      const item = document.createElement("li");
-      item.textContent = step;
-      return item;
-    }));
-    panel.hidden = false;
-    button.setAttribute("aria-expanded", "true");
-    title.focus();
+// Design-only login mock: no database, authentication, persistence, or network submission.
+const consent = document.querySelector('#demo-consent');
+const providerLink = document.querySelector('#provider-link');
+if (consent && providerLink) {
+  consent.addEventListener('change', () => {
+    providerLink.setAttribute('aria-disabled', String(!consent.checked));
+    document.querySelector('#selection-status').textContent = consent.checked
+      ? 'Vari atvērt eParaksts mobile saskarnes maketu.'
+      : 'Lai atvērtu maketu, atzīmē demonstrācijas apliecinājumu.';
   });
-});
-
-document.querySelector("#close-bundle").addEventListener("click", () => {
-  panel.hidden = true;
-  activeButton?.setAttribute("aria-expanded", "false");
-  activeButton?.focus();
-});
+  providerLink.addEventListener('click', event => {
+    if (!consent.checked) {
+      event.preventDefault();
+      consent.focus();
+    }
+  });
+}
+const numberForm = document.querySelector('#number-form');
+if (numberForm) {
+  numberForm.addEventListener('submit', event => {
+    event.preventDefault();
+    document.querySelector('#user-number').value = '';
+    document.querySelector('#form-status').textContent = 'Dizaina demonstrācija. Nekas nav nosūtīts, lietotājs nav izveidots.';
+  });
+}

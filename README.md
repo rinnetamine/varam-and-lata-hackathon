@@ -10,7 +10,7 @@ Install Docker with Docker Compose (Docker Desktop includes both), then run:
 docker compose up --build -d
 ```
 
-Open http://localhost:8080.
+Open http://localhost:8080/login.html to preview login. The root page is intentionally blank.
 
 Stop the website:
 
@@ -28,16 +28,25 @@ The website uses plain HTML, CSS, and JavaScript, with no build tools or package
 python3 -m http.server 8080 --directory public
 ```
 
-## Files
+## Current interface
 
-- `public/index.html` — page content and service cards.
-- `public/styles.css` — responsive styles.
-- `public/app.js` — mock service bundles and their steps.
-- `Dockerfile` — Nginx image serving the website.
-- `nginx.conf` — web server configuration on port 8080.
-- `compose.yaml` — local container setup.
+- `public/index.html` — intentionally blank landing page.
+- `public/login.html` — reference-inspired login selection with one eParaksts mobile option and a required demo acknowledgment.
+- `public/eparaksts-login.html` — separate user-number form with cancel and confirm controls.
+- `public/styles.css` — responsive styles for both login screens and prototype icons.
+- `public/app.js` — demo acknowledgment gating and local form handling. Confirm clears the input and shows a design-only message; it does not authenticate or create a user.
+- `Dockerfile`, `nginx.conf`, and `compose.yaml` — Dockerized static hosting.
 
-To add a bundle, add a card in `index.html` with a `data-bundle` key and a matching entry in `app.js`.
+Both login pages display clear prototype notices. They do not use official logos, send phone notifications, connect to eParaksts, persist input, or access a database. Use invented user numbers only.
+
+## Next steps
+
+1. Design the newborn service page and shared application flow on the currently blank landing page.
+2. Define the demo user model, database schema, and account/session behavior before connecting the login mockup. Keep demo identities separate from real authentication.
+3. Add the demo profile and explicit simulated approval/result screens.
+4. Integrate address selection and municipality lookup using the imported open data.
+5. Verify official benefit amounts, deadlines, eligibility conditions, and municipal grant rules before implementing recommendations.
+6. Verify the complete flow in Docker once the Docker daemon is running.
 
 ## Open data
 
