@@ -44,18 +44,30 @@ DB_PATH = Path(os.environ.get('DB_PATH', DEFAULT_DB))
 SESSION_TTL_SECONDS = 7 * 24 * 60 * 60
 MAX_BODY_BYTES = 4096
 CODE_PATTERN = re.compile(r'^(\d{6})-?(\d{5})$')
+DATABASE_WRITE_LOCK = threading.Lock()
 
 
 @contextmanager
-def database():
-    connection = connect(DB_PATH)
+def database(immediate=False):
+    if immediate:
+        DATABASE_WRITE_LOCK.acquire()
+    connection = None
     try:
+        connection = sqlite3.connect(DB_PATH)
+        connection.row_factory = sqlite3.Row
+        connection.execute('PRAGMA foreign_keys = ON')
+        demo_registry.attach(connection, DB_PATH, initialize=False)
         with connection:
-            demo_registry.promote_adult_children(connection)
-            vsaa.sanitize_shared_messages(connection)
+            if immediate:
+                connection.execute('BEGIN IMMEDIATE')
             yield connection
     finally:
-        connection.close()
+        try:
+            if connection is not None:
+                connection.close()
+        finally:
+            if immediate:
+                DATABASE_WRITE_LOCK.release()
 
 
 def hash_token(token):
@@ -174,7 +186,7 @@ class Handler(SimpleHTTPRequestHandler):
         payload = self.read_json() if self.command == 'POST' else {}
         if self.command == 'POST' and payload is None:
             return self.send_json(HTTPStatus.BAD_REQUEST, {'error': 'invalid_body'})
-        with database() as db:
+        with database(immediate=self.command == 'POST') as db:
             person = self.current_person(db)
             if person is None:
                 return self.send_json(HTTPStatus.UNAUTHORIZED, {'error': 'unauthorized'})
@@ -330,16 +342,21 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 def main():
-    with database() as db:
-        ensure_seeded(db)
+    connection = connect(DB_PATH)
+    try:
+        with connection:
+            ensure_seeded(connection)
+    finally:
+        connection.close()
     host = os.environ.get('HOST', '127.0.0.1')
     port = int(os.environ.get('PORT', '8080'))
     def refresh_adult_registry():
         while True:
             time.sleep(60)
             try:
-                with database():
-                    pass
+                with database(immediate=True) as db:
+                    demo_registry.promote_adult_children(db)
+                    vsaa.sanitize_shared_messages(db)
             except sqlite3.Error as error:
                 print(f'Adult registry update failed: {error}')
     threading.Thread(target=refresh_adult_registry,daemon=True).start()

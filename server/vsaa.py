@@ -186,7 +186,7 @@ def dashboard(db, person, today=None):
     if employment['status'] == 'iemaksas_partrauktas' and not unemployment_app:
         reminders.append({'key': 'nva', 'level': 'steidzami' if gap >= 2 else 'pieejams',
                           'title': f'Sociālās iemaksas nav veiktas {gap} mēnešus',
-                          'text': 'Reģistrējieties NVA bezdarbnieka statusam un tajā pašā dienā piesakieties bezdarbnieka pabalstam. Iemaksas veiktas '
+                          'text': 'Reālajā procesā vispirms jāiegūst NVA bezdarbnieka statuss, pēc tam atsevišķi jāpiesakās VSAA pabalstam. Demonstrācija abus soļus simulē prototipā. Iemaksas veiktas '
                                   f'{with_contributions} no pēdējiem 16 mēnešiem' + (' — pabalsta nosacījums (12 mēneši) ir izpildīts.' if with_contributions >= 12 else ' — nepietiek pabalstam (vajag 12).'),
                           'dueDate': None, 'daysLeft': None, 'action': 'apply', 'benefitCode': 'bezdarbnieka',
                           'template': 'reminder_nva', 'params': {'gap': gap, 'months': with_contributions, 'eligible': with_contributions >= 12}})
@@ -226,7 +226,7 @@ def mask_iban(iban):
 
 
 def deliver_reminders(db, person, data):
-    """Copy due reminders into the e-address inbox once (seed keys keep it idempotent)."""
+    """Copy due reminders into the prototype inbox once (seed keys keep it idempotent)."""
     if not person['reminders_enabled']:
         return 0
     delivered = 0
