@@ -23,7 +23,7 @@ from datetime import date, timedelta
 import demo_registry
 
 DEFAULT_DB = Path(__file__).resolve().parent / 'data' / 'people.db'
-DEFAULT_COUNT = 4
+DEFAULT_COUNT = 5
 DEFAULT_SEED = 20240601
 ADDRESS_FILE = Path(os.environ.get('ADDRESS_FILE', Path(__file__).resolve().parent.parent / 'public' / 'data' / 'addresses.json'))
 
@@ -230,9 +230,16 @@ def generate_people(count, seed):
     rng = random.Random(seed)
     people = []
     codes, emails, phones = set(), set(), set()
+    imported = json.loads(demo_registry.NAME_FILE.read_text())['names']
+    female_names = [row['name'] for row in imported if row['gender'] == 'SIEVIETE']
+    male_names = [row['name'] for row in imported if row['gender'] == 'VĪRIETIS']
+    if not female_names or not male_names:
+        raise ValueError('Imported name snapshot must contain both gender pools')
     while len(people) < count:
-        is_female = rng.random() < 0.5
-        first = rng.choice(FEMALE_NAMES if is_female else MALE_NAMES)
+        random_female = rng.random() < 0.5
+        # Showcase IDs have fixed parental roles; name selection must follow them.
+        is_female = {1: True, 2: False, 3: True, 4: False, 5: True}.get(len(people) + 1, random_female)
+        first = rng.choice(female_names if is_female else male_names)
         last = rng.choice(SURNAMES)[1 if is_female else 0]
 
         birth, code = demo_identity(rng)
@@ -297,10 +304,8 @@ def ensure_seeded(connection):
     if connection.execute('SELECT COUNT(*) FROM people').fetchone()[0] == 0:
         seed(connection)
     ensure_admin(connection)
-    demo_registry.seed_registries(connection)
     with connection:
-        demo_registry.order_demo_accounts(connection)
-        demo_registry.seed_household_showcase(connection)
+        demo_registry.seed_current_showcase(connection)
     seed_vsaa_cases(connection)
     with connection:
         demo_registry.promote_adult_children(connection)

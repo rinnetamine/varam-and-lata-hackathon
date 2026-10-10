@@ -166,7 +166,7 @@
     picker.hidden = false;
     if (selectedChild !== 'all' && !children.some(child => child.id === selectedChild)) selectedChild = 'all';
     const options = [['all', t('children.all')], ...children.map(child => [child.id, `${child.firstName} ${child.lastName || ''}`.trim()])];
-    picker.replaceChildren(...options.map(([value, label]) => el('button', {type: 'button', class: `picker-btn ${String(selectedChild) === String(value) ? 'active' : ''}`, 'aria-pressed': String(String(selectedChild) === String(value)), 'data-no-translate': value !== 'all' || null, ...(value === 'all' ? {i18n: 'children.all'} : {text: label}), onclick: () => { selectedChild = value === 'all' ? 'all' : Number(value); renderChildren(dashboard.children); renderApplications(dashboard.applications.filter(app => app.childId && (selectedChild === 'all' || app.childId === selectedChild))); applyLanguage(); $('#child-picker').querySelector('[aria-pressed="true"]')?.focus(); }})));
+    picker.replaceChildren(...options.map(([value, label]) => el('button', {type: 'button', class: `picker-btn ${String(selectedChild) === String(value) ? 'active' : ''}`, 'aria-pressed': String(String(selectedChild) === String(value)), 'data-no-translate': value !== 'all' || null, ...(value === 'all' ? {i18n: 'children.all'} : {text: label}), onclick: () => { selectedChild = value === 'all' ? 'all' : Number(value); const url = new URL(location.href); if (selectedChild === 'all') url.searchParams.delete('child'); else url.searchParams.set('child', selectedChild); history.replaceState(null, '', url); render(dashboard); $('#child-picker').querySelector('[aria-pressed="true"]')?.focus(); }})));
     for (const [index, child] of children.entries()) {
       picker.children[index + 1].append(el('small', {class: 'child-sidebar-code', text: child.personasKods, 'data-no-translate': true}));
     }
@@ -345,7 +345,12 @@
   }
   function openApply(benefit, context) {
     if(!dashboard.person.iban){location.assign('bank-account.html');return;}
-    if(!benefit.options || !Object.keys(benefit.options).length){sendDirectApplication(benefit,context);return;}
+    if(!benefit.options || !Object.keys(benefit.options).length){
+      const dialog=$('#apply-dialog');
+      const confirm=el('button',{class:'gov-btn',type:'button',i18n:'dialog.confirmSend',onclick:()=>{confirm.disabled=true;sendDirectApplication(benefit,context);}});
+      dialog.replaceChildren(el('div',{class:'dialog-ok application-confirmation'},el('h2',{id:'apply-title',i18n:`benefit.${benefit.code}`}),el('p',{class:'submission-warning',i18n:'dialog.profileWarning'}),el('p',{text:`${dashboard.person.firstName} ${dashboard.person.lastName} · ${dashboard.person.personasKods}`,'data-no-translate':true}),context.child?el('p',{text:`${context.child.firstName} ${context.child.lastName} · ${context.child.personasKods}`,'data-no-translate':true}):null,el('p',{},tx('dialog.iban'),': ',el('strong',{text:dashboard.person.ibanMasked,'data-no-translate':true})),el('div',{class:'dialog-actions'},el('button',{class:'gov-btn secondary',type:'button',i18n:'common.cancel',onclick:()=>dialog.close()}),confirm)));
+      applyLanguage();dialog.showModal();dialog.querySelector('.secondary').focus();return;
+    }
 
     const dialog = $('#apply-dialog');
     const person = dashboard.person;
@@ -356,7 +361,7 @@
     if (context.child) facts.append(el('div', {}, el('dt', {i18n: 'common.child'}), el('dd', {i18n: 'dialog.childBorn', i18nParams: {name: `${context.child.firstName} ${context.child.lastName || ''}`.trim(), date: fmtDate(context.child.birthDate)}})));
     if (context.leave) facts.append(el('div', {}, el('dt', {i18n: 'dialog.leave'}), el('dd', {text: `${context.leave.number}, ${fmtDate(context.leave.dateFrom)} – ${fmtDate(context.leave.dateTo)}`, 'data-no-translate': true})));
     if (context.employment) facts.append(el('div', {}, el('dt', {i18n: 'dialog.months'}), el('dd', {i18n: 'dialog.of16', i18nParams: {months: context.employment.monthsWithContributions}})));
-    form.append(facts, el('p', {class: 'prefilled-note', i18n: 'dialog.prefilled'}));
+    form.append(facts, el('p', {class: 'submission-warning', i18n: 'dialog.profileWarning'}));
     if (benefit.estimate) form.append(el('p', {class: 'prefilled-note'}, tx('benefit.estimate'), el('span', {text: `: ${benefitAmount(benefit)}`, 'data-no-translate': true})));
     if (benefit.late) form.append(el('p', {class: 'prefilled-note', i18n: 'dialog.late', i18nParams: {rule: t(lateKey(benefit))}}));
     form.append(el('p',{class:'prefilled-note'},tx('dialog.iban'),': ',el('strong',{text:person.iban,'data-no-translate':true})),el('input',{type:'hidden',name:'iban',value:person.iban}));
@@ -417,7 +422,7 @@
     renderEmployment(data.employment);
     const view = document.body.dataset.vsaaView;
     const belongs = code => view === 'slimiba' ? code === 'slimibas' : view === 'darbs' ? code === 'bezdarbnieka' : view === 'children' ? ['maternitates', 'paternitates', 'berna_piedzimsanas', 'berna_kopsanas', 'vecaku', 'gimenes_valsts'].includes(code) : true;
-    renderReminders(data.reminders.filter(item => !view || (item.benefitCode ? belongs(item.benefitCode) : view === 'darbs' && item.template === 'reminder_nva')), data.person);
+    renderReminders(data.reminders.filter(item => (!view || (item.benefitCode ? belongs(item.benefitCode) : view === 'darbs' && item.template === 'reminder_nva')) && (view !== 'children' || selectedChild === 'all' || item.childId === selectedChild)), data.person);
     renderApplications(data.applications.filter(app => belongs(app.benefitCode) && (view !== 'children' || selectedChild === 'all' || app.childId === selectedChild)));
     const disclaimer = $('#disclaimer');
     disclaimer.dataset.i18nParams = JSON.stringify({date: fmtDate(data.verifiedAt)});

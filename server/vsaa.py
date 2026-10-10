@@ -175,6 +175,7 @@ def dashboard(db, person, today=None):
                                   'title': f'{child["firstName"]} drīz būs 1 gads',
                                   'text': f'No {fmt(benefit["availableFrom"])} varēs pieteikt ģimenes valsts pabalstu. Bērna kopšanas pabalsts turpinās līdz 1,5 gadu vecumam.',
                                   'dueDate': benefit['availableFrom'], 'daysLeft': (date.fromisoformat(benefit['availableFrom']) - today).days, 'action': None,
+                                  'benefitCode': benefit['code'], 'childId': child['id'],
                                   'template': 'reminder_first_birthday', 'params': {'child': child['firstName'], 'date': benefit['availableFrom']}})
     for leave in sick_leaves:
         if leave['status'] == 'neizmaksata':

@@ -75,10 +75,26 @@
       const copy = node('div'); copy.append(node('h3', title), node('p', detail));
       card.append(copy, overviewLink(href, t('home.open'))); actions.append(card);
     };
+    const newborns=data.children;
+    for(const child of newborns){
+      const road=node('article',null,'newborn-roadmap');road.append(node('h3',t('road.title',{name:`${child.firstName} ${child.lastName}`})));
+      const steps=node('ol',null,'roadmap-steps');
+      for(const benefit of child.benefits.filter(b=>!['nav_attiecas','nav_pieejams'].includes(b.status))){
+        const done=['iesniegts','izskatisana','pieskirts'].includes(benefit.status);
+        const future=benefit.status==='gaidams';
+        const row=node('li',null,`roadmap-step${done?' is-done':''}${future?' is-future':''}`);
+        const marker=node('span',done?'✓':future?'○':'•','roadmap-marker');marker.setAttribute('aria-hidden','true');
+        const copy=node('div');copy.append(node('strong',t(`benefit.${benefit.code}`)),node('p',t(`status.${benefit.status}`,{date:i18n.formatDate(benefit.availableFrom)})),node('small',t(`period.${benefit.code}`)));
+        if(benefit.deadline&&!done)copy.append(node('p',t('home.due',{date:i18n.formatDate(benefit.deadline)})));
+        copy.append(createRoadmapPreview(child,benefit,data.today));
+        row.append(marker,copy,overviewLink(`vsaa.html?child=${child.id}#berni`,t('home.open')));steps.append(row);
+      }
+      road.append(node('p',t('road.note')),steps);actions.append(road);
+    }
     if (!data.person.profileComplete) addAction(t('home.addAccount'), t('home.accountHelp'), 'bank-account.html', true);
     const pending = data.children.flatMap(child => child.benefits.filter(benefit => ['pieejams', 'steidzami'].includes(benefit.status)).map(benefit => ({child, benefit})));
     pending.sort((a,b) => (a.benefit.daysLeft ?? Infinity) - (b.benefit.daysLeft ?? Infinity));
-    for (const {child, benefit} of pending.slice(0, 3)) {
+    for (const {child, benefit} of pending.filter(item=>!newborns.some(c=>c.id===item.child.id)).slice(0, 3)) {
       addAction(`${t(`benefit.${benefit.code}`)} · ${child.firstName} ${child.lastName}`, benefit.deadline ? t('home.due', {date: i18n.formatDate(benefit.deadline)}) : t('home.availableHelp'), `vsaa.html?child=${child.id}#berni`, benefit.status === 'steidzami');
     }
     if (data.summary.unpaidSickLeaves) addAction(t('sick.title'), t('overview.sick', {count: data.summary.unpaidSickLeaves}), 'sick-leave.html');

@@ -44,14 +44,16 @@ A personas kods alone is not a credential in any real system. This works only be
 
 ## Mana VSAA dashboard
 
-`public/vsaa.html` + `vsaa.js` + `vsaa.css` render `GET /api/vsaa/dashboard` for the signed-in person. The demo database carries four fictional situations, assigned by person id (`python3 server/seed_people.py --list` prints which code opens which):
+`public/vsaa.html` + `vsaa.js` + `vsaa.css` render `GET /api/vsaa/dashboard` for the signed-in person. The demo database contains five parents and administrator 999 (`python3 server/seed_people.py --list` prints their codes):
 
-| id % 4 | Situation | What the dashboard shows |
-| --- | --- | --- |
-| 1 | Newborn (18 days) with a partner, plus a closed, unpaid darbnespējas lapa B | Six child benefits with status and deadline countdown, "notify the other parent", sick-leave claim |
-| 2 | The other parent of that newborn | Same child from the other role; one-per-family benefits show "Pieteicis otrs vecāks" once claimed |
-| 3 | Child at 11 months, benefits already granted, one unpaid lapa B | Granted statuses, "ģimenes valsts pabalsts available from the first birthday" reminder |
-| 0 | Social contributions stopped two months ago | Contribution strip with the gap, NVA status followed by a separate VSAA unemployment-benefit application (both steps are simulated together in the demo), NVA vacancies in the municipality |
+| IDs | Situation |
+| --- | --- |
+| 1–2 | Mother and father sharing a child born three days before seeding |
+| 3–4 | Mother and father sharing two children; several benefits are already granted |
+| 5 | Single mother with three children |
+| 999 | Administrator application register |
+
+Each parent has one closed, unpaid B sick-leave record and contribution history. There are six children across three households. Seeded benefit applications have matching inbox confirmations and decisions.
 
 Actions, all confined to the prototype database:
 
@@ -112,10 +114,10 @@ Users without an IBAN are directed to `bank-account.html` after login and when e
 ### Family showcases and mock bank
 
 - `server/data/people.db`: portal users, sessions, inbox, applications and employment history.
-- `server/data/children.db`: three fictional children, first/last names, birth dates, DDMMYY-XXXXX codes, mother/father references and receiving flags per benefit and parent.
+- `server/data/children.db`: six fictional children, first/last names, birth dates, DDMMYY-XXXXX codes, mother/father references and receiving flags per benefit and parent.
 - `server/data/bank.db`: fictional bank customers keyed by personas kods, their test IBANs and active status. This simulates a bank registry; no external bank is contacted.
 
-Fresh databases seed four adult accounts. The first four demonstrate no child, one newborn, two children with already granted benefits, and a mother with no recorded father. Users 2 and 3 share one child; user 3 has a second child, and user 4 has a child with no recorded father. Users beyond the first four and their dependent records are removed. There are three distinct children and four parent-child links. Portal `children` rows retain compatibility IDs for existing application foreign keys; the separate child registry is authoritative for family details and dashboard reads.
+Fresh databases and the versioned v4 migration use the six-account showcase above. Children are linked to both parents for users 1–2 and 3–4, and only mother 5 for the single-parent household. The migration replaces earlier fictional showcase records once; subsequent startup preserves user actions and dates. Portal `children` rows retain compatibility IDs for application foreign keys; the separate child registry is authoritative for family details and dashboard reads.
 
 First names are sampled from the imported PMLP **Personu vārdi** CC0 statistics (`python3 scripts/import_person_names.py`). Surnames are inherited from the fictional father, or mother when no father is recorded. Family links, birth dates, identifiers and bank records are fictional. Source metadata and transformation notes are saved; the source/licence page includes attribution.
 

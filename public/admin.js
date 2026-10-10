@@ -4,6 +4,7 @@
   const $ = selector => document.querySelector(selector);
   const status = $('#page-status');
   let data = null;
+  let saving = false;
   const el = (tag, attrs = {}, ...children) => {
     const node = document.createElement(tag);
     for (const [key, value] of Object.entries(attrs)) {
@@ -43,9 +44,13 @@
   }
 
   async function decide(app, next, button) {
-    button.disabled = true; setStatus('admin.saving');
+    if (saving) return;
+    saving = true;
+    document.querySelectorAll('#applications button, #refresh').forEach(control => { control.disabled = true; });
+    setStatus('admin.saving');
     try { data = await request(`/api/admin/applications/${app.id}/status`, 'POST', {status: next}); renderList(); setStatus('admin.saved'); }
-    catch (error) { if (error.message !== 'unauthorized' && error.message !== 'forbidden') { setStatus('admin.failed'); button.disabled = false; } }
+    catch (error) { if (error.message !== 'unauthorized' && error.message !== 'forbidden') { setStatus('admin.failed'); } }
+    finally { saving = false; document.querySelectorAll('#applications button, #refresh').forEach(control => { control.disabled = false; }); }
   }
 
   function renderList() {
@@ -73,10 +78,12 @@
     }
     table.append(body);
     root.replaceChildren(table);
+    if (saving) root.querySelectorAll('button').forEach(button => { button.disabled = true; });
     applyLanguage();
   }
 
   async function load() {
+    if (saving) return;
     try { data = await request('/api/admin/applications'); $('#profile-account-name').textContent = data.admin.name; renderList(); setStatus(''); }
     catch (error) { if (!['unauthorized', 'forbidden'].includes(error.message)) setStatus('admin.loadFailed'); }
   }

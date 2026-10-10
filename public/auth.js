@@ -214,7 +214,7 @@
     };
 
     const requiredRole = document.body.dataset.requiresRole || 'person';
-    const misplaced = person => (requiredRole === 'admin' ? !isAdmin(person) : isAdmin(person));
+    const misplaced = person => requiredRole === 'any' ? false : (requiredRole === 'admin' ? !isAdmin(person) : isAdmin(person));
     const cached = readSession();
     if (!cached) {
       location.replace(LOGIN_PAGE);
@@ -225,11 +225,34 @@
       currentSession().then(session => {
         if (!session) location.replace(LOGIN_PAGE);
         else if (misplaced(session.person)) location.replace(destination(session));
-        else if (!isAdmin(session.person) && !session.person.iban) location.replace('bank-account.html');
+        else if (requiredRole !== 'any' && !isAdmin(session.person) && !session.person.iban) location.replace('bank-account.html');
         else renderPerson(session);
       });
     }
 
+  }
+
+
+  // Shared reference tools remain accessible to administrators with their own navigation.
+  if (['calculator.html', 'data-licenses.html'].includes(location.pathname.split('/').pop())) {
+    const renderAdminNavigation = session => {
+      if (!isAdmin(session?.person)) return;
+      const makeLink = (href, key, active) => {
+        const link=document.createElement('a');link.href=href;link.dataset.i18n=key;link.textContent=t(key);
+        if(active)link.setAttribute('aria-current','page');return link;
+      };
+      const page=location.pathname.split('/').pop();
+      const links=[['admin.html','nav.admin'],['calculator.html','nav.calculator'],['data-licenses.html','footer.sources']];
+      for(const selector of ['.primary-nav','.profile-menu']) {
+        const nav=document.querySelector(selector);
+        if(nav)nav.replaceChildren(...links.map(([href,key])=>makeLink(href,key,href===page)));
+      }
+      const name=document.querySelector('#profile-account-name');if(name)name.textContent=`${session.person.firstName} ${session.person.lastName}`;
+      const account=document.querySelector('.account-switch');if(account){const role=account.querySelector('span');if(role){role.dataset.i18n='account.admin';role.textContent=t('account.admin');}}
+      applyLanguage();
+    };
+    renderAdminNavigation(readSession());
+    currentSession().then(renderAdminNavigation);
   }
 
     document.querySelector('#logout-button')?.addEventListener('click', async event => {

@@ -173,6 +173,28 @@ def order_demo_accounts(db):
         raise ValueError('Demo account ID migration left invalid references')
 
 
+def repair_showcase_names(db):
+    """Keep fictional showcase names consistent with their explicitly seeded roles."""
+    from seed_people import SURNAMES, ascii_fold
+    names = json.loads(NAME_FILE.read_text())['names']
+    pools = {gender: [n['name'] for n in names if n['gender'] == gender]
+             for gender in ('SIEVIETE', 'VĪRIETIS')}
+    roles = {1: 'SIEVIETE', 2: 'SIEVIETE', 3: 'VĪRIETIS', 4: 'SIEVIETE',
+             5: 'VĪRIETIS', 6: 'SIEVIETE', 7: 'VĪRIETIS'}
+    for pid, gender in roles.items():
+        person = db.execute("SELECT * FROM people WHERE id=? AND role='person'", (pid,)).fetchone()
+        if not person:
+            continue
+        first = person['first_name'] if person['first_name'] in pools[gender] else pools[gender][pid % len(pools[gender])]
+        last = next((pair[1 if gender == 'SIEVIETE' else 0] for pair in SURNAMES
+                     if person['last_name'] in pair), person['last_name'])
+        if (first, last) != (person['first_name'], person['last_name']):
+            email = f'{ascii_fold(first)}.{ascii_fold(last)}@example.com'
+            if db.execute('SELECT 1 FROM people WHERE email=? AND id!=?', (email, pid)).fetchone():
+                email = f'{ascii_fold(first)}.{ascii_fold(last)}{pid}@example.com'
+            db.execute('UPDATE people SET first_name=?,last_name=?,email=? WHERE id=?', (first,last,email,pid))
+
+
 def seed_household_showcase(db, today=None):
     """Four distinct households: zero, one, two children and a single mother."""
     today=today or date.today()
@@ -204,6 +226,7 @@ def seed_household_showcase(db, today=None):
             db.execute('UPDATE family.children SET last_name=? WHERE id=?',(surname,child['id']))
         db.execute("INSERT OR IGNORE INTO messages (person_id,seed_key,sender,subject,body,received_at) SELECT DISTINCT person_id,'newborn-demo','FAKETVIJA.LV · DEMONSTRĀCIJA','Par bērna piedzimšanu ir pieejami pakalpojumi','Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.',? FROM family.child_parents",(today.isoformat()+'T09:00:00+03:00',))
         db.execute("INSERT INTO family.metadata VALUES ('household-showcase-v3',?)",(today.isoformat(),))
+    repair_showcase_names(db)
     for person in db.execute("SELECT * FROM people WHERE role='person'").fetchall():
         db.execute('UPDATE bank.people SET first_name=?,last_name=? WHERE personas_kods=?',(person['first_name'],person['last_name'],person['personas_kods']))
     CASES.update({1:'Māte bez bērniem',7:'Tēvs bez bērniem',2:'Māte ar vienu bērnu',5:'Tēvs ar vienu bērnu',6:'Māte ar diviem bērniem',3:'Tēvs ar diviem bērniem',4:'Māte ar vienu bērnu, otrs vecāks nav norādīts'})
@@ -232,3 +255,69 @@ def promote_adult_children(db, today=None):
         db.execute('DELETE FROM messages WHERE seed_key LIKE ?',(f'share-{child["id"]}-%',))
         db.execute('DELETE FROM family.benefits WHERE child_id=?',(child['id'],))
         db.execute('DELETE FROM family.children WHERE id=?',(child['id'],))
+
+
+def seed_current_showcase(db, today=None):
+    """Versioned six-account presentation dataset; initialise once, preserve later actions."""
+    from seed_people import generate_people, DEFAULT_SEED, ensure_admin, SURNAMES
+    today = today or date.today()
+    CASES.clear()
+    CASES.update({1:'Māte ar 3 dienas vecu bērnu',2:'Tēvs ar 3 dienas vecu bērnu',
+                  3:'Māte ar diviem bērniem, daļa pabalstu piešķirta',
+                  4:'Tēvs ar diviem bērniem, daļa pabalstu piešķirta',
+                  5:'Vientuļā māte ar trim bērniem'})
+    if db.execute("SELECT 1 FROM family.metadata WHERE key='six-account-showcase-v4'").fetchone():
+        return
+    # This migration intentionally replaces the previous fictional showcase scenarios.
+    for table in ('sessions','messages','applications','child_parents','sick_leaves','contributions','children'):
+        db.execute(f'DELETE FROM main.{table}')
+    db.execute('DELETE FROM family.benefits')
+    db.execute('DELETE FROM family.children')
+    db.execute('DELETE FROM family.former_children') if db.execute("SELECT 1 FROM family.sqlite_master WHERE name='former_children'").fetchone() else None
+    db.execute('DELETE FROM bank.accounts')
+    db.execute('DELETE FROM bank.people')
+    db.execute('DELETE FROM people')
+    db.execute("DELETE FROM sqlite_sequence WHERE name IN ('people','children','applications','messages','sick_leaves')")
+    records = generate_people(5, DEFAULT_SEED)
+    names = json.loads(NAME_FILE.read_text())['names']
+    female = [n['name'] for n in names if n['gender']=='SIEVIETE']
+    male = [n['name'] for n in names if n['gender']=='VĪRIETIS']
+    # Imported first names, fictional family names with Latvian gender forms.
+    families = [(female[2],'Kļaviņa'),(male[2],'Kļaviņš'),(female[5],'Purviņa'),
+                (male[5],'Purviņš'),(female[8],'Grīnberga')]
+    from seed_people import ascii_fold
+    for pid,(record,(first,last)) in enumerate(zip(records,families),1):
+        _,_,code,_,phone,address,birth = record
+        if pid in (2,4):address=db.execute('SELECT address FROM people WHERE id=?',(pid-1,)).fetchone()['address']
+        db.execute('INSERT INTO people (id,first_name,last_name,personas_kods,email,phone,address,birth_date,role) VALUES (?,?,?,?,?,?,?,?,?)',
+                   (pid,first,last,code,f'{ascii_fold(first)}.{ascii_fold(last)}@example.com',phone,address,birth,'person'))
+        db.execute('INSERT INTO bank.people VALUES (?,?,?)',(code,first,last))
+        db.execute('INSERT INTO bank.accounts (iban,personas_kods) VALUES (?,?)',(make_iban(pid),code))
+    ensure_admin(db)
+    admin=db.execute("SELECT id FROM people WHERE role='admin'").fetchone()['id']
+    db.execute('UPDATE people SET id=999 WHERE id=?',(admin,))
+    definitions=[(1,1,2,3),(2,3,4,400),(3,3,4,40),(4,5,None,3),(5,5,None,240),(6,5,None,800)]
+    for cid,mom,dad,age in definitions:
+        birth=today-timedelta(days=age)
+        first=names[cid*7]['name']
+        surname=db.execute('SELECT last_name FROM people WHERE id=?',(dad or mom,)).fetchone()['last_name']
+        gender=next(n['gender'] for n in names if n['name']==first)
+        surname=next((pair[1 if gender=='SIEVIETE' else 0] for pair in SURNAMES if surname in pair),surname)
+        code=f'{birth:%d%m%y}-{random.Random(9100+cid).randrange(100000):05d}'
+        db.execute('INSERT INTO family.children VALUES (?,?,?,?,?,?,?,?)',(cid,first,surname,code,birth.isoformat(),f'showcase-v4-{cid}',mom,dad))
+        db.execute('INSERT INTO children VALUES (?,?,?,?)',(cid,first,birth.isoformat(),f'showcase-v4-{cid}'))
+        used = {'berna_piedzimsanas','berna_kopsanas','vecaku','gimenes_valsts'} if cid==2 else {'maternitates'} if cid==3 else set()
+        for benefit in CHILD_BENEFITS:
+            receiving=int(benefit in used)
+            db.execute('INSERT INTO family.benefits VALUES (?,?,?,0)',(cid,benefit,receiving))
+            if receiving:
+                submitted=birth+timedelta(days=366 if benefit=='gimenes_valsts' else 10)
+                db.execute('INSERT INTO applications (person_id,benefit_code,child_id,submitted_at,status,details,decided_at) VALUES (?,?,?,?,?,?,?)',
+                           (mom,benefit,cid,submitted.isoformat(),'pieskirts',json.dumps({'seed':True,'iban':make_iban(mom)}),(submitted+timedelta(days=7)).isoformat()))
+    for pid in range(1,6):
+        end=today-timedelta(days=pid+2)
+        db.execute('INSERT INTO sick_leaves (person_id,number,kind,date_from,date_to,closed_at,employer,status) VALUES (?,?,?,?,?,?,?,?)',
+                   (pid,f'B-{today.year}-SHOWCASE-{pid}','B',(end-timedelta(days=15)).isoformat(),end.isoformat(),end.isoformat(),'SIA "Demo Būve"','neizmaksata'))
+        db.execute('INSERT INTO messages (person_id,seed_key,sender,subject,body,received_at) VALUES (?,?,?,?,?,?)',
+                   (pid,'newborn-demo','VSAA','Ar bērnu saistītie pakalpojumi','Apskati bērna pabalstus un pieejamo atbalstu sadaļā Mana VSAA.',today.isoformat()+'T09:00:00+03:00'))
+    db.execute("INSERT INTO family.metadata VALUES ('six-account-showcase-v4',?)",(today.isoformat(),))
