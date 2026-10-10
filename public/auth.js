@@ -72,6 +72,15 @@
     if (element) element.textContent = text;
   };
 
+  // Header service links require a validated session, including homepage anchors.
+  document.addEventListener('click', async event => {
+    const link = event.target.closest('.primary-nav a, .header-actions a:not(#logout-button)');
+    if (!link || link.id === 'login-button' || event.defaultPrevented) return;
+    event.preventDefault();
+    const session = await currentSession();
+    location.assign(session ? link.href : LOGIN_PAGE);
+  });
+
   const consent = document.querySelector('#demo-consent');
   const providerLink = document.querySelector('#provider-link');
   if (consent && providerLink) {

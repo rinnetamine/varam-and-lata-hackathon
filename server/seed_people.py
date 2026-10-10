@@ -299,6 +299,10 @@ def ensure_seeded(connection):
     ensure_admin(connection)
     seed_vsaa_cases(connection)
     demo_registry.seed_registries(connection)
+    with connection:
+        demo_registry.order_demo_accounts(connection)
+        from vsaa import seed_application_messages
+        seed_application_messages(connection)
 
 
 def main():

@@ -14,6 +14,17 @@
   const content = node('div', null, 'demo-record'); const status = node('p'); status.setAttribute('role', 'status');
   dialog.append(header, intro, search, label, content, status); document.body.append(dialog);
   let people = [];
+  const selectionKey = 'faketvijaDemoSelectedUser';
+  let selectedCode = null;
+  try { selectedCode = localStorage.getItem(selectionKey); } catch {}
+  function rememberSelection() {
+    const person = people.find(p => p.id === Number(select.value));
+    if (person) {
+      selectedCode = person.personas_kods;
+      try { localStorage.setItem(selectionKey, selectedCode); } catch {}
+    }
+    render();
+  }
   function copyField(labelText, value) {
     const row = node('div', null, 'demo-field'); row.append(node('strong', labelText), node('code', value || '—'));
     if (value) { const copy = node('button', t('demo.copy')); copy.type = 'button'; copy.onclick = async () => { try { await navigator.clipboard.writeText(value); status.textContent = t('demo.copied'); } catch { status.textContent = value; } }; row.append(copy); }
@@ -49,8 +60,8 @@
     }
     const sources = keyed('a', 'footer.sources'); sources.href = 'data-licenses.html'; content.append(sources);
   }
-  function options() { const selected = select.value; select.replaceChildren(); const query = search.value.trim().toLocaleLowerCase(); for (const p of people) { if (!`${p.first_name} ${p.last_name} ${p.personas_kods}`.toLocaleLowerCase().includes(query)) continue; const option = node('option', `${p.id}. ${p.first_name} ${p.last_name} · ${p.scenario}`); option.value = p.id; select.append(option); } if ([...select.options].some(o => o.value === selected)) select.value = selected; render(); }
-  select.onchange = render; search.oninput = options;
-  launch.onclick = async () => { dialog.showModal(); status.textContent = t('demo.loading'); try { const response = await fetch('/api/demo/admin'); if (!response.ok) throw new Error(); people = (await response.json()).people; options(); status.textContent = ''; } catch { status.textContent = t('demo.unavailable'); } };
+  function options() { const selected = people.find(p => p.personas_kods === selectedCode)?.id?.toString() || select.value; select.replaceChildren(); const query = search.value.trim().toLocaleLowerCase(); for (const p of people) { if (!`${p.first_name} ${p.last_name} ${p.personas_kods}`.toLocaleLowerCase().includes(query)) continue; const option = node('option', `${p.id}. ${p.first_name} ${p.last_name} · ${p.scenario}`); option.value = p.id; select.append(option); } if ([...select.options].some(o => o.value === selected)) select.value = selected; render(); }
+  select.onchange = rememberSelection; search.oninput = options;
+  launch.onclick = async () => { search.value = ''; dialog.showModal(); status.textContent = t('demo.loading'); try { const response = await fetch('/api/demo/admin'); if (!response.ok) throw new Error(); people = (await response.json()).people; options(); status.textContent = ''; } catch { status.textContent = t('demo.unavailable'); } };
   i18n.onChange(() => { if (people.length) render(); });
 })();

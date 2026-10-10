@@ -77,6 +77,35 @@
       }
     }
   }
+  function renderHistory() {
+    const root = document.querySelector('#activity-history');
+    if (!root) return;
+    const english = i18n.language === 'en';
+    const labels = english ? {application_received:'Application submitted',decision:'Application status updated',received:'Message received',read:'Message read'} : {application_received:'Iesniegums iesniegts',decision:'Iesnieguma statuss atjaunināts',received:'Ziņojums saņemts',read:'Ziņojums izlasīts'};
+    const events = [];
+    for (const message of messages) {
+      const subject = localized(message).subject;
+      events.push({date:message.receivedAt,label:subject,type:['application_received','decision'].includes(message.template) ? message.template : 'received'});
+      if (message.readAt) events.push({date:new Date(message.readAt * 1000).toISOString(),label:subject,type:'read'});
+    }
+    events.sort((a,b) => new Date(b.date) - new Date(a.date));
+    root.replaceChildren();
+    if (!events.length) { root.textContent = english ? 'No recorded activity yet.' : 'Vēl nav reģistrētu darbību.'; return; }
+    const intro=document.createElement('p');intro.className='history-description';intro.textContent=english?'Your applications, status updates and messages, newest first.':'Tavi iesniegumi, statusu izmaiņas un ziņojumi — jaunākās darbības vispirms.';root.append(intro);
+    let day=null, timeline;
+    const paths={application_received:'M12 16V4m-4 4 4-4 4 4M4 14v6h16v-6',decision:'m5 12 4 4L19 6',received:'M3 5h18v14H3zM3 6l9 7 9-7',read:'M3 8l9-5 9 5v12H3zM3 9l9 6 9-6'};
+    for (const event of events) {
+      const dateValue=new Date(event.date);
+      const dateLabel=i18n.formatDate(event.date);
+      if(day!==dateLabel){day=dateLabel;const heading=document.createElement('h3');heading.className='history-day';heading.textContent=dateLabel;timeline=document.createElement('ol');timeline.className='history-timeline';root.append(heading,timeline);}
+      const row=document.createElement('li');row.className='history-entry';
+      const marker=document.createElement('span');marker.className='history-marker';marker.setAttribute('aria-hidden','true');
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.7');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',paths[event.type]);svg.append(path);marker.append(svg);
+      const copy=document.createElement('div');copy.className='history-copy';const title=document.createElement('strong');title.textContent=labels[event.type];const detail=document.createElement('p');detail.textContent=event.label;copy.append(title,detail);
+      const time=document.createElement('time');time.dateTime=event.date;time.textContent=event.date.length>10?dateValue.toLocaleTimeString(english?'en-GB':'lv-LV',{hour:'2-digit',minute:'2-digit'}):'—';
+      row.append(marker,copy,time);timeline.append(row);
+    }
+  }
   function render() {
     list.replaceChildren();
     for (const message of messages) {
@@ -96,7 +125,7 @@
       meta.append(badge, date); summary.append(sender, subject, meta);
       const body = document.createElement('div'); body.className = 'message-body';
       const paragraph = document.createElement('p'); paragraph.textContent = text.body; paragraph.style.whiteSpace = 'pre-line'; paragraph.setAttribute('data-no-translate', '');
-      const link = document.createElement('a'); link.href = message.template ? 'vsaa.html' : 'pakalpojumi.html'; link.dataset.i18n = message.template ? 'inbox.openVsaa' : 'inbox.viewServices'; link.textContent = t(link.dataset.i18n);
+      const link = document.createElement('a'); link.href = message.template ? 'vsaa.html' : 'vsaa.html#berni'; link.dataset.i18n = 'inbox.openVsaa'; link.textContent = t(link.dataset.i18n);
       body.append(paragraph, link); row.append(summary, body); list.append(row);
       let saving = false;
       row.addEventListener('toggle', async () => {
@@ -105,7 +134,7 @@
         try {
           const data = await request(`/api/messages/${message.id}/read`, 'POST');
           message.readAt = data.messages.find(item => item.id === message.id).readAt;
-          counts(data);
+          counts(data); renderHistory();
           badge.className = 'read-tag';
           setTranslatedStatus(badge, '', 'inbox.read');
           setTranslatedStatus(status, '');
@@ -114,7 +143,7 @@
         } finally { saving = false; }
       });
     }
-    applyLanguage(); filter();
+    renderHistory(); applyLanguage(); filter();
   }
   async function load() {
     try {

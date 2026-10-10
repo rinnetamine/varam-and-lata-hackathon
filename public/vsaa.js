@@ -139,10 +139,13 @@
       root.replaceChildren(el('p', {class: 'empty', i18n: 'children.empty'}));
       return;
     }
-    picker.hidden = children.length < 2;
+    picker.hidden = false;
     if (selectedChild !== 'all' && !children.some(child => child.id === selectedChild)) selectedChild = 'all';
     const options = [['all', t('children.all')], ...children.map(child => [child.id, `${child.firstName} ${child.lastName || ''}`.trim()])];
-    picker.replaceChildren(el('span', {class: 'picker-label', i18n: 'children.select'}), ...options.map(([value, label]) => el('button', {type: 'button', class: `picker-btn ${String(selectedChild) === String(value) ? 'active' : ''}`, 'aria-pressed': String(String(selectedChild) === String(value)), 'data-no-translate': value !== 'all' || null, ...(value === 'all' ? {i18n: 'children.all'} : {text: label}), onclick: () => { selectedChild = value === 'all' ? 'all' : Number(value); renderChildren(dashboard.children); applyLanguage(); }})));
+    picker.replaceChildren(...options.map(([value, label]) => el('button', {type: 'button', class: `picker-btn ${String(selectedChild) === String(value) ? 'active' : ''}`, 'aria-pressed': String(String(selectedChild) === String(value)), 'data-no-translate': value !== 'all' || null, ...(value === 'all' ? {i18n: 'children.all'} : {text: label}), onclick: () => { selectedChild = value === 'all' ? 'all' : Number(value); renderChildren(dashboard.children); applyLanguage(); $('#child-picker').querySelector('[aria-pressed="true"]')?.focus(); }})));
+    for (const [index, child] of children.entries()) {
+      picker.children[index + 1].append(el('small', {class: 'child-sidebar-code', text: child.personasKods, 'data-no-translate': true}));
+    }
     root.replaceChildren();
     if (selectedChild === 'all' && children.length > 1) {
       root.append(el('div', {class: 'gov-panel muted'}, el('h3', {i18n: 'children.overview'}), el('ul', {class: 'overview-list'}, children.map(child => {

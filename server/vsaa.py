@@ -428,3 +428,30 @@ def admin_decide(db, admin, application_id, status, today=None):
 
 def legal():
     return legal_references()
+
+
+def seed_application_messages(db):
+    """Backfill missing receipts/decisions for persisted demo applications once."""
+    for app in db.execute('SELECT a.*, c.first_name AS child_first, s.number AS leave_number FROM applications a LEFT JOIN family.children c ON c.id=a.child_id LEFT JOIN sick_leaves s ON s.id=a.sick_leave_id').fetchall():
+        rule=BENEFITS.get(app['benefit_code'],{})
+        details=json.loads(app['details'] or '{}')
+        submitted=app['submitted_at']
+        params={'benefit':app['benefit_code'],'child':app['child_first'],'number':app['leave_number'],
+                'date':submitted[:10],'days':rule.get('processingDays',0),'iban':details.get('izmaksa','—')}
+        db.execute('INSERT OR IGNORE INTO messages (person_id,seed_key,sender,subject,body,received_at,template,params) VALUES (?,?,?,?,?,?,?,?)',
+                   (app['person_id'],f'application-{app["id"]}',SENDER,
+                    f'Iesniegums saņemts: {rule.get("short",app["benefit_code"])}',
+                    'Iesniegums ir reģistrēts prototipa datubāzē. Demonstrācijas ziņojums, nekas nav nosūtīts VSAA.',
+                    submitted,'application_received',json.dumps(params,ensure_ascii=False)))
+        if app['status'] not in ('izskatisana','pieskirts','atteikts'):
+            continue
+        prefix=f'decision-{app["id"]}-{app["status"]}-%'
+        if db.execute('SELECT 1 FROM messages WHERE person_id=? AND seed_key LIKE ?',(app['person_id'],prefix)).fetchone():
+            continue
+        decided=app['decided_at'] or submitted
+        status=STATUS_TEXT.get(app['status'],app['status'])
+        db.execute('INSERT OR IGNORE INTO messages (person_id,seed_key,sender,subject,body,received_at,template,params) VALUES (?,?,?,?,?,?,?,?)',
+                   (app['person_id'],f'decision-{app["id"]}-{app["status"]}-{decided[:10]}',SENDER,
+                    f'{status}: {rule.get("short",app["benefit_code"])}',
+                    'Iesnieguma statuss ir saglabāts prototipa datubāzē. Demonstrācijas lēmums, nav juridiska spēka.',
+                    decided,'decision',json.dumps({'benefit':app['benefit_code'],'child':app['child_first'],'status':app['status'],'date':decided[:10]},ensure_ascii=False)))

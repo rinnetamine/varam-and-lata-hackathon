@@ -41,3 +41,5 @@ body{overflow-wrap:break-word}
 #bank-form .bank-submit-row{display:flex;justify-content:center;margin-top:24px}
 #bank-form .bank-submit-row .confirm-button{flex:0 1 280px;width:100%;max-width:280px;margin:0}
 #bank-status.bank-checking{display:flex;justify-content:center;align-items:center;gap:10px;color:#303a3e}#bank-status.bank-checking::before{content:'';width:16px;height:16px;border:2px solid #d5deeb;border-top-color:#698ebf;border-radius:50%;animation:bank-spin .8s linear infinite}#bank-form input[aria-invalid=true]{border-color:#a5193b}#bank-form button:disabled{opacity:.65;cursor:wait}@keyframes bank-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){#bank-status.bank-checking::before{animation:none}}
+
+.login-home-link{display:inline-flex;align-items:center;gap:6px;margin-bottom:28px;font-weight:600;min-height:44px}

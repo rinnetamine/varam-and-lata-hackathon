@@ -47,16 +47,14 @@ def bank_error(db, code, iban):
 
 def seed_registries(db, today=None):
     today = today or date.today()
-    with db:
-        db.execute('DELETE FROM bank.accounts WHERE personas_kods NOT IN (SELECT personas_kods FROM main.people WHERE id <= 4)')
-        db.execute('DELETE FROM bank.people WHERE personas_kods NOT IN (SELECT personas_kods FROM main.people WHERE id <= 4)')
-        db.execute("DELETE FROM main.people WHERE id > 4 AND role = 'person'")
     people = {r['id']:r for r in db.execute("SELECT * FROM people WHERE role = 'person'")}
     with db:
         for pid, person in people.items():
             db.execute('INSERT OR IGNORE INTO bank.people VALUES (?, ?, ?)', (person['personas_kods'],person['first_name'],person['last_name']))
-            db.execute('INSERT OR IGNORE INTO bank.accounts (iban, personas_kods) VALUES (?, ?)', (make_iban(pid), person['personas_kods']))
+            if not db.execute('SELECT 1 FROM bank.accounts WHERE personas_kods=?',(person['personas_kods'],)).fetchone():
+                db.execute('INSERT INTO bank.accounts (iban, personas_kods) VALUES (?, ?)', (make_iban(pid), person['personas_kods']))
         if db.execute("SELECT 1 FROM family.metadata WHERE key = 'showcase-v2-four-users'").fetchone():
+            restore_partners(db)
             return
         # Replace repetitive old fictional family scenarios, retaining people and sessions.
         db.execute('DELETE FROM family.children')
@@ -96,6 +94,7 @@ def seed_registries(db, today=None):
         db.execute('UPDATE people SET iban = NULL WHERE iban IS NOT NULL AND NOT EXISTS '
                    '(SELECT 1 FROM bank.accounts WHERE accounts.iban = people.iban AND accounts.personas_kods = people.personas_kods AND active = 1)')
         db.execute("INSERT INTO family.metadata VALUES ('showcase-v2-four-users', ?)", (today.isoformat(),))
+        restore_partners(db)
 
 def admin_data(db):
     children = [dict(r) for r in db.execute('SELECT * FROM family.children ORDER BY id')]
@@ -110,3 +109,63 @@ def admin_data(db):
         person['bankAccounts'] = [dict(r) for r in db.execute('SELECT * FROM bank.accounts WHERE personas_kods = ?', (row['personas_kods'],))]
         people.append(person)
     return {'people':people, 'children':children, 'demoOnly':True}
+
+
+def restore_partners(db):
+    """Add missing spouses without replacing applications, bank accounts or sessions."""
+    names = json.loads(NAME_FILE.read_text())['names']
+    if not db.execute("SELECT 1 FROM family.metadata WHERE key='restored-partners-v2'").fetchone():
+        db.execute("UPDATE people SET first_name='Mārtiņš', last_name='Purviņš', email='martins.purvins@example.com' WHERE id=3 AND role='person'")
+        db.execute("UPDATE people SET last_name='Purviņa' WHERE id=2 AND role='person'")
+        partners = [('120489-90005','male','Grīnbergs','1989-04-12',4),
+                    ('210687-90006','female','Purviņa','1987-06-21',3),
+                    ('140280-90007','male','Rozītis','1980-02-14',1)]
+        ids = []
+        for index,(code,gender,surname,birth,partner) in enumerate(partners):
+            candidates=[n['name'] for n in names if n['gender']==('VĪRIETIS' if gender=='male' else 'SIEVIETE')]
+            address=db.execute('SELECT address FROM people WHERE id=?',(partner,)).fetchone()['address']
+            db.execute("INSERT OR IGNORE INTO people (first_name,last_name,personas_kods,email,phone,address,birth_date,role) VALUES (?,?,?,?,?,?,?,'person')",
+                       (candidates[index+5],surname,code,f'partner{index+1}@example.com',f'+371 2000900{index+1}',address,birth))
+            ids.append(db.execute('SELECT id FROM people WHERE personas_kods=?',(code,)).fetchone()['id'])
+        db.execute('UPDATE family.children SET father_id=? WHERE id=3',(ids[0],))
+        db.execute('UPDATE family.children SET mother_id=? WHERE id=2',(ids[1],))
+        # Children inherit the family surname with the appropriate Latvian form.
+        from seed_people import SURNAMES
+        gender_by_name={n['name']:n['gender'] for n in names}
+        for child in db.execute('SELECT * FROM family.children').fetchall():
+            surname=db.execute('SELECT last_name FROM people WHERE id=?',(child['father_id'] or child['mother_id'],)).fetchone()['last_name']
+            female=gender_by_name.get(child['first_name'])=='SIEVIETE'
+            surname=next((pair[1 if female else 0] for pair in SURNAMES if surname in pair),surname)
+            db.execute('UPDATE family.children SET last_name=? WHERE id=?',(surname,child['id']))
+        db.execute("INSERT INTO family.metadata VALUES ('restored-partners-v2','applied')")
+    for person in db.execute("SELECT * FROM people WHERE role='person'").fetchall():
+        db.execute('INSERT INTO bank.people VALUES (?,?,?) ON CONFLICT(personas_kods) DO UPDATE SET first_name=excluded.first_name,last_name=excluded.last_name',
+                   (person['personas_kods'],person['first_name'],person['last_name']))
+        if not db.execute('SELECT 1 FROM bank.accounts WHERE personas_kods=?',(person['personas_kods'],)).fetchone():
+            db.execute('INSERT INTO bank.accounts (iban,personas_kods) VALUES (?,?)',(make_iban(person['id']),person['personas_kods']))
+    CASES[4]='Viens bērns, divi vecāki'
+
+
+def order_demo_accounts(db):
+    """Keep primary users 1–4, partner users 5–7, and the administrator 999."""
+    targets = {'120489-90005':5, '210687-90006':6, '140280-90007':7}
+    changes=[]
+    for person in db.execute('SELECT id,personas_kods,role FROM people').fetchall():
+        target=999 if person['role']=='admin' else targets.get(person['personas_kods'],person['id'])
+        if person['id']!=target:
+            changes.append((person['id'],target))
+    if not changes:
+        return
+    db.execute('PRAGMA defer_foreign_keys = ON')
+    def move(old,new):
+        db.execute('UPDATE people SET id=? WHERE id=?',(new,old))
+        for table in ('sessions','messages','child_parents','sick_leaves','contributions','applications'):
+            db.execute(f'UPDATE {table} SET person_id=? WHERE person_id=?',(new,old))
+        db.execute('UPDATE family.children SET mother_id=? WHERE mother_id=?',(new,old))
+        db.execute('UPDATE family.children SET father_id=? WHERE father_id=?',(new,old))
+    for old,new in changes:
+        move(old,-old)
+    for old,new in changes:
+        move(-old,new)
+    if db.execute('PRAGMA foreign_key_check').fetchone():
+        raise ValueError('Demo account ID migration left invalid references')

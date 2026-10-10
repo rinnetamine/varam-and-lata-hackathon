@@ -58,7 +58,7 @@ def main():
                     time.sleep(0.1)
 
             people = sqlite3.connect(db_path).execute("SELECT personas_kods, first_name, last_name FROM people WHERE role = 'person' ORDER BY id").fetchall()
-            check('database seeded with 4 showcase people', len(people) == 4, str(len(people)))
+            check('database seeded with four showcase people and three partners', len(people) == 7, str(len(people)))
             admin_row = sqlite3.connect(db_path).execute("SELECT personas_kods FROM people WHERE role = 'admin'").fetchall()
             check('one demo administrator account is seeded', len(admin_row) == 1)
             code, first, last = people[1]
@@ -91,7 +91,7 @@ def main():
             check('inbox requires authentication', status == 401)
             status, raw = call('/api/messages', token=token)
             inbox = json.loads(raw)
-            check('new user has unread demo mail', status == 200 and inbox['unreadCount'] == 1)
+            check('new user has unread demo mail', status == 200 and inbox['unreadCount'] >= 1)
             message_id = inbox['messages'][0]['id']
             _, other_raw = call('/api/login', 'POST', {'personasKods': people[2][0]})
             other_token = json.loads(other_raw)['token']
@@ -99,27 +99,27 @@ def main():
             check('other user cannot mark this message read', status == 404)
             status, raw = call(f'/api/messages/{message_id}/read', 'POST', token=token)
             read_at = json.loads(raw)['messages'][0]['readAt']
-            check('reading mail clears unread count', status == 200 and json.loads(raw)['unreadCount'] == 0 and read_at is not None)
+            check('reading mail clears unread count', status == 200 and json.loads(raw)['unreadCount'] == inbox['unreadCount'] - 1 and read_at is not None)
             _, raw = call(f'/api/messages/{message_id}/read', 'POST', token=token)
             check('marking read twice preserves timestamp', json.loads(raw)['messages'][0]['readAt'] == read_at)
             _, raw = call('/api/messages', token=token)
-            check('read state persists on reload', json.loads(raw)['unreadCount'] == 0)
+            check('read state persists on reload', json.loads(raw)['unreadCount'] == inbox['unreadCount'] - 1)
             saved = sqlite3.connect(db_path).execute('SELECT read_at FROM messages WHERE id = ?', (message_id,)).fetchone()[0]
             check('read state stored in SQLite', saved == read_at)
             _, raw = call('/api/messages', token=other_token)
-            check('other user retains unread mail', json.loads(raw)['unreadCount'] == 1)
+            check('other user retains unread mail', json.loads(raw)['unreadCount'] >= 1)
 
             status, raw = call('/api/demo/admin')
             registry = json.loads(raw)
             check('demo inspector exposes fictional registries', status == 200 and registry['demoOnly'])
             cases = {p['id']: p for p in registry['people']}
             check('four showcase child counts', [len(cases[i]['children']) for i in (1,2,3,4)] == [0,1,2,1])
-            check('single-parent case has no father', cases[4]['children'][0]['father_id'] is None)
+            check('all children have two distinct parents', all(c['mother_id'] and c['father_id'] and c['mother_id'] != c['father_id'] for c in registry['children']))
             names = {r['name'] for r in json.loads((HERE.parent/'public/data/person-names.json').read_text())['names']}
             from datetime import date
             check('child names use imported PMLP data', all(c['first_name'] in names for c in registry['children']))
             check('child codes match valid birth dates', all(c['personas_kods'][:6] == date.fromisoformat(c['birth_date']).strftime('%d%m%y') for c in registry['children']))
-            check('child inherits father surname or mother fallback', all(c['last_name'] == cases[c['father_id'] or c['mother_id']]['last_name'] for c in registry['children']))
+            check('child inherits father surname or mother fallback', all(c['last_name'] in next((pair for pair in __import__('seed_people').SURNAMES if cases[c['father_id'] or c['mother_id']]['last_name'] in pair), (cases[c['father_id'] or c['mother_id']]['last_name'],)) for c in registry['children']))
             check('mother and father benefit fields seeded', any(b['mother_receiving'] for c in registry['children'] for b in c['benefits']) and any(b['father_receiving'] for c in registry['children'] for b in c['benefits']))
             check('separate registry databases exist', (Path(tmp)/'children.db').exists() and (Path(tmp)/'bank.db').exists())
             wrong_iban = __import__('demo_registry').make_iban(3)
@@ -308,7 +308,7 @@ def main():
             bank = sqlite3.connect(Path(tmp)/'bank.db')
             check('clearing profile keeps mock bank account',bank.execute('SELECT count(*) FROM accounts WHERE iban = ?',(iban,)).fetchone()[0] == 1)
             bank.close()
-            status, _ = call('/api/demo/people/999/clear-iban','POST')
+            status, _ = call('/api/demo/people/999999/clear-iban','POST')
             check('unknown demo person rejected',status == 404)
 
             stored = [row[0] for row in sqlite3.connect(db_path).execute('SELECT token_hash FROM sessions')]
