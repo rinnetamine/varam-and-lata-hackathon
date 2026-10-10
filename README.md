@@ -1,136 +1,189 @@
-# Kopā — e-pakalpojumu prototype
+# Born Digital · Faketvija.lv
 
-A minimal Latvian website exploring how several public services could be combined around one life event. This is a hackathon demo, not an official government portal. All flows are illustrative. A small demo backend checks fictional personas kodi against a database of invented people; there is no real authentication or connection to government systems.
+We are **Born Digital**, a team building this project for the **VARAM un LATA atvērto datu hakatons**. Our idea is to make the first steps after a child’s birth easier: bring relevant public services into one personalised journey, so parents can see what support is available, when to apply and what happens next.
 
-The centrepiece is **Mana VSAA** (`public/vsaa.html`): a dashboard in the Latvija.gov.lv visual style that shows a signed-in demo person's fictional social-insurance situation instead of a service catalogue — child-related benefits with official names, amounts and deadlines, unpaid sick-leave certificates, a contribution gap that calls for NVA registration, reminders, and open-data context for the person's municipality. Benefits become relevant at different times and depend on the family situation. See [docs/design-research.md](docs/design-research.md) for the portal tokens, terminology and benefit rules it follows.
+**Faketvija.lv** is our working prototype of that journey. Inspired by the government portal Latvija.gov.lv, it combines child-related benefits, reminders, applications and messages in one interface. The playful name and visible prototype notices distinguish it from an official service.
 
-## Run with Docker
+> This is a hackathon demonstration. People and family relationships are fictional. Authentication, banking, applications, decisions and email delivery are simulated locally; nothing is submitted to VSAA, eParaksts or another government system.
 
-Install Docker with Docker Compose (Docker Desktop includes both), then run:
+## The problem we address
+
+A newborn brings several administrative tasks. Different benefits have different eligibility conditions, application periods and payment rules, and some can be received by only one parent. Finding the correct service and understanding the next step can take time.
+
+Our prototype starts with the family’s situation rather than a long service catalogue. It shows relevant support now, future steps as a child grows, and the applications already submitted.
+
+## What the project offers
+
+- **Personal overview:** messages, available benefits, deadlines, children and an actionable support roadmap.
+- **Mana VSAA:** child-specific benefit information, application status, reminders and links to official sources. Choosing a child filters the associated information.
+- **Benefit applications:** profile-derived details, a confirmation step, a saved application and an inbox acknowledgement.
+- **Planning tools:** calculators and expandable roadmap previews, including 12- and 24-month scenarios for fixed-rate benefits.
+- **Sick-leave and contribution pages:** separate views of certificates, contribution history and related actions.
+- **Inbox, notifications and history:** persistent messages, read status and recorded activity. A parent can send a child-related notification to the other parent without seeing that parent’s personal information.
+- **Bank-account setup:** checks IBAN format, checksum, existence and ownership against a separate fictional bank registry.
+- **Administrator register:** review, approve or reject applications and send the corresponding decision to the applicant’s inbox.
+- **Presentation tools:** a public demo panel for inspecting fixtures, switching accounts and clearing saved IBANs, plus an animated phone popup showing a fictional newborn-service email.
+- **Latvian and English:** a persistent language preference, responsive layouts and a text-size control.
+
+The six child-related benefits represented are:
+
+| Latvian name | English description |
+| --- | --- |
+| Maternitātes pabalsts | Maternity benefit |
+| Paternitātes pabalsts | Paternity benefit |
+| Bērna piedzimšanas pabalsts | Childbirth benefit |
+| Bērna kopšanas pabalsts | Childcare benefit |
+| Vecāku pabalsts | Parental benefit |
+| Ģimenes valsts pabalsts | Family state benefit |
+
+## Open data and sources
+
+The prototype uses snapshots from Latvia’s open-data portal, **data.gov.lv**:
+
+| Publisher | Data | How we use it |
+| --- | --- | --- |
+| PMLP | First-name statistics | Generate fictional names from gender-separated name lists |
+| Valsts zemes dienests | State Address Register | Assign sample addresses to fictional users and identify municipalities |
+| VSAA | Benefit-recipient statistics | Show municipality-level context |
+| NVA | Vacancy data | Show employment opportunities by municipality |
+
+Names are combined into fictional identities. Surnames, personal codes, contact details, family relationships, account numbers and insurance histories are generated; they are not records of real residents. Building addresses may come from real open data, but the residents assigned to them are invented.
+
+The datasets have individual licence requirements: PMLP/VSAA/NVA snapshots listed in the inventory use CC0; VZD address data uses CC BY 4.0 with attribution. These dataset licences do not constitute a licence for the entire project.
+
+[OPEN_DATA.md](OPEN_DATA.md) records the complete dataset inventory, licences, retrieval dates, local files and transformations. [data/README.md](data/README.md) describes the import workflow. The website’s **Datu avoti un licences** page presents attribution and benefit-specific legal references. [docs/design-research.md](docs/design-research.md) documents design and service research.
+
+## Demo scenarios
+
+The current dataset contains five parent accounts, administrator 999 and six children across three households.
+
+| Account IDs | Scenario |
+| --- | --- |
+| **1–2** | Mother and father with one child born three days before the scenario was seeded |
+| **3–4** | Mother and father with two children; several benefits are already granted |
+| **5** | Single mother with three children |
+| **999** | Administrator with access to the application register |
+
+Each parent has one closed, unpaid B sick-leave record and contribution history. Seeded applications have matching confirmation and decision messages. Dates are fixed when the dataset is seeded; restarting the server does not make the children younger or erase subsequent actions.
+
+The demo panel intentionally exposes fictional fixtures for presentation. It is separate from the administrator register, which requires an admin session. It must not be used with real personal data.
+
+## How it is built
+
+The frontend uses plain **HTML, CSS and JavaScript**. The backend uses the **Python standard library** and **SQLite**, with no Python package installation or frontend build step required.
+
+Three databases separate the portal and simulated registries:
+
+| Database | Contents |
+| --- | --- |
+| `people.db` | Users, hashed sessions, messages, applications, contributions and sick-leave records |
+| `children.db` | Children, birth dates, personal codes, parent links and benefit flags |
+| `bank.db` | Fictional bank customers and accounts |
+
+The backend checks application eligibility against the fictional records and uses database constraints to prevent duplicate applications. Decisions and messages persist. Sessions use random bearer tokens with only their hashes stored in SQLite; logout revokes the token and returns to the homepage.
+
+Docker Compose runs an nginx frontend and a Python API. nginx proxies `/api/` requests to the API container, while a named volume retains database state.
+
+```text
+public/             Website, translations, calculators and bundled data snapshots
+server/             API, benefit rules, registry logic and database seeder
+scripts/            Open-data import tools
+data/              Source metadata, manifests and saved dataset licences
+docs/              Design and service research
+compose.yaml        Frontend/API services and persistent database volume
+CHANGELOG.md        Detailed changes since the previous release
+```
+
+## Scope and limitations
+
+- The interface follows Latvija.gov.lv conventions, but is an independent prototype.
+- Enter only fictional personal codes and test IBANs from the demo panel. Personal-code-only login is not suitable for real authentication.
+- Reminder and email controls create messages inside the prototype inbox; they do not send external email or official e-address messages.
+- Benefit rules are simplified simulations. Estimates use documented assumptions and current modelled rates; they do not confirm entitlement, future rates or payment dates.
+- Family-state forecast previews assume one eligible child. Use the full calculator to explore a recipient’s eligible-child count rather than adding child previews together.
+- The first run of the v4 showcase migration replaces earlier fictional scenarios. Later starts preserve the new records and user actions.
+- The existing `server/test_api.py` needs scenario-fixture updates: it still expects the previous seven-parent dataset. Targeted temporary checks of the new showcase and application lifecycle have passed; the legacy suite is not currently a passing release check.
+
+## Run and present the project
+
+### Option 1: Docker
+
+Install Docker with Docker Compose, then run from the repository root:
 
 ```sh
 docker compose up --build -d
 ```
 
-Open http://localhost:8080/login.html to preview the demo login, then open **Mana VSAA** from the profile. The root page shows the portal landing-page mockup. nginx serves `public/` and proxies `/api/` to the Python demo server in the `api` container; the people database lives in the `people-data` Docker volume.
+Open **[http://localhost:8080/](http://localhost:8080/)**. After changing source files, run the same command again to rebuild the containers.
 
-Stop the website:
+Stop the containers while retaining the database volume:
 
 ```sh
 docker compose down
 ```
 
-After changing files, run `docker compose up --build -d` again to rebuild.
+If another local server already uses port 8080, stop it before starting Docker.
 
-## Develop locally
+### Option 2: Local Python server
 
-The website uses plain HTML, CSS, and JavaScript, with no build tools or package dependencies. The demo server uses only the Python 3 standard library. For a local preview without Docker:
+With Python 3 installed, run from the repository root:
 
 ```sh
 python3 server/app.py
 ```
 
-This serves `public/` and the API at http://127.0.0.1:8080 and creates `server/data/people.db` on first start. A plain static server (`python3 -m http.server`) still shows the pages, but login needs `server/app.py`.
+Open **[http://localhost:8080/](http://localhost:8080/)**. The server serves both the website and API and initialises the local databases in `server/data/`. Stop it with `Ctrl+C`.
 
-## Demo login and sessions
+A static file server alone cannot run login, banking or application functionality.
 
-- `server/seed_people.py` generates 4 fictional Latvian people (name, surname, e-mail on `example.com`, phone, personas kods in the `DDMMYY-XXXXX` format with fictional birth dates and random suffixes). `python3 server/seed_people.py --list` prints them so you can pick a code; `--reset` regenerates them.
-- `POST /api/login` takes `{"personasKods": "..."}`, looks the code up and returns a random bearer token plus the person. Only a SHA-256 hash of the token is stored, and sessions expire after 7 days.
-- `GET /api/me` validates the token; `POST /api/logout` revokes it.
-- `public/auth.js` keeps the token in `localStorage`, so a reload or new tab stays signed in. The profile and services pages redirect to login without a valid session; a rejected token signs the user out, while an unreachable server keeps the cached session.
-- `python3 server/test_api.py` checks the API end to end against a throwaway database, including the VSAA dashboard flows.
+### Suggested presentation flow
 
-A personas kods alone is not a credential in any real system. This works only because the data is fictional; never use it with real people or codes.
+1. Open the homepage phone popup, open Gmail and follow the newborn-service email into the portal.
+2. Open **Demo panelis** and choose a scenario. Copy its personal code for the login flow, or use the quick account-switch button.
+3. If bank setup appears, copy that user’s IBAN from the demo panel and save it.
+4. Explore the profile roadmap, future benefit previews and calculator.
+5. Open **Mana VSAA**, choose a child and submit an available benefit after reviewing the confirmation.
+6. Check the acknowledgement in the applicant’s inbox, then switch to **999** and review or decide the application.
+7. Return to the applicant and check the changed status and decision message. Switch between both parents to demonstrate child-related notifications.
 
-## Mana VSAA dashboard
+### Inspect or reset the demo data
 
-`public/vsaa.html` + `vsaa.js` + `vsaa.css` render `GET /api/vsaa/dashboard` for the signed-in person. The demo database contains five parents and administrator 999 (`python3 server/seed_people.py --list` prints their codes):
+List local accounts and their personal codes:
 
-| IDs | Situation |
-| --- | --- |
-| 1–2 | Mother and father sharing a child born three days before seeding |
-| 3–4 | Mother and father sharing two children; several benefits are already granted |
-| 5 | Single mother with three children |
-| 999 | Administrator application register |
+```sh
+python3 server/seed_people.py --list
+```
 
-Each parent has one closed, unpaid B sick-leave record and contribution history. There are six children across three households. Seeded benefit applications have matching inbox confirmations and decisions.
+To regenerate the fictional dataset, **stop the local server and back up the databases first**. Resetting removes existing sessions, applications and messages:
 
-Actions, all confined to the prototype database:
+```sh
+python3 server/seed_people.py --reset
+python3 server/app.py
+```
 
-- `POST /api/vsaa/apply` — prefilled demo application (name, personas kods, declared address, child or certificate come from fictional prototype databases, not government registers; only the test IBAN and, for vecāku pabalsts, the 13/19-month choice are asked). Saves the demo application and IBAN locally and adds a fictional confirmation to the prototype inbox; nothing is sent to VSAA or the official e-address.
-- `POST /api/vsaa/notify-other-parent` — the other parent's details are never shown (privacy); the demo adds a fictional notification to the other demo user's prototype inbox. No VSAA message is sent.
-- `POST /api/vsaa/profile` — test bank account and the demo-reminder switch. With reminders on, each unclaimed benefit, unpaid certificate and contribution gap is added once to the prototype inbox; no official e-address is contacted.
-- `GET /api/vsaa/vacancies` — NVA open-data vacancies for the person's declared municipality.
-- `GET /api/vsaa/legal` — the benefit rules with their legal sources (public).
+For Docker, list or reset the database inside the API container:
 
-Eligibility is simulated on the server, never trusted from the browser: role (mother/father), the child's age window, the application deadline (one-time benefits are refused after it; monthly benefits stay open with the law's limited back payment), the social-insurance test for maternity, paternity, parental and sickness benefits (contributions in 3 of the last 6 or 6 of the last 24 months, from the demo contribution history), the "one parent per child" rule, the rule that childcare and parental benefit go to the same person, the 12-of-16-months test for unemployment benefit, and IBAN format, checksum and ownership in the mock bank registry. These simplified rules use fictional records and are not an official eligibility determination. For unemployment, the real process requires NVA unemployed status before a separate VSAA benefit application; the demo simulates both steps together. Unique indexes on `applications` make repeated or concurrent submissions collapse into one stored record. Benefit rules and amounts live in `server/benefits.py` with the law, article and VSAA page for each (verified 09.10.2026, see [docs/design-research.md](docs/design-research.md) and the legal section on `public/data-licenses.html`); they are simplified summaries, not eligibility decisions. Dates in the demo scenarios are generated relative to the first server start; run `python3 server/seed_people.py --reset` to regenerate them.
+```sh
+docker compose exec api python3 seed_people.py --db /data/people.db --list
+```
 
-### Administrator inbox
+To reset, stop the services first, then run the seeder in a temporary container using the existing volume:
 
-A demo VSAA administrator account (`role = admin`, personas kods shown in the demo panel; `python3 server/seed_people.py --list` prints it) signs in through the same login page and lands on `public/admin.html`, the application register. `GET /api/admin/applications` reads every persisted application with applicant, child or certificate, status, date and saved details; it answers 401 without a session and 403 for ordinary users. `POST /api/admin/applications/<id>/status` records a simulated decision (`izskatisana`, `pieskirts`, `atteikts`), updates the applicant's demo dashboard and adds a decision message to the prototype inbox. No message is sent to VSAA or the official e-address. The administrator has no personal dashboard or bank account. Decisions have no legal effect.
+```sh
+docker compose stop
+docker compose run --rm api python3 seed_people.py --db /data/people.db --reset
+docker compose up -d
+```
 
-### Language
+Reset commands replace demo data. Local `server/data/` files and the Docker volume are separate stores; resetting one does not reset the other.
 
-One mechanism in `public/translations.js` serves every page: the preference is stored under the localStorage key `faketvijaLanguage` (`lv` or `en`; it is a preference, not a credential). The default is `lv`; a missing, invalid or unreadable value falls back to the default in memory. The script loads synchronously in `<head>`, sets `document.documentElement.lang` before the first paint (hiding the body until the DOM is translated when the stored language is not the default) and keeps the choice across reloads, navigation, login, logout and account switching; a `storage` event synchronises open tabs. Markup carries `data-i18n` / `data-i18n-attr` keys and scripts call `i18n.t(key, params)`; dates and numbers use `i18n.formatDate` / `formatNumber` with the matching locale. System messages in the inbox are stored with a template key and parameters and rendered in the selected language; names, personal codes and IBANs are never translated. Older markup is still covered by the Latvian-text → English map at the top of the file.
+### Refresh open-data snapshots
 
-## Current interface
+The repository already includes the sample snapshots needed for the demo. To re-import data, use the scripts from the repository root:
 
-- `public/index.html` — portal landing-page mockup.
-- `public/login.html` — demo login; enter a personas kods from the demo database to open the profile.
-- `public/profile.html` — demo profile showing the signed-in person's data and a simulated inbox notice about services related to a child's birth.
-- `public/pakalpojumi.html` — illustrative service list opened from the inbox notice.
-- `public/vsaa.html`, `public/vsaa.js`, `public/vsaa.css` — Mana VSAA dashboard (see above).
-- `public/admin.html`, `public/admin.js` — administrator application register (see above).
-- `public/translations.js` — shared language mechanism and message catalogue (see Language).
-- `public/styles.css` and `public/auth.css` — responsive portal and login styles.
-- `public/app.js` — text-size toggle.
-- `public/auth.js` — login request, token storage, session restore, route guarding and log out.
-- `server/` — demo API (`app.py`), VSAA dashboard logic (`vsaa.py`), benefit rules (`benefits.py`) and the fictional people database (SQLite).
-- `docs/design-research.md` — Latvija.gov.lv design tokens, official terminology and benefit rules gathered before building.
-- `Dockerfile`, `nginx.conf`, and `compose.yaml` — Dockerized static hosting plus the demo API.
+```sh
+python3 scripts/import_open_data.py
+python3 scripts/import_person_names.py
+```
 
-This is not government authentication and does not connect to Latvija.gov.lv, eParaksts, or email. Use only the invented personas kodi from the demo database. The profile notice and service descriptions are illustrative and do not confirm eligibility or submit applications.
-
-## Further work
-
-1. Add real service application flows only after verifying official eligibility, deadlines, and requirements.
-2. Integrate address selection and municipality lookup using the imported open data.
-3. Verify the complete flow in Docker once the Docker daemon is running.
-
-## Open data
-
-Import licensed data snapshots with `python3 scripts/import_open_data.py`. See [data/README.md](data/README.md) for sources, licenses, attribution, generated files and limitations. Import before rebuilding Docker to include nationwide address JSON. The small address sample remains available without the bulk import.
-
-Three further CC0 snapshots converted on 09.10.2026 feed the Mana VSAA dashboard and are committed as JSON: `public/data/vsaa-statistics.json` (VSAA recipients per municipality, 12.2025), `public/data/gimenes-valsts-pabalsts.json` (family state benefit recipients, 06.2026) and `public/data/nva-vacancies.json` (NVA vacancies aggregated per municipality, daily CSV). [OPEN_DATA.md](OPEN_DATA.md) is the complete inventory of every dataset, licence, retrieval date, local file and transformation, and separates sourced open data from generated demo data; `public/data-licenses.html` carries the visible attribution and the benefit-rule legal references.
-
-### Demo inbox
-
-SQLite `messages` stores each user's demo notifications, message body, received timestamp and nullable `read_at`. Startup seeds one fictional newborn-service message per user without duplicating it or resetting read status. Authenticated `GET /api/messages` returns only the current user's messages and unread count; `POST /api/messages/<id>/read` saves a read timestamp only for that user's message. Opening mail in the profile marks it read and updates the overview count. No external email is sent or received.
-
-### First-login bank account
-
-Users without an IBAN are directed to `bank-account.html` after login and when entering guarded pages. The authenticated `POST /api/iban` endpoint normalizes and validates a Latvian IBAN's format and MOD-97 checksum, then saves it on that user's record. Subsequent logins open the profile directly; the saved IBAN appears in My data. This does not verify account ownership or make payments. Use only demo IBANs. Existing people receive a nullable IBAN column without resetting records.
-
-### Family showcases and mock bank
-
-- `server/data/people.db`: portal users, sessions, inbox, applications and employment history.
-- `server/data/children.db`: six fictional children, first/last names, birth dates, DDMMYY-XXXXX codes, mother/father references and receiving flags per benefit and parent.
-- `server/data/bank.db`: fictional bank customers keyed by personas kods, their test IBANs and active status. This simulates a bank registry; no external bank is contacted.
-
-Fresh databases and the versioned v4 migration use the six-account showcase above. Children are linked to both parents for users 1–2 and 3–4, and only mother 5 for the single-parent household. The migration replaces earlier fictional showcase records once; subsequent startup preserves user actions and dates. Portal `children` rows retain compatibility IDs for application foreign keys; the separate child registry is authoritative for family details and dashboard reads.
-
-First names are sampled from the imported PMLP **Personu vārdi** CC0 statistics (`python3 scripts/import_person_names.py`). Surnames are inherited from the fictional father, or mother when no father is recorded. Family links, birth dates, identifiers and bank records are fictional. Source metadata and transformation notes are saved; the source/licence page includes attribution.
-
-A **Demo panelis** button appears on every HTML page, including login. It lets you inspect people, children, parent benefit flags and bank records and copy each user's personas kods or test IBAN. This is a read-only public demo inspector, not a production administrator login. Set `DEMO_ADMIN_ENABLED=0` to disable its API. Keep these registries fictional.
-
-Both `/api/iban` and VSAA profile/application forms check the bank registry: the IBAN must exist, be active and belong to the signed-in user's personas kods. Use the user's IBAN from the demo panel; an arbitrary checksum-valid account is rejected. Existing profile IBANs that fail this check are cleared once during migration, so those users are asked again on next login.
-
-The separate registries are created beside the configured `DB_PATH`, inside the existing persistent Docker volume. Docker mounts the tracked name snapshot read-only. Startup is idempotent and retains family/payment records; `--reset` explicitly clears all demo registries. Local pre-migration backups are excluded from Git.
-
-The demo family registry includes three additional partner accounts. Child 1 belongs to Kristīne Kļaviņa and Edgars Kļaviņš; children 2 and 4 belong to the Purviņš/Purviņa couple; child 3 belongs to single mother Dace Grīnberga. Marta Rozīte and her partner have no children. Partners use imported PMLP first names and generated family surnames/contact details. The additive registry migration preserves existing applications, sessions and saved bank accounts.
-
-### Parent privacy and adulthood
-
-Ordinary user dashboards omit other-parent identity, role, registration status and benefit records. Shared notifications contain only the child’s name and birth date and require a child younger than 18; existing shared messages are sanitized. The clearly labeled demo inspector and demo IBAN reset endpoints remain public for presentation purposes and expose fictional fixtures. The ordinary profile and VSAA APIs omit other-parent information; the real application administrator endpoints still require the admin role. A generic notification acknowledgement does not disclose whether another parent is registered.
-
-At age 18, the child is removed from the active family registry and receives an ordinary citizen record using the same name, personal code and birth date, with generated demo contact and bank data. Historical application records remain. Migration runs at startup, on API requests, and every minute while the server runs; an open VSAA page refreshes at the date change or when revisited. This is idempotent and uses the server’s date.
+Review source metadata and licence requirements in [OPEN_DATA.md](OPEN_DATA.md) before distributing updated snapshots. Rebuild the Docker frontend after updating bundled data.
