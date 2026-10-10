@@ -56,7 +56,7 @@ def main():
         db_path = os.path.join(tmp, 'test.db')
         env = {**os.environ, 'DB_PATH': db_path, 'PORT': str(PORT)}
         server = subprocess.Popen([sys.executable, str(HERE / 'app.py')], env=env,
-                                  stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:
             for _ in range(50):
                 try:
@@ -286,7 +286,7 @@ def main():
             token = switched
             # Restart the server with the same database: everything must survive.
             server.terminate(); server.wait(timeout=5)
-            server = subprocess.Popen([sys.executable, str(HERE / 'app.py')], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            server = subprocess.Popen([sys.executable, str(HERE / 'app.py')], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             for _ in range(50):
                 try:
                     call('/api/me'); break
