@@ -1,0 +1,27 @@
+/* Sources use the same portal layout, colour tokens and readable card spacing. */
+.sources-sidebar-title { color: var(--gov-accent); font-weight: 700; padding: 8px 0 24px; }
+.sources-page .profile-content { min-width: 0; }
+.sources-page .profile-menu a { min-height: 62px; }
+.sources-page section { margin-bottom: 44px; scroll-margin-top: 24px; }
+.sources-page h2 { margin-bottom: 18px; }
+.source-intro-note, .legal-limits { background: var(--gov-panel); border-left: 4px solid var(--gov-outline); padding: 16px 20px; color: var(--gov-muted); font-size: 14px; line-height: 1.6; }
+.legal-benefit { border: 1px solid var(--gov-line); border-radius: 6px; margin: 16px 0; background: #fff; }
+.legal-benefit summary { padding: 20px 24px; font-weight: 700; font-size: 19px; cursor: pointer; background: var(--gov-panel); border-radius: 6px; }
+.source-rule-body { padding: 4px 24px 24px; }
+.legal-service { color: var(--gov-muted); font-size: 14px; }
+.source-rule-body dl { display: grid; gap: 12px; margin: 20px 0; }
+.source-rule-body dl > div { display: grid; grid-template-columns: minmax(90px, .3fr) minmax(0, 1fr); gap: 16px; }
+.source-rule-body dt { font-weight: 700; }
+.source-rule-body dd { margin: 0; }
+.legal-sources { padding-left: 20px; font-size: 14px; line-height: 1.75; }
+.legal-sources li { margin-bottom: 12px; }
+.legal-type { display: inline-block; padding: 2px 8px; margin: 3px; border-radius: 12px; background: var(--gov-info-bg); font-style: normal; font-size: 12px; }
+.legal-note { color: var(--gov-muted); }
+.source-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.source-card, #calculator-sources { border: 1px solid var(--gov-line); border-radius: 6px; padding: 24px; background: #fff; }
+.source-card p, .source-card ul { font-size: 15px; line-height: 1.75; }
+.sources-page a, .sources-page code { overflow-wrap: anywhere; }
+.sources-page code { font-size: .9em; background: var(--gov-panel); padding: 2px 4px; }
+#calculator-sources ul { line-height: 1.8; padding-left: 20px; }
+.legal-benefit:target { border-color: var(--gov-outline); }
+@media(max-width:700px) { .source-card, #calculator-sources, .source-rule-body { padding: 18px; } .source-rule-body dl > div { grid-template-columns: minmax(0, 1fr); gap: 4px; } .legal-benefit summary { padding: 18px; } }

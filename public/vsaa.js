@@ -5,7 +5,8 @@
   const $ = selector => document.querySelector(selector);
   const status = $('#page-status');
   let dashboard = null;
-  let selectedChild = 'all';
+  const requestedChild = Number(new URLSearchParams(location.search).get('child'));
+  let selectedChild = Number.isInteger(requestedChild) && requestedChild > 0 ? requestedChild : 'all';
   const pendingChildNotifications = new Set();
   const childNotificationFeedback = new Map();
 
@@ -56,7 +57,8 @@
 
   // --- Summary tiles -------------------------------------------------------------------
   function renderSummary(summary) {
-    const tiles = [['#berni', summary.available, 'tile.available'], ['#atgadinajumi', summary.urgent, 'tile.urgent', 'urgent'], ['#slimiba', summary.unpaidSickLeaves, 'tile.sick'], ['#pieteikumi', summary.applications, 'tile.applications']];
+    if (!$('#summary')) return;
+    const tiles = [['vsaa.html#berni', summary.available, 'tile.available'], ['#atgadinajumi', summary.urgent, 'tile.urgent', 'urgent'], ['sick-leave.html', summary.unpaidSickLeaves, 'tile.sick'], ['#pieteikumi', summary.applications, 'tile.applications']];
     $('#summary').replaceChildren(...tiles.map(([href, count, key, extra]) => el('a', {class: `status-tile ${extra && count ? extra : ''}`, href},
       el('span', {class: `count ${count ? '' : 'zero'}`, text: String(count), 'data-no-translate': true}), el('span', {class: 'label', i18n: key}))));
   }
@@ -153,6 +155,7 @@
   }
 
   function renderChildren(children) {
+    if (!$('#children')) return;
     const root = $('#children');
     const picker = $('#child-picker');
     if (!children.length) {
@@ -163,22 +166,17 @@
     picker.hidden = false;
     if (selectedChild !== 'all' && !children.some(child => child.id === selectedChild)) selectedChild = 'all';
     const options = [['all', t('children.all')], ...children.map(child => [child.id, `${child.firstName} ${child.lastName || ''}`.trim()])];
-    picker.replaceChildren(...options.map(([value, label]) => el('button', {type: 'button', class: `picker-btn ${String(selectedChild) === String(value) ? 'active' : ''}`, 'aria-pressed': String(String(selectedChild) === String(value)), 'data-no-translate': value !== 'all' || null, ...(value === 'all' ? {i18n: 'children.all'} : {text: label}), onclick: () => { selectedChild = value === 'all' ? 'all' : Number(value); renderChildren(dashboard.children); applyLanguage(); $('#child-picker').querySelector('[aria-pressed="true"]')?.focus(); }})));
+    picker.replaceChildren(...options.map(([value, label]) => el('button', {type: 'button', class: `picker-btn ${String(selectedChild) === String(value) ? 'active' : ''}`, 'aria-pressed': String(String(selectedChild) === String(value)), 'data-no-translate': value !== 'all' || null, ...(value === 'all' ? {i18n: 'children.all'} : {text: label}), onclick: () => { selectedChild = value === 'all' ? 'all' : Number(value); renderChildren(dashboard.children); renderApplications(dashboard.applications.filter(app => app.childId && (selectedChild === 'all' || app.childId === selectedChild))); applyLanguage(); $('#child-picker').querySelector('[aria-pressed="true"]')?.focus(); }})));
     for (const [index, child] of children.entries()) {
       picker.children[index + 1].append(el('small', {class: 'child-sidebar-code', text: child.personasKods, 'data-no-translate': true}));
     }
     root.replaceChildren();
-    if (selectedChild === 'all' && children.length > 1) {
-      root.append(el('div', {class: 'gov-panel muted'}, el('h3', {i18n: 'children.overview'}), el('ul', {class: 'overview-list'}, children.map(child => {
-        const counts = {available: child.benefits.filter(b => ['pieejams', 'steidzami'].includes(b.status)).length, applied: child.benefits.filter(b => ['iesniegts', 'izskatisana'].includes(b.status)).length, granted: child.benefits.filter(b => b.status === 'pieskirts').length};
-        return el('li', {}, el('a', {href: '#berni', onclick: event => { event.preventDefault(); selectedChild = child.id; renderChildren(dashboard.children); applyLanguage(); }, i18n: 'children.overviewOf', i18nParams: {child: `${child.firstName} ${child.lastName || ''}`.trim(), ...counts}}));
-      }))));
-    }
     root.append(...children.filter(child => selectedChild === 'all' || child.id === selectedChild).map(childCard));
   }
 
   // --- Sick leaves ----------------------------------------------------------------------
   function renderSickLeaves(leaves) {
+    if (!$('#sick-leaves')) return;
     const root = $('#sick-leaves');
     if (!leaves.length) { root.replaceChildren(el('p', {class: 'empty', i18n: 'sick.empty'})); return; }
     root.replaceChildren(...leaves.map(leave => {
@@ -195,6 +193,7 @@
 
   // --- Employment, contributions and vacancies ------------------------------------------
   function renderEmployment(employment) {
+    if (!$('#employment')) return;
     const root = $('#employment');
     const headline = {nodarbinats: ['work.regular', {}], iemaksas_partrauktas: ['work.gap', {gap: employment.gapMonths}], bezdarbnieks: ['work.registered', {}]}[employment.status];
     root.replaceChildren(el('h3', {i18n: headline[0], i18nParams: headline[1]}));
@@ -216,6 +215,7 @@
   }
 
   function renderVacancies(data) {
+    if (!$('#vacancies')) return;
     const root = $('#vacancies');
     root.replaceChildren(el('h3', {i18n: 'vac.title', i18nParams: {municipality: data.municipality || 'Latvija'}}));
     root.append(el('p', {style: 'margin:6px 0 0;font-size:14px', i18n: 'vac.count', i18nParams: {count: data.count, total: data.total, date: fmtDate(data.retrievedAt)}}));
@@ -293,6 +293,7 @@
 
   // --- Open-data statistics for the person's municipality -------------------------------
   async function renderStatistics(municipality) {
+    if (!$('#statistics')) return;
     const root = $('#statistics');
     try {
       const [vsaa, gvp] = await Promise.all(['data/vsaa-statistics.json', 'data/gimenes-valsts-pabalsts.json'].map(url => fetch(url).then(r => r.json())));
@@ -395,13 +396,13 @@
   }
 
   // --- Profile alert and reminder toggle ---------------------------------------------------
-  $('#iban-form').addEventListener('submit', async event => {
+  $('#iban-form')?.addEventListener('submit', async event => {
     event.preventDefault();
     setStatus('profile.saving');
     try { const data = await request('/api/vsaa/profile', 'POST', {iban: $('#iban-input').value}); render(data.dashboard); setStatus('profile.saved'); }
     catch (error) { setStatus(error.code && MESSAGES.lv[`err.${error.code}`] ? `err.${error.code}` : 'err.ibanSave'); $('#iban-input').focus(); }
   });
-  $('#reminders-toggle').addEventListener('change', async event => {
+  $('#reminders-toggle')?.addEventListener('change', async event => {
     const enabled = event.target.checked;
     try { const data = await request('/api/vsaa/profile', 'POST', {remindersEnabled: enabled}); render(data.dashboard); setStatus(enabled ? (data.remindersDelivered ? 'rem.onSent' : 'rem.on') : 'rem.off', {count: data.remindersDelivered}); }
     catch { event.target.checked = !enabled; setStatus('rem.saveFailed'); }
@@ -410,26 +411,28 @@
   function render(data) {
     dashboard = data;
     renderSummary(data.summary);
-    $('#profile-alert').hidden = data.person.profileComplete;
+    if ($('#profile-alert')) $('#profile-alert').hidden = data.person.profileComplete;
     renderChildren(data.children);
     renderSickLeaves(data.sickLeaves);
     renderEmployment(data.employment);
-    renderReminders(data.reminders, data.person);
-    renderApplications(data.applications);
+    const view = document.body.dataset.vsaaView;
+    const belongs = code => view === 'slimiba' ? code === 'slimibas' : view === 'darbs' ? code === 'bezdarbnieka' : view === 'children' ? ['maternitates', 'paternitates', 'berna_piedzimsanas', 'berna_kopsanas', 'vecaku', 'gimenes_valsts'].includes(code) : true;
+    renderReminders(data.reminders.filter(item => !view || (item.benefitCode ? belongs(item.benefitCode) : view === 'darbs' && item.template === 'reminder_nva')), data.person);
+    renderApplications(data.applications.filter(app => belongs(app.benefitCode) && (view !== 'children' || selectedChild === 'all' || app.childId === selectedChild)));
     const disclaimer = $('#disclaimer');
     disclaimer.dataset.i18nParams = JSON.stringify({date: fmtDate(data.verifiedAt)});
     applyLanguage();
   }
   // Re-render locale-dependent values (dates, money) when the language changes.
-  i18n.onChange(() => { if (dashboard) { render(dashboard); request('/api/vsaa/vacancies').then(renderVacancies).then(() => applyLanguage()).catch(() => {}); renderStatistics(dashboard.person.municipality); } });
+  i18n.onChange(() => { if (dashboard) { render(dashboard); $('#vacancies') && request('/api/vsaa/vacancies').then(renderVacancies).then(() => applyLanguage()).catch(() => {}); if ($('#statistics')) renderStatistics(dashboard.person.municipality); } });
 
   async function load() {
     try {
       const data = await request('/api/vsaa/dashboard');
       render(data.dashboard);
       setStatus(data.remindersDelivered ? 'rem.delivered' : '', {count: data.remindersDelivered});
-      request('/api/vsaa/vacancies').then(renderVacancies).then(() => applyLanguage()).catch(() => $('#vacancies').replaceChildren(el('p', {class: 'empty', i18n: 'vac.failed'})));
-      renderStatistics(data.dashboard.person.municipality);
+      $('#vacancies') && request('/api/vsaa/vacancies').then(renderVacancies).then(() => applyLanguage()).catch(() => $('#vacancies')?.replaceChildren(el('p', {class: 'empty', i18n: 'vac.failed'})));
+      if ($('#statistics')) renderStatistics(data.dashboard.person.municipality);
     } catch (error) {
       if (error.code === 'forbidden') { location.replace('admin.html'); return; }
       if (error.message !== 'unauthorized') setStatus('err.load');

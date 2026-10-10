@@ -1,6 +1,6 @@
 // Profile sections and a fictional inbox; no external messages are sent.
 (() => {
-  const titles = {overview:'Laipni gaidīts Mana Faketvija.lv', data:'Mani dati reģistros', mail:'Saņemtie ziņojumi', history:'Veikto darbību vēsture', notifications:'Paziņojumi'};
+  const titles = {overview:'Mana Faketvija.lv', data:'Mani dati reģistros', mail:'Saņemtie ziņojumi', history:'Veikto darbību vēsture', notifications:'Paziņojumi'};
   function showSection() {
     const key = location.hash.slice(1);
     const section = Object.hasOwn(titles, key) ? key : 'overview';
@@ -21,7 +21,11 @@
     try { return JSON.parse(localStorage.getItem('faketvijaSession'))?.token; } catch { return null; }
   }
   async function request(path, method = 'GET') {
-    const response = await fetch(path, {method, headers: {Authorization: `Bearer ${token() || ''}`}});
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    let response;
+    try { response = await fetch(path, {method, signal: controller.signal, headers: {Authorization: `Bearer ${token() || ''}`}}); }
+    finally { clearTimeout(timeout); }
     if (response.status === 401) {
       localStorage.removeItem('faketvijaSession');
       location.replace('login.html');
@@ -32,13 +36,70 @@
   }
   function counts(data) {
     messages = data.messages;
-    document.querySelector('.unread-number').replaceChildren(document.createTextNode(String(data.unreadCount) + ' '));
-    const badge = document.createElement('span');
-    setTranslatedStatus(badge, '', data.unreadCount ? 'inbox.unread' : 'inbox.read');
-    document.querySelector('.unread-number').append(badge);
-    setTranslatedStatus(document.querySelector('#notification-count'), '', data.unreadCount ? 'inbox.hasUnread' : 'inbox.noUnread');
+    inboxLoaded = true;
+    renderOverview();
     setTranslatedStatus(document.querySelector('#notification-read-status'), '', data.unreadCount ? 'inbox.unread' : 'inbox.read');
   }
+  let overviewDashboard = null;
+  let inboxLoaded = false;
+  const node = (tag, text, className) => {
+    const element = document.createElement(tag);
+    if (text != null) element.textContent = text;
+    if (className) element.className = className;
+    return element;
+  };
+  function overviewLink(href, label) { const link = node('a', label, 'outline-link'); link.href = href; return link; }
+  function renderOverview() {
+    const unread = document.querySelector('#overview-unread');
+    if (!unread) return;
+    unread.textContent = inboxLoaded ? String(messages.filter(message => !message.readAt).length) : '—';
+    const recent = document.querySelector('#overview-recent'); recent.replaceChildren();
+    const events = messages.flatMap(message => {
+      const event = {date: message.receivedAt, title: localized(message).subject, key: message.template === 'application_received' ? 'home.submitted' : message.template === 'decision' ? 'home.decision' : 'home.message'};
+      return message.readAt ? [event, {date: new Date(message.readAt * 1000).toISOString(), title: event.title, key: 'home.read'}] : [event];
+    }).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+    if (!events.length) recent.append(node('li', t(inboxLoaded ? 'home.noHistory' : 'common.loading'), 'overview-empty'));
+    for (const event of events) {
+      const item = node('li', null, 'overview-event');
+      const date = node('time', i18n.formatDate(event.date)); date.dateTime = event.date;
+      item.append(node('strong', t(event.key)), node('p', event.title), date); recent.append(item);
+    }
+    const data = overviewDashboard;
+    if (!data) return;
+    for (const [id, value] of [['available', data.summary.available], ['applications', data.summary.applications], ['deadlines', data.summary.urgent]]) {
+      const target = document.querySelector(`#overview-${id}`); target.textContent = String(value); target.classList.toggle('is-zero', !value);
+    }
+    const actions = document.querySelector('#overview-actions'); actions.replaceChildren();
+    const addAction = (title, detail, href, urgent = false) => {
+      const card = node('article', null, `overview-action${urgent ? ' is-urgent' : ''}`);
+      const copy = node('div'); copy.append(node('h3', title), node('p', detail));
+      card.append(copy, overviewLink(href, t('home.open'))); actions.append(card);
+    };
+    if (!data.person.profileComplete) addAction(t('home.addAccount'), t('home.accountHelp'), 'bank-account.html', true);
+    const pending = data.children.flatMap(child => child.benefits.filter(benefit => ['pieejams', 'steidzami'].includes(benefit.status)).map(benefit => ({child, benefit})));
+    pending.sort((a,b) => (a.benefit.daysLeft ?? Infinity) - (b.benefit.daysLeft ?? Infinity));
+    for (const {child, benefit} of pending.slice(0, 3)) {
+      addAction(`${t(`benefit.${benefit.code}`)} · ${child.firstName} ${child.lastName}`, benefit.deadline ? t('home.due', {date: i18n.formatDate(benefit.deadline)}) : t('home.availableHelp'), `vsaa.html?child=${child.id}#berni`, benefit.status === 'steidzami');
+    }
+    if (data.summary.unpaidSickLeaves) addAction(t('sick.title'), t('overview.sick', {count: data.summary.unpaidSickLeaves}), 'sick-leave.html');
+    if (data.employment.status === 'iemaksas_partrauktas') addAction(t('home.gap'), t('home.gapHelp'), 'contributions.html');
+    if (!actions.children.length) actions.append(node('p', t('home.noActions'), 'overview-empty'));
+    const children = document.querySelector('#overview-children'); children.replaceChildren();
+    if (!data.children.length) children.append(node('p', t('home.noChildren'), 'overview-empty'));
+    for (const child of data.children) {
+      const card = node('article', null, 'overview-child');
+      const birth = new Date(child.birthDate), today = new Date(data.today);
+      const months = Math.max(0, (today.getUTCFullYear() - birth.getUTCFullYear()) * 12 + today.getUTCMonth() - birth.getUTCMonth() - (today.getUTCDate() < birth.getUTCDate() ? 1 : 0));
+      const available = child.benefits.filter(benefit => ['pieejams', 'steidzami'].includes(benefit.status)).length;
+      card.append(node('h3', `${child.firstName} ${child.lastName}`), node('p', `${i18n.formatDate(child.birthDate)} · ${t(months < 12 ? 'home.months' : 'home.years', {count: months < 12 ? months : Math.floor(months / 12)})}`, 'overview-muted'), node('p', `${t('common.personalCode')}: ${child.personasKods}`, 'overview-child-code'), node('span', t('home.childAvailable', {count: available}), 'overview-child-count'), overviewLink(`vsaa.html?child=${child.id}#berni`, t('home.childBenefits')));
+      children.append(card);
+    }
+    const person = document.querySelector('#overview-person'); person.replaceChildren();
+    for (const [label, value] of [['common.municipality', data.person.municipality], ['home.account', data.person.ibanMasked]]) {
+      const row = node('div'); row.append(node('dt', t(label)), node('dd', value || t('common.noData'))); person.append(row);
+    }
+  }
+
   function filter() {
     const query = search.value.trim().toLocaleLowerCase();
     let visible = 0;
@@ -171,29 +232,23 @@
     try {
       const data = await request('/api/messages');
       counts(data); render(); setTranslatedStatus(status, '');
-    } catch { setTranslatedStatus(status, '', 'inbox.loadFailed'); }
+    } catch { setTranslatedStatus(status, '', 'inbox.loadFailed'); document.querySelector('#overview-unread').textContent = '—'; document.querySelector('#overview-recent').textContent = t('inbox.loadFailed'); }
   }
   async function loadVsaaSummary() {
-    const target = document.querySelector('#vsaa-summary');
-    if (!target) return;
     try {
       const {dashboard} = await request('/api/vsaa/dashboard');
-      const describe = () => {
-        const parts = [];
-        if (dashboard.summary.available) parts.push(t('overview.available', {count: dashboard.summary.available}));
-        if (dashboard.summary.unpaidSickLeaves) parts.push(t('overview.sick', {count: dashboard.summary.unpaidSickLeaves}));
-        if (dashboard.employment.status === 'iemaksas_partrauktas') parts.push(t('overview.gap'));
-        if (dashboard.summary.urgent) parts.push(t('overview.urgent', {count: dashboard.summary.urgent}));
-        target.setAttribute('data-no-translate', '');
-        target.textContent = parts.length ? t('overview.summary', {parts: parts.join(' · ')}) : t('overview.calm');
-      };
-      describe();
-      i18n.onChange(describe);
-    } catch {}
+      overviewDashboard = dashboard;
+      renderOverview();
+    } catch (error) {
+      if (error.message !== 'unauthorized') {
+        document.querySelector('#overview-actions').textContent = t('home.failed');
+        document.querySelector('#overview-children').textContent = t('home.failed');
+      }
+    }
   }
-  i18n.onChange(() => { if (messages.length) render(); });
+  i18n.onChange(() => { render(); renderOverview(); });
   loadVsaaSummary();
   search.addEventListener('input', filter);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { load(); loadVsaaSummary(); } });
   load();
 })();

@@ -238,3 +238,25 @@
 .calculator-amount { display: block; font-size: clamp(24px, 3vw, 36px); overflow-wrap: anywhere; }
 .calculator-links { display: flex; flex-wrap: wrap; gap: 12px 24px; }
 @media(max-width:700px) { .calculator-form { grid-template-columns: minmax(0, 1fr); } }
+
+.guidance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 20px 0; }
+.guidance-grid .gov-panel { margin: 0; }
+.guidance-detail { border: 1px solid var(--gov-line); border-radius: 6px; background: var(--gov-panel); margin: 12px 0; padding: 18px 22px; }
+.guidance-detail summary { cursor: pointer; font-weight: 700; }
+.guidance-detail p { margin-bottom: 10px; }
+.guidance-steps { padding-left: 24px; line-height: 1.6; }
+.guidance-steps li { padding: 6px 0 6px 6px; }
+.guidance-links { display: flex; flex-wrap: wrap; gap: 16px 24px; margin-top: 20px; }
+@media(max-width:700px) { .guidance-grid { grid-template-columns: minmax(0, 1fr); } }
+/* Benefits pages share the profile overview's restrained card treatment. */
+.benefits-page-links{display:flex;flex-wrap:wrap;gap:12px 24px;margin:0 0 24px;padding-bottom:18px;border-bottom:1px solid var(--gov-line)}
+.benefits-page-links a{font-size:14px;font-weight:500}
+.vsaa-page[data-vsaa-view=children] .child-card{border-color:#d2e1f3;border-radius:6px;box-shadow:none}
+.vsaa-page[data-vsaa-view=children] .child-card>header{background:#f7f9fc;padding:22px}
+.vsaa-page[data-vsaa-view=children] .benefit .official{display:none}
+.vsaa-page[data-vsaa-view=children] .child-card>footer{background:#f7f9fc;padding:22px}
+.vsaa-page[data-vsaa-view=children] .vsaa-section>header h2{font-size:22px}
+.vsaa-page[data-vsaa-view=children] .section-intro{font-size:14px}
+
+.vsaa-page[data-vsaa-view=children] .profile-heading { min-height: var(--profile-top); }
+.vsaa-page[data-vsaa-view=children] .benefits-intro { margin: 24px 0 18px; }
