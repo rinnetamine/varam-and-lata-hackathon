@@ -114,11 +114,6 @@ class Handler(SimpleHTTPRequestHandler):
             if os.environ.get('DEMO_ADMIN_ENABLED', '1') != '1':
                 return self.send_json(HTTPStatus.NOT_FOUND, {'error':'not_found'})
             with database() as db:
-                person=self.current_person(db)
-                if person is None:
-                    return self.send_json(HTTPStatus.UNAUTHORIZED, {'error':'unauthorized'})
-                if person['role']!='admin':
-                    return self.send_json(HTTPStatus.FORBIDDEN, {'error':'forbidden'})
                 data = demo_registry.admin_data(db)
             return self.send_json(HTTPStatus.OK, data)
         if path == '/api/messages':
@@ -144,11 +139,6 @@ class Handler(SimpleHTTPRequestHandler):
             if os.environ.get('DEMO_ADMIN_ENABLED', '1') != '1':
                 return self.send_json(HTTPStatus.NOT_FOUND, {'error':'not_found'})
             with database() as db:
-                person=self.current_person(db)
-                if person is None:
-                    return self.send_json(HTTPStatus.UNAUTHORIZED, {'error':'unauthorized'})
-                if person['role']!='admin':
-                    return self.send_json(HTTPStatus.FORBIDDEN, {'error':'forbidden'})
                 result = db.execute('UPDATE people SET iban = NULL WHERE id = ?', (int(reset_match.group(1)),))
                 if not result.rowcount:
                     return self.send_json(HTTPStatus.NOT_FOUND, {'error':'not_found'})

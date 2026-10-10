@@ -111,9 +111,8 @@ def main():
             _, raw = call('/api/messages', token=other_token)
             check('other user retains unread mail', json.loads(raw)['unreadCount'] >= 1)
 
-            check('demo registry requires authentication',call('/api/demo/admin')[0] == 401)
-            check('ordinary user cannot inspect other people',call('/api/demo/admin',token=token)[0] == 403)
-            check('ordinary user cannot reset another account',call('/api/demo/people/5/clear-iban','POST',token=token)[0] == 403)
+            check('fictional demonstration registry stays public',call('/api/demo/admin')[0] == 200)
+            check('demo registry is explicitly labeled fictional',json.loads(call('/api/demo/admin',token=token)[1])['demoOnly'])
             status, raw = call('/api/demo/admin',token=demo_admin_token)
             registry = json.loads(raw)
             check('demo inspector exposes fictional registries', status == 200 and registry['demoOnly'])

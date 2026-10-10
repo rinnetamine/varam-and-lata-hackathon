@@ -1,16 +1,11 @@
-// Administrator-only inspector for fictional demo registries.
+// Public demonstration inspector for fictional data; separate from user-facing services.
 // Labels come from i18n.t('demo.*') and the panel re-renders when the language changes.
 (() => {
-  const stylesheet = document.createElement('link'); stylesheet.rel = 'stylesheet'; stylesheet.href = 'demo-admin.css?v=panel-layout-7'; document.head.append(stylesheet);
+  const stylesheet = document.createElement('link'); stylesheet.rel = 'stylesheet'; stylesheet.href = 'demo-admin.css?v=public-demo-8'; document.head.append(stylesheet);
   const node = (tag, text, className) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (className) e.className = className; return e; };
   const keyed = (tag, key, className) => { const e = node(tag, t(key), className); e.dataset.i18n = key; return e; };
   const launch = keyed('button', 'demo.launch', 'demo-launch'); launch.type = 'button'; document.body.append(launch);
   function adminToken(){try{return JSON.parse(localStorage.getItem('faketvijaSession'))?.token || '';}catch{return '';}}
-  function updateAccess(){
-    try{launch.hidden=JSON.parse(localStorage.getItem('faketvijaSession'))?.person?.role !== 'admin';}catch{launch.hidden=true;}
-    if(launch.hidden && dialog.open){dialog.close();people=[];content.replaceChildren();select.replaceChildren();}
-  }
-  window.addEventListener('storage',updateAccess);
   const dialog = node('dialog', null, 'demo-inspector'); dialog.setAttribute('data-no-translate', ''); dialog.setAttribute('aria-labelledby','demo-inspector-title');
   const header = node('header'); const title=keyed('h2','demo.title');title.id='demo-inspector-title';header.append(title);
   const close = node('button', '×', 'demo-close'); close.type = 'button'; close.dataset.i18nAttr = 'aria-label:common.close'; close.setAttribute('aria-label', t('common.close')); close.onclick = () => dialog.close(); header.append(close);
@@ -20,8 +15,7 @@
   const content = node('div', null, 'demo-record'); const status = node('p'); status.setAttribute('role', 'status');
   status.className='demo-status'; dialog.append(header, intro, search, label, content, status); document.body.append(dialog);
   let people = [];
-  updateAccess();
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateAccess();});
+
   const selectionKey = 'faketvijaDemoSelectedUser';
   let selectedCode = null;
   try { selectedCode = localStorage.getItem(selectionKey); } catch {}
@@ -70,6 +64,6 @@
   }
   function options() { const selected = people.find(p => p.personas_kods === selectedCode)?.id?.toString() || select.value; select.replaceChildren(); const query = search.value.trim().toLocaleLowerCase(); for (const p of people) { if (!`${p.first_name} ${p.last_name} ${p.personas_kods}`.toLocaleLowerCase().includes(query)) continue; const option = node('option', `${p.id}. ${p.first_name} ${p.last_name} · ${p.scenario}`); option.value = p.id; select.append(option); } if ([...select.options].some(o => o.value === selected)) select.value = selected; render(); }
   select.onchange = rememberSelection; search.oninput = options;
-  launch.onclick = async () => { updateAccess();if(launch.hidden)return;people=[];select.replaceChildren();content.replaceChildren();search.value = ''; dialog.showModal(); status.textContent = t('demo.loading'); try { const response = await fetch('/api/demo/admin',{headers:{Authorization:`Bearer ${adminToken()}`}}); if (!response.ok) throw new Error(); people = (await response.json()).people; options(); status.textContent = ''; } catch { status.textContent = t('demo.unavailable'); } };
+  launch.onclick = async () => {people=[];select.replaceChildren();content.replaceChildren();search.value = ''; dialog.showModal(); status.textContent = t('demo.loading'); try { const response = await fetch('/api/demo/admin',{headers:{Authorization:`Bearer ${adminToken()}`}}); if (!response.ok) throw new Error(); people = (await response.json()).people; options(); status.textContent = ''; } catch { status.textContent = t('demo.unavailable'); } };
   i18n.onChange(() => { if (people.length) options(); });
 })();
