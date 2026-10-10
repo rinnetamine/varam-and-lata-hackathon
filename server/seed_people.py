@@ -297,11 +297,15 @@ def ensure_seeded(connection):
     if connection.execute('SELECT COUNT(*) FROM people').fetchone()[0] == 0:
         seed(connection)
     ensure_admin(connection)
-    seed_vsaa_cases(connection)
     demo_registry.seed_registries(connection)
     with connection:
         demo_registry.order_demo_accounts(connection)
-        from vsaa import seed_application_messages
+        demo_registry.seed_household_showcase(connection)
+    seed_vsaa_cases(connection)
+    with connection:
+        demo_registry.promote_adult_children(connection)
+        from vsaa import seed_application_messages, sanitize_shared_messages
+        sanitize_shared_messages(connection)
         seed_application_messages(connection)
 
 

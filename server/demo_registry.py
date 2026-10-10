@@ -169,3 +169,64 @@ def order_demo_accounts(db):
         move(-old,new)
     if db.execute('PRAGMA foreign_key_check').fetchone():
         raise ValueError('Demo account ID migration left invalid references')
+
+
+def seed_household_showcase(db, today=None):
+    """Four distinct households: zero, one, two children and a single mother."""
+    today=today or date.today()
+    if not db.execute("SELECT 1 FROM family.metadata WHERE key='household-showcase-v3'").fetchone():
+        names=json.loads(NAME_FILE.read_text())['names']
+        female_names=[n['name'] for n in names if n['gender']=='SIEVIETE']
+        db.execute("UPDATE people SET last_name='Kļaviņa' WHERE id=2")
+        db.execute("UPDATE people SET last_name='Kļaviņš',address=(SELECT address FROM people WHERE id=2) WHERE id=5")
+        db.execute('UPDATE people SET first_name=? WHERE id=6',(female_names[12],))
+        # Move the existing one-child household's father applications and messages together.
+        for app in db.execute('SELECT id FROM applications WHERE child_id=1 AND person_id=3').fetchall():
+            db.execute('UPDATE messages SET person_id=5 WHERE person_id=3 AND (seed_key=? OR seed_key LIKE ?)',(f'application-{app["id"]}',f'decision-{app["id"]}-%'))
+        db.execute('UPDATE applications SET person_id=5 WHERE child_id=1 AND person_id=3')
+        db.execute('UPDATE family.children SET mother_id=2,father_id=5 WHERE id=1')
+        db.execute('UPDATE family.children SET mother_id=6,father_id=3 WHERE id=2')
+        db.execute('UPDATE family.children SET mother_id=4,father_id=NULL WHERE id=3')
+        birth=today-timedelta(days=18)
+        name=names[28]['name']
+        code=f'{birth:%d%m%y}-{random.Random(8104).randrange(100000):05d}'
+        db.execute('INSERT INTO family.children (id,first_name,last_name,personas_kods,birth_date,seed_key,mother_id,father_id) VALUES (4,?,?,?,?,?,6,3)',(name,'Purviņa',code,birth.isoformat(),'showcase-4'))
+        db.execute('INSERT INTO children (id,first_name,birth_date,seed_key) VALUES (4,?,?,?)',(name,birth.isoformat(),'showcase-4'))
+        for benefit in CHILD_BENEFITS:
+            db.execute('INSERT INTO family.benefits VALUES (4,?,0,0)',(benefit,))
+        from seed_people import SURNAMES
+        genders={n['name']:n['gender'] for n in names}
+        for child in db.execute('SELECT * FROM family.children').fetchall():
+            surname=db.execute('SELECT last_name FROM people WHERE id=?',(child['father_id'] or child['mother_id'],)).fetchone()['last_name']
+            surname=next((pair[1 if genders.get(child['first_name'])=='SIEVIETE' else 0] for pair in SURNAMES if surname in pair),surname)
+            db.execute('UPDATE family.children SET last_name=? WHERE id=?',(surname,child['id']))
+        db.execute("INSERT OR IGNORE INTO messages (person_id,seed_key,sender,subject,body,received_at) SELECT DISTINCT person_id,'newborn-demo','FAKETVIJA.LV · DEMONSTRĀCIJA','Par bērna piedzimšanu ir pieejami pakalpojumi','Ar bērna piedzimšanu saistītie pakalpojumi ir apkopoti vienuviet. Izdomāts ziņojums hakatona prototipam.',? FROM family.child_parents",(today.isoformat()+'T09:00:00+03:00',))
+        db.execute("INSERT INTO family.metadata VALUES ('household-showcase-v3',?)",(today.isoformat(),))
+    for person in db.execute("SELECT * FROM people WHERE role='person'").fetchall():
+        db.execute('UPDATE bank.people SET first_name=?,last_name=? WHERE personas_kods=?',(person['first_name'],person['last_name'],person['personas_kods']))
+    CASES.update({1:'Māte bez bērniem',7:'Tēvs bez bērniem',2:'Māte ar vienu bērnu',5:'Tēvs ar vienu bērnu',6:'Māte ar diviem bērniem',3:'Tēvs ar diviem bērniem',4:'Māte ar vienu bērnu, otrs vecāks nav norādīts'})
+
+
+def promote_adult_children(db, today=None):
+    """Keep historical applications, but move adults out of the active child registry."""
+    from benefits import add_months
+    today=today or date.today()
+    db.execute('CREATE TABLE IF NOT EXISTS family.former_children (personas_kods TEXT PRIMARY KEY, citizen_id INTEGER NOT NULL, archived_at TEXT NOT NULL, record TEXT NOT NULL)')
+    for child in db.execute('SELECT * FROM family.children').fetchall():
+        if today < add_months(date.fromisoformat(child['birth_date']),216):
+            continue
+        parent=db.execute('SELECT address FROM people WHERE id=?',(child['mother_id'] or child['father_id'],)).fetchone()
+        digits=child['personas_kods'].replace('-','')
+        phone=f'+371 20{digits[-6:]}'
+        suffix=int(digits[-6:])
+        while db.execute('SELECT 1 FROM people WHERE phone=? AND personas_kods!=?',(phone,child['personas_kods'])).fetchone():
+            suffix=(suffix+1)%1000000
+            phone=f'+371 20{suffix:06d}'
+        db.execute("INSERT OR IGNORE INTO people (first_name,last_name,personas_kods,email,phone,address,birth_date,role) VALUES (?,?,?,?,?,?,?,'person')",(child['first_name'],child['last_name'],child['personas_kods'],f'citizen{digits}@example.com',phone,parent['address'] if parent else '',child['birth_date']))
+        citizen=db.execute('SELECT * FROM people WHERE personas_kods=?',(child['personas_kods'],)).fetchone()
+        db.execute('INSERT OR IGNORE INTO family.former_children VALUES (?,?,?,?)',(child['personas_kods'],citizen['id'],today.isoformat(),json.dumps(dict(child),ensure_ascii=False)))
+        db.execute('INSERT OR IGNORE INTO bank.people VALUES (?,?,?)',(citizen['personas_kods'],citizen['first_name'],citizen['last_name']))
+        db.execute('INSERT OR IGNORE INTO bank.accounts (iban,personas_kods) VALUES (?,?)',(make_iban(citizen['id']),citizen['personas_kods']))
+        db.execute('DELETE FROM messages WHERE seed_key LIKE ?',(f'share-{child["id"]}-%',))
+        db.execute('DELETE FROM family.benefits WHERE child_id=?',(child['id'],))
+        db.execute('DELETE FROM family.children WHERE id=?',(child['id'],))

@@ -60,8 +60,7 @@
         return {subject: t('msg.applicationSubject', {subject}), body: t('msg.applicationBody', {service: t(`service.${params.benefit}`), date: i18n.formatDate(params.date), days: params.days, iban: params.iban})};
       }
       case 'share': {
-        const lines = (params.items || []).map(item => t('msg.shareItem', {benefit: bn(item.benefit), deadline: i18n.formatDate(item.deadline)}) + (item.shared ? t('msg.shareShared') : ''));
-        return {subject: t('msg.shareSubject', {child: params.child}), body: [t('msg.shareBody', {from: params.from, child: params.child, birth: i18n.formatDate(params.birth), role: t(`role.dative.${params.role}`)}), ...lines, t('msg.shareEnd')].join('\n')};
+        return {subject:t('msg.shareSubject',{child:params.child}),body:t('msg.shareBody',{child:params.child,birth:i18n.formatDate(params.birth)})};
       }
       case 'decision': {
         const label = params.child ? t('msg.forChild', {benefit: bn(params.benefit), child: params.child}) : bn(params.benefit);

@@ -137,10 +137,10 @@
 .source-note{font-size:12.5px;color:var(--gov-muted);margin:12px 0 0;line-height:1.5}
 
 /* Application dialog */
-.vsaa-page dialog{border:1px solid var(--gov-band-line);border-radius:10px;padding:0;width:min(640px,calc(100% - 32px));color:var(--gov-text);font-family:inherit}
-.vsaa-page dialog form{padding:30px 34px 28px;display:grid;gap:18px}
-.vsaa-page dialog h2{font-size:24px;margin:0;padding-right:36px}
-.vsaa-page dialog .official{font-size:13px;color:var(--gov-muted);margin:-10px 0 0}
+.vsaa-page #apply-dialog{border:1px solid var(--gov-band-line);border-radius:10px;padding:0;width:min(640px,calc(100% - 32px));color:var(--gov-text);font-family:inherit}
+.vsaa-page #apply-dialog form{padding:30px 34px 28px;display:grid;gap:18px}
+.vsaa-page #apply-dialog h2{font-size:24px;margin:0;padding-right:36px}
+.vsaa-page #apply-dialog .official{font-size:13px;color:var(--gov-muted);margin:-10px 0 0}
 .prefilled{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 20px;padding:16px 18px;border-radius:var(--gov-radius);background:var(--gov-band);font-size:14px}
 .prefilled dt{color:var(--gov-text-2);font-size:12.5px}.prefilled dd{margin:2px 0 0;font-weight:500;overflow-wrap:anywhere}
 .prefilled-note{font-size:12.5px;color:var(--gov-muted);margin:-8px 0 0}
@@ -163,7 +163,7 @@
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 @media(max-width:1100px){.status-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.benefit{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto}.benefit .deadline{grid-column:1/3}.leave{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.leave .actions{grid-column:1/-1;justify-self:start}.employment-grid{grid-template-columns:1fr}}
-@media(max-width:700px){.benefit{grid-template-columns:minmax(0,1fr);padding:16px 18px}.benefit .actions{flex-direction:row;justify-self:start;flex-wrap:wrap}.benefit .deadline{grid-column:auto}.child-card>header,.child-card>footer{padding:16px 18px}.months{grid-template-columns:repeat(8,minmax(0,1fr))}.months li i{height:26px}.prefilled{grid-template-columns:1fr}.vsaa-page dialog form{padding:22px 20px}.status-tile .count{font-size:32px}.facts{grid-template-columns:1fr}.reminder{grid-template-columns:auto minmax(0,1fr)}.reminder .gov-btn{grid-column:2}}
+@media(max-width:700px){.benefit{grid-template-columns:minmax(0,1fr);padding:16px 18px}.benefit .actions{flex-direction:row;justify-self:start;flex-wrap:wrap}.benefit .deadline{grid-column:auto}.child-card>header,.child-card>footer{padding:16px 18px}.months{grid-template-columns:repeat(8,minmax(0,1fr))}.months li i{height:26px}.prefilled{grid-template-columns:1fr}.vsaa-page #apply-dialog form{padding:22px 20px}.status-tile .count{font-size:32px}.facts{grid-template-columns:1fr}.reminder{grid-template-columns:auto minmax(0,1fr)}.reminder .gov-btn{grid-column:2}}
 @media(max-width:420px){.status-strip{grid-template-columns:1fr 1fr;gap:10px}.status-tile{padding:12px}}
 @media(prefers-reduced-motion:no-preference){.window i{transition:width .5s ease}}
 

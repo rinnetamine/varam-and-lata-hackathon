@@ -108,14 +108,18 @@ def dashboard(db, person, today=None):
             own = applications.get((code, link['id'], None))
             if own and own['status'] == 'atteikts':
                 own = None
-            benefits.append(child_benefit_status(code, link['role'], birth, today, own, other_apps, insured_person=insured_person, family_children=len(links)))
-        notified = db.execute("SELECT received_at FROM messages WHERE seed_key LIKE ? ORDER BY received_at DESC LIMIT 1",
-                              (f'share-{link["id"]}-{pid}-%',)).fetchone() if other else None
+            benefit=child_benefit_status(code, link['role'], birth, today, own, other_apps, insured_person=insured_person, family_children=len(links))
+            if benefit['status']=='otrs_vecaks':
+                benefit['status']='nav_pieejams'
+                benefit['statusText']='Šobrīd nav pieejams'
+            elif benefit['status']=='nav_attiecas':
+                benefit['statusText']='Nav piemērojams jūsu situācijai'
+            benefits.append(benefit)
         children.append({
             'id': link['id'], 'firstName': link['first_name'], 'lastName': link['last_name'], 'personasKods': link['personas_kods'], 'birthDate': link['birth_date'],
             'ageDays': (today - birth).days, 'ageText': age_text(birth, today), 'firstBirthday': add_months(birth, 12).isoformat(),
             'myRole': link['role'],
-            'otherParent': {'known': bool(other), 'role': other['role'] if other else None, 'notifiedAt': notified['received_at'] if notified else None},
+            'notification': {'allowed': today < add_months(birth,216)},
             'benefits': benefits,
             'municipal': {'municipality': municipality, 'lifeSituationUrl': LIFE_SITUATIONS['berna_piedzimsana']},
         })
@@ -336,26 +340,18 @@ def notify_other_parent(db, person, child_id, today=None):
                       (child_id, person['id'])).fetchone()
     if not link:
         return 'not_found'
-    other = db.execute('SELECT person_id, role FROM family.child_parents WHERE child_id = ? AND person_id != ?', (child_id, person['id'])).fetchone()
+    birth=date.fromisoformat(link['birth_date'])
+    if today >= add_months(birth,216):
+        return 'not_found'
+    other=db.execute('SELECT person_id FROM family.child_parents WHERE child_id=? AND person_id!=?',(child_id,person['id'])).fetchone()
+    # A generic acknowledgement never reveals whether a second parent exists.
     if not other:
-        return 'no_other_parent'
-    birth = date.fromisoformat(link['birth_date'])
-    lines, items = [], []
-    for code, rule in BENEFITS.items():
-        if rule['group'] != 'berns' or other['role'] not in rule['roles']:
-            continue
-        status = child_benefit_status(code, other['role'], birth, today, None, {})
-        if status['status'] in ('pieejams', 'steidzami', 'gaidams'):
-            shared = ' (saņem tikai viens no vecākiem — vienojieties, kurš piesakās)' if rule['onePerFamily'] else ''
-            lines.append(f'• {rule["short"]}: {rule["amount"]}; termiņš {fmt(status["deadline"])}{shared}')
-            items.append({'benefit': code, 'deadline': status['deadline'], 'shared': rule['onePerFamily']})
-    dative = {'māte': 'mātei', 'tēvs': 'tēvam'}.get(other['role'], 'vecākam')
-    body = (f'{person["first_name"]} {person["last_name"]} aicina salīdzināt pabalstus par bērnu {link["first_name"]} (dz. {birth:%d.%m.%Y}). '
-            f'Jums kā {dative} pieejamie VSAA pabalsti:\n' + '\n'.join(lines) +
-            '\nAtveriet "Mana VSAA", lai pieteiktos vai aprēķinātu summu. Demonstrācijas ziņojums.')
-    sent = post_message(db, other['person_id'], f'share-{child_id}-{person["id"]}-{today.isoformat()}',
-                        f'Pabalsti par bērnu {link["first_name"]}: salīdziniet, kurš no vecākiem piesakās', body,
-                        'share', {'from': f'{person["first_name"]} {person["last_name"]}', 'child': link['first_name'], 'birth': link['birth_date'], 'role': other['role'], 'items': items})
+        return None
+    child=f'{link["first_name"]} {link["last_name"]}'
+    sent=post_message(db,other['person_id'],f'share-{child_id}-{person["id"]}-{today.isoformat()}',
+                      f'Informācija par bērnu {child}',
+                      f'Informācija par bērnu {child} (dz. {birth:%d.%m.%Y}). Atveriet Mana VSAA, lai apskatītu bērna pakalpojumus. Demonstrācijas ziņojums.',
+                      'share',{'child':child,'birth':link['birth_date']})
     return None if sent else 'already_sent_today'
 
 
@@ -455,3 +451,13 @@ def seed_application_messages(db):
                     f'{status}: {rule.get("short",app["benefit_code"])}',
                     'Iesnieguma statuss ir saglabāts prototipa datubāzē. Demonstrācijas lēmums, nav juridiska spēka.',
                     decided,'decision',json.dumps({'benefit':app['benefit_code'],'child':app['child_first'],'status':app['status'],'date':decided[:10]},ensure_ascii=False)))
+
+
+def sanitize_shared_messages(db):
+    for message in db.execute("SELECT * FROM messages WHERE template='share'").fetchall():
+        params=json.loads(message['params'] or '{}')
+        clean={key:params[key] for key in ('child','birth') if key in params}
+        child=clean.get('child','')
+        body=f'Informācija par bērnu {child} (dz. {fmt(clean["birth"])}). Atveriet Mana VSAA, lai apskatītu bērna pakalpojumus. Demonstrācijas ziņojums.' if clean.get('birth') else f'Informācija par bērnu {child}. Demonstrācijas ziņojums.'
+        if params!=clean or message['body']!=body:
+            db.execute('UPDATE messages SET subject=?,body=?,params=? WHERE id=?',(f'Informācija par bērnu {child}',body,json.dumps(clean,ensure_ascii=False),message['id']))

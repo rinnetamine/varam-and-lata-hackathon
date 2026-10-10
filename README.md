@@ -125,4 +125,10 @@ Both `/api/iban` and VSAA profile/application forms check the bank registry: the
 
 The separate registries are created beside the configured `DB_PATH`, inside the existing persistent Docker volume. Docker mounts the tracked name snapshot read-only. Startup is idempotent and retains family/payment records; `--reset` explicitly clears all demo registries. Local pre-migration backups are excluded from Git.
 
-The demo family registry includes three additional partner accounts. Child 1 links Kristīne Purviņa and Mārtiņš Purviņš; child 2 links its additional mother and Mārtiņš; child 3 links Dace Grīnberga and its additional father. Marta Rozīte and her partner have no children. Partners use imported PMLP first names and generated family surnames/contact details. The additive registry migration preserves existing applications, sessions and saved bank accounts.
+The demo family registry includes three additional partner accounts. Child 1 belongs to Kristīne Kļaviņa and Edgars Kļaviņš; children 2 and 4 belong to the Purviņš/Purviņa couple; child 3 belongs to single mother Dace Grīnberga. Marta Rozīte and her partner have no children. Partners use imported PMLP first names and generated family surnames/contact details. The additive registry migration preserves existing applications, sessions and saved bank accounts.
+
+### Parent privacy and adulthood
+
+Ordinary user dashboards omit other-parent identity, role, registration status and benefit records. Shared notifications contain only the child’s name and birth date and require a child younger than 18; existing shared messages are sanitized. The full demo registry and IBAN reset endpoints are restricted to authenticated administrators. A generic notification acknowledgement does not disclose whether another parent is registered.
+
+At age 18, the child is removed from the active family registry and receives an ordinary citizen record using the same name, personal code and birth date, with generated demo contact and bank data. Historical application records remain. Migration runs at startup, on API requests, and every minute while the server runs; an open VSAA page refreshes at the date change or when revisited. This is idempotent and uses the server’s date.

@@ -111,18 +111,16 @@
     const shared = child.benefits.filter(b => b.onePerFamily && ['pieejams', 'steidzami'].includes(b.status)).map(b => t(`benefit.${b.code}`));
     if (shared.length) footer.append(el('p', {class: 'compare-note', i18n: 'child.compare', i18nParams: {list: shared.join(', ')}}));
     const parentRow = el('div', {class: 'parent-row'});
-    if (child.otherParent.known) {
-      parentRow.append(el('p', {i18n: 'child.otherParent'}));
+    if (child.notification.allowed) {
+
       const sent = el('span', {class: 'sent'});
-      if (child.otherParent.notifiedAt) { sent.dataset.i18n = 'child.sentOn'; sent.dataset.i18nParams = JSON.stringify({date: fmtDate(child.otherParent.notifiedAt)}); sent.textContent = t('child.sentOn', {date: fmtDate(child.otherParent.notifiedAt)}); }
+
       const button = el('button', {class: 'gov-btn secondary small', type: 'button', onclick: async () => {
         button.disabled = true; setStatus('child.sending');
         try { const data = await request('/api/vsaa/notify-other-parent', 'POST', {childId: child.id}); render(data.dashboard); setStatus(data.notified ? 'child.sent' : 'child.sentAlready'); }
         catch (error) { setStatus(error.code && MESSAGES.lv[`err.${error.code}`] ? `err.${error.code}` : 'child.sendFailed'); button.disabled = false; }
       }}, icon(ICONS.send), tx('child.notify'));
       parentRow.append(el('div', {style: 'display:flex;gap:12px;align-items:center;flex-wrap:wrap'}, sent, button));
-    } else {
-      parentRow.append(el('p', {i18n: 'child.noOtherParent'}));
     }
     footer.append(parentRow);
     footer.append(el('div', {class: 'parent-row'}, el('p', {i18n: 'child.municipal', i18nParams: {municipality: child.municipal.municipality || '—'}}),
@@ -378,5 +376,11 @@
       if (error.message !== 'unauthorized') setStatus('err.load');
     }
   }
+  let registryDay = new Date().toDateString();
+  setInterval(() => {
+    const day = new Date().toDateString();
+    if (day !== registryDay) { registryDay = day; load(); }
+  }, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
   load();
 })();

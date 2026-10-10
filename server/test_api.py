@@ -61,6 +61,8 @@ def main():
             check('database seeded with four showcase people and three partners', len(people) == 7, str(len(people)))
             admin_row = sqlite3.connect(db_path).execute("SELECT personas_kods FROM people WHERE role = 'admin'").fetchall()
             check('one demo administrator account is seeded', len(admin_row) == 1)
+            _, bootstrap_raw=call('/api/login','POST',{'personasKods':admin_row[0][0]})
+            demo_admin_token=json.loads(bootstrap_raw)['token']
             code, first, last = people[1]
 
             status, _ = call('/api/login', 'POST', {'personasKods': 'abc'})
@@ -93,7 +95,7 @@ def main():
             inbox = json.loads(raw)
             check('new user has unread demo mail', status == 200 and inbox['unreadCount'] >= 1)
             message_id = inbox['messages'][0]['id']
-            _, other_raw = call('/api/login', 'POST', {'personasKods': people[2][0]})
+            _, other_raw = call('/api/login', 'POST', {'personasKods': people[4][0]})
             other_token = json.loads(other_raw)['token']
             status, _ = call(f'/api/messages/{message_id}/read', 'POST', token=other_token)
             check('other user cannot mark this message read', status == 404)
@@ -109,12 +111,16 @@ def main():
             _, raw = call('/api/messages', token=other_token)
             check('other user retains unread mail', json.loads(raw)['unreadCount'] >= 1)
 
-            status, raw = call('/api/demo/admin')
+            check('demo registry requires authentication',call('/api/demo/admin')[0] == 401)
+            check('ordinary user cannot inspect other people',call('/api/demo/admin',token=token)[0] == 403)
+            check('ordinary user cannot reset another account',call('/api/demo/people/5/clear-iban','POST',token=token)[0] == 403)
+            status, raw = call('/api/demo/admin',token=demo_admin_token)
             registry = json.loads(raw)
             check('demo inspector exposes fictional registries', status == 200 and registry['demoOnly'])
             cases = {p['id']: p for p in registry['people']}
             check('four showcase child counts', [len(cases[i]['children']) for i in (1,2,3,4)] == [0,1,2,1])
-            check('all children have two distinct parents', all(c['mother_id'] and c['father_id'] and c['mother_id'] != c['father_id'] for c in registry['children']))
+            check('household counts match showcase', [len(cases[i]['children']) for i in (1,7,2,5,6,3,4)] == [0,0,1,1,2,2,1])
+            check('single mother has no second parent',cases[4]['children'][0]['father_id'] is None)
             names = {r['name'] for r in json.loads((HERE.parent/'public/data/person-names.json').read_text())['names']}
             from datetime import date
             check('child names use imported PMLP data', all(c['first_name'] in names for c in registry['children']))
@@ -158,20 +164,20 @@ def main():
             _, raw = call('/api/messages', token=token)
             check('application confirmation lands in the inbox', any(m['subject'].startswith('Iesniegums saņemts') for m in json.loads(raw)['messages']))
 
-            other_code = [p for p in sqlite3.connect(db_path).execute('SELECT personas_kods FROM people WHERE id = 3')][0][0]
+            other_code = [p for p in sqlite3.connect(db_path).execute('SELECT personas_kods FROM people WHERE id = 5')][0][0]
             _, raw = call('/api/login', 'POST', {'personasKods': other_code})
             other_parent = json.loads(raw)['token']
             _, raw = call('/api/vsaa/dashboard', token=other_parent)
             other_dash = json.loads(raw)['dashboard']
             check('other parent sees the same child from their role', other_dash['children'] and other_dash['children'][0]['id'] == child['id'] and other_dash['children'][0]['myRole'] != child['myRole'])
-            check('one-per-family benefit shows as claimed by the other parent', next(b for b in other_dash['children'][0]['benefits'] if b['code'] == 'berna_piedzimsanas')['status'] == 'otrs_vecaks')
+            check('one-per-family benefit shows as claimed by the other parent', next(b for b in other_dash['children'][0]['benefits'] if b['code'] == 'berna_piedzimsanas')['status'] == 'nav_pieejams')
             status, raw = call('/api/vsaa/notify-other-parent', 'POST', {'childId': child['id']}, token=token)
             check('notification to the other parent is sent once per day', status == 200 and json.loads(raw)['notified'] is True)
             status, raw = call('/api/vsaa/notify-other-parent', 'POST', {'childId': child['id']}, token=token)
             check('repeat notification is reported, not duplicated', status == 200 and json.loads(raw)['notified'] is False)
             _, raw = call('/api/messages', token=other_parent)
-            check('other parent receives the comparison message', any('salīdziniet' in m['subject'] for m in json.loads(raw)['messages']))
-            check('other parent details are not exposed', 'firstName' not in json.dumps(child['otherParent']))
+            check('other parent receives the comparison message', any('Informācija par bērnu' in m['subject'] for m in json.loads(raw)['messages']))
+            check('other parent details are not exposed', 'otherParent' not in child)
 
             status, raw = call('/api/vsaa/profile', 'POST', {'remindersEnabled': True}, token=token)
             check('enabling reminders delivers them to the inbox', status == 200 and json.loads(raw)['remindersDelivered'] >= 1)
@@ -207,11 +213,15 @@ def main():
             check('legal citations travel with each benefit', all(b['legal'] and b['verifiedAt'] for b in newborn['benefits']))
             _, raw = call('/api/vsaa/dashboard', token=other_parent)
             father_dash = json.loads(raw)['dashboard']
-            older = next(c for c in father_dash['children'] if c['id'] != newborn['id'])
-            check('father of two children sees both and the family benefit estimate counts two', len(father_dash['children']) == 2 and next(b for b in older['benefits'] if b['code'] == 'gimenes_valsts')['estimate']['children'] == 2)
+            _, two_raw = call('/api/login','POST',{'personasKods':people[2][0]})
+            two_token = json.loads(two_raw)['token']
+            _, two_raw = call('/api/vsaa/dashboard',token=two_token)
+            two_dash = json.loads(two_raw)['dashboard']
+            older = next(c for c in two_dash['children'] if c['id'] == 2)
+            check('father of two children sees both and the family benefit estimate counts two', len(two_dash['children']) == 2 and next(b for b in older['benefits'] if b['code'] == 'gimenes_valsts')['estimate']['children'] == 2)
             check('2025 birth keeps the 421.17 EUR childbirth amount', next(b for b in older['benefits'] if b['code'] == 'berna_piedzimsanas')['estimate']['oneTime'] == 421.17)
             check('paternity leave deadline (6 months) is reported as missed for the 11-month-old', next(b for b in older['benefits'] if b['code'] == 'paternitates')['status'] == 'nokavets')
-            status, _ = call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': older['id'], 'iban': father_dash['person']['iban'] or 'LV80BANK0000435195001'}, token=other_parent)
+            status, _ = call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': older['id'], 'iban': father_dash['person']['iban'] or 'LV80BANK0000435195001'}, token=two_token)
             check('server refuses an application after the deadline even if the browser asks', status == 400)
             status, raw = call('/api/vsaa/apply', 'POST', {'benefitCode': 'vecaku', 'childId': newborn['id'], 'options': {'ilgums': '7 mēneši'}, 'iban': __import__('demo_registry').make_iban(2)}, token=token)
             check('invalid parental-benefit duration is rejected', status == 400 and json.loads(raw)['error'] == 'invalid_option')
@@ -219,14 +229,14 @@ def main():
             check('mother applies for parental benefit (13 months)', status == 200)
             _, raw = call('/api/vsaa/dashboard', token=other_parent)
             kopsanas = next(b for b in next(c for c in json.loads(raw)['dashboard']['children'] if c['id'] == newborn['id'])['benefits'] if b['code'] == 'berna_kopsanas')
-            check('childcare benefit follows the parental-benefit recipient (VSP likuma 7. panta otrā daļa)', kopsanas['status'] == 'otrs_vecaks')
+            check('childcare benefit follows the parental-benefit recipient (VSP likuma 7. panta otrā daļa)', kopsanas['status'] == 'nav_pieejams')
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-                results = list(pool.map(lambda _: call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': newborn['id'], 'iban': father_dash['person']['iban'] or __import__('demo_registry').make_iban(3)}, token=other_parent)[0], range(6)))
+                results = list(pool.map(lambda _: call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': newborn['id'], 'iban': father_dash['person']['iban'] or sqlite3.connect(Path(tmp)/'bank.db').execute('SELECT iban FROM accounts WHERE personas_kods=?',(other_code,)).fetchone()[0]}, token=other_parent)[0], range(6)))
             stored_count = sqlite3.connect(db_path).execute("SELECT count(*) FROM applications WHERE benefit_code = 'paternitates' AND child_id = ?", (newborn['id'],)).fetchone()[0]
             check('concurrent duplicate submissions store a single application', stored_count == 1 and results.count(200) == 1, str(results))
             # Restore the father's profile (the demo panel action) so later isolation checks start clean.
-            status, _ = call('/api/demo/people/3/clear-iban', 'POST')
+            status, _ = call('/api/demo/people/5/clear-iban', 'POST',token=demo_admin_token)
             _, raw = call('/api/me', token=other_parent)
             check('demo panel clears the IBAN the father saved while applying', status == 200 and json.loads(raw)['person']['iban'] is None)
             status, _ = call('/api/admin/applications')
@@ -271,7 +281,7 @@ def main():
             check('applications and sessions persist across a server restart', status == 200 and any(a['id'] == target['id'] and a['status'] == 'pieskirts' for a in json.loads(raw)['applications']))
             with_children = sqlite3.connect(db_path)
             with_children.execute('ATTACH DATABASE ? AS family', (os.path.join(tmp, 'children.db'),))
-            check('restart does not duplicate seeded data', with_children.execute('SELECT count(*) FROM family.children').fetchone()[0] == 3 and with_children.execute("SELECT count(*) FROM people WHERE role = 'admin'").fetchone()[0] == 1)
+            check('restart does not duplicate seeded data', with_children.execute('SELECT count(*) FROM family.children').fetchone()[0] == 4 and with_children.execute("SELECT count(*) FROM people WHERE role = 'admin'").fetchone()[0] == 1)
             with_children.close()
 
             status, _ = call('/api/iban', 'POST', {'iban': 'LV00TEST0000000000001'})
@@ -298,17 +308,17 @@ def main():
             from seed_people import connect, ensure_seeded
             with connect(db_path) as seeded:
                 ensure_seeded(seeded)
-                check('reseeding preserves three children', seeded.execute('SELECT count(*) FROM family.children').fetchone()[0] == 3)
+                check('reseeding preserves four children', seeded.execute('SELECT count(*) FROM family.children').fetchone()[0] == 4)
                 check('reseeding retains saved IBAN', seeded.execute('SELECT iban FROM people WHERE id = 2').fetchone()[0] == iban)
 
-            status, _ = call('/api/demo/people/2/clear-iban','POST')
+            status, _ = call('/api/demo/people/2/clear-iban','POST',token=admin_token)
             check('demo panel clears saved IBAN', status == 200)
             _, raw = call('/api/me',token=token)
             check('cleared IBAN visible in profile',json.loads(raw)['person']['iban'] is None)
             bank = sqlite3.connect(Path(tmp)/'bank.db')
             check('clearing profile keeps mock bank account',bank.execute('SELECT count(*) FROM accounts WHERE iban = ?',(iban,)).fetchone()[0] == 1)
             bank.close()
-            status, _ = call('/api/demo/people/999999/clear-iban','POST')
+            status, _ = call('/api/demo/people/999999/clear-iban','POST',token=admin_token)
             check('unknown demo person rejected',status == 404)
 
             stored = [row[0] for row in sqlite3.connect(db_path).execute('SELECT token_hash FROM sessions')]
