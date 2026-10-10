@@ -77,6 +77,29 @@
       }
     }
   }
+  let unreadNotificationsOnly = false;
+  function renderNotifications() {
+    const root=document.querySelector('#notification-list');
+    if (!root) return;
+    const english=i18n.language==='en';
+    const filters=document.querySelector('#notification-filters');filters.replaceChildren();
+    for(const [value,label] of [[false,english?'All':'Visi'],[true,english?'Unread':'Nelasītie']]){
+      const button=document.createElement('button');button.type='button';button.textContent=label;button.className='notification-filter';button.setAttribute('aria-pressed',String(unreadNotificationsOnly===value));
+      button.onclick=()=>{unreadNotificationsOnly=value;renderNotifications();filters.querySelector('[aria-pressed="true"]')?.focus();};filters.append(button);
+    }
+    root.replaceChildren();
+    const visible=messages.filter(m=>!unreadNotificationsOnly || !m.readAt);
+    if(!visible.length){const empty=document.createElement('p');empty.className='notification-empty';empty.textContent=english?(unreadNotificationsOnly?'No unread notifications.':'No notifications yet.'):(unreadNotificationsOnly?'Nav nelasītu paziņojumu.':'Vēl nav paziņojumu.');root.append(empty);return;}
+    for(const message of visible){
+      const text=localized(message);const card=document.createElement('article');card.className='notification-card'+(message.readAt?'':' is-unread');
+      const meta=document.createElement('div');meta.className='notification-meta';const date=document.createElement('time');date.dateTime=message.receivedAt;date.textContent=i18n.formatDate(message.receivedAt);
+      const badge=document.createElement('span');badge.className=message.readAt?'read-tag':'unread-tag';badge.textContent=t(message.readAt?'inbox.read':'inbox.unread');meta.append(date,badge);
+      const title=document.createElement('h2');title.textContent=text.subject;const sender=document.createElement('p');sender.className='notification-sender';sender.textContent=message.sender;
+      const link=document.createElement('a');link.href='#mail';link.className='outline-link';link.textContent=english?'Open message':'Atvērt ziņojumu';
+      link.onclick=()=>{search.value='';filter();const row=document.querySelector(`#message-${message.id}`);if(row){row.open=true;requestAnimationFrame(()=>row.scrollIntoView({block:'center',behavior:'smooth'}));}};
+      card.append(meta,title,sender,link);root.append(card);
+    }
+  }
   function renderHistory() {
     const root = document.querySelector('#activity-history');
     if (!root) return;
@@ -111,7 +134,7 @@
     for (const message of messages) {
       const text = localized(message);
       const row = document.createElement('details');
-      row.className = 'received-message';
+      row.className = 'received-message'; row.id = `message-${message.id}`;
       const summary = document.createElement('summary');
       const sender = document.createElement('span');
       sender.className = 'message-sender'; sender.textContent = message.sender;
@@ -134,7 +157,7 @@
         try {
           const data = await request(`/api/messages/${message.id}/read`, 'POST');
           message.readAt = data.messages.find(item => item.id === message.id).readAt;
-          counts(data); renderHistory();
+          counts(data); renderHistory(); renderNotifications();
           badge.className = 'read-tag';
           setTranslatedStatus(badge, '', 'inbox.read');
           setTranslatedStatus(status, '');
@@ -143,7 +166,7 @@
         } finally { saving = false; }
       });
     }
-    renderHistory(); applyLanguage(); filter();
+    renderHistory(); renderNotifications(); applyLanguage(); filter();
   }
   async function load() {
     try {
