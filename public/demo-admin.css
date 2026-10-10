@@ -11,3 +11,5 @@ dialog.demo-inspector{box-sizing:border-box;width:min(780px,calc(100% - 32px));m
 .demo-inspector .demo-intro{padding:14px 16px;margin:16px 0;background:#f0f5fc;color:#253b55}
 .demo-inspector .demo-field code{overflow-wrap:anywhere;font-size:13px}.demo-status{min-height:20px;color:#566170}.demo-table-scroll{max-width:100%;overflow-x:auto}.demo-child{min-width:0}.demo-child table{min-width:300px}
 @media(max-width:560px){.demo-inspector header{top:-18px}.demo-inspector .demo-field strong{width:auto}.demo-inspector .demo-field code{grid-column:1}.demo-child{padding:12px}}
+
+.demo-inspector .demo-switch-user{display:block;margin:16px 0;padding:11px 18px;border:1px solid #253b55;border-radius:6px;background:#253b55;color:#fff;font:600 14px/1.4 Arial,sans-serif;cursor:pointer}.demo-inspector .demo-switch-user:disabled{opacity:.6;cursor:wait}

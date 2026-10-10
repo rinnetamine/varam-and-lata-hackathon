@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="lv" data-i18n-title="calc.title">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pabalstu kalkulators — orientējoši aprēķini sešiem bērnu pabalstiem.">
+  <title>Pabalstu kalkulators — Faketvija.lv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="styles.css?v=sidebar-labels-2">
+  <link rel="stylesheet" href="vsaa.css?v=calculator-link-15">
+  <script src="translations.js?v=calculator-sidebar-17"></script>
+  <script src="app.js?v=accessibility-3"></script>
+  <script src="auth.js?v=header-guard-3" defer></script>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+</head>
+<body class="profile-page vsaa-page" data-requires-demo-session>
+  <div class="prototype-banner" data-i18n="banner.prototype">Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls. VSAA dati šajā lapā ir izdomāti.</div>
+  <a class="skip-link" href="#saturs" data-i18n="nav.skip">Pāriet uz saturu</a>
+  <header class="portal-header">
+    <div class="header-inner">
+      <a href="index.html" aria-label="Uz sākumlapu" class="fake-logo">Fake<span>tvija</span>.lv<small>HACKATHON PROTOTYPE</small></a>
+      <nav class="primary-nav" data-i18n-attr="aria-label:nav.main">
+        <a href="vsaa.html#berni" data-i18n="nav.services">Pakalpojumi</a>
+        <a href="profile.html#overview" data-i18n="nav.my">Mana Faketvija.lv</a><a href="profile.html#mail" data-i18n="nav.eaddress">E-adrese</a><a href="vsaa.html" data-i18n="nav.vsaa">Mana VSAA</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="language-label" data-language-toggle aria-label="Switch to English"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><span data-language-label>EN</span></button>
+        <a class="login-button logout-button" id="logout-button" href="login.html"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5H5v14h4m5-15h6v16h-6M3 12h12m-4-4 4 4-4 4"/></svg><span data-i18n="nav.logout">Iziet</span></a>
+      </div>
+    </div>
+  </header>
+  <main class="profile-workspace" id="saturs">
+<div class="shell profile-layout"><aside class="profile-sidebar"><div class="account-switch"><small data-i18n="account.available">Pieejamie konti</small><strong id="profile-account-name" data-no-translate>Demonstrācijas profils</strong><span data-i18n="account.kind">Privātpersona · DEMO</span></div><nav class="profile-menu" data-i18n-attr="aria-label:nav.profileSections"><a href="profile.html#overview"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/></svg><span data-i18n="nav.my">Mana Faketvija.lv</span></a><a href="vsaa.html"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V9l8-5 8 5v10"/><path d="M9 19v-6h6v6"/><path d="M12 9h.01"/></svg><span data-i18n="nav.vsaa">Mana VSAA</span></a><a href="calculator.html" aria-current="page"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 11h1m6 0h1M8 15h1m6 0h1M8 19h1m6 0h1"/></svg><span data-i18n="nav.calculator">Kalkulators</span></a><a href="profile.html#mail"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg><span>E-adrese · Saņemtie</span></a><a href="profile.html#history"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 3"/></svg>Veikto darbību vēsture</a><a href="profile.html#notifications"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>Paziņojumi</a><a href="profile.html#data"><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="8" cy="10" r="2"/><path d="M5 16c0-3 6-3 6 0m3-6h4m-4 4h4"/></svg><span data-i18n="nav.data">Mani dati</span></a></nav></aside>
+<div class="profile-content">
+  <div class="profile-heading"><p><a href="index.html" data-i18n="nav.home">Sākums</a> › <a href="profile.html" data-i18n="nav.my">Mana Faketvija.lv</a> › <span data-i18n="nav.calculator">Kalkulators</span></p><h1 data-i18n="calc.title">Pabalstu kalkulators</h1><p class="lede" data-i18n="calc.intro"></p></div>
+  <section class="vsaa-section" id="kalkulators" aria-labelledby="calculator-title">
+    <header><h2 id="calculator-title" data-i18n="calc.benefit">Pabalsta veids</h2><a class="section-link" href="https://www.vsaa.gov.lv/lv/kalkulatori" target="_blank" rel="noopener noreferrer" data-i18n="calc.official">Oficiālie VSAA kalkulatori ↗</a></header>
+    <div class="gov-panel" id="benefit-calculator">
+      <form class="calculator-form">
+        <label class="calculator-wide"><span data-i18n="calc.benefit">Pabalsta veids</span><select name="benefit"><option value="maternitates" data-i18n="benefit.maternitates"></option><option value="paternitates" data-i18n="benefit.paternitates"></option><option value="berna_piedzimsanas" data-i18n="benefit.berna_piedzimsanas"></option><option value="berna_kopsanas" data-i18n="benefit.berna_kopsanas"></option><option value="vecaku" data-i18n="benefit.vecaku"></option><option value="gimenes_valsts" data-i18n="benefit.gimenes_valsts"></option></select></label>
+        <label data-calculator-for="maternitates paternitates vecaku"><span data-i18n="calc.daily">Vidējā apdrošināšanas iemaksu alga dienā (EUR)</span><input name="daily" type="number" min="0.01" max="100000" step="0.01" required><small data-i18n="calc.dailyHelp">Ievadi aprēķināto dienas vidējo iemaksu algu, nevis neto vai mēneša algu. To precizē VSAA.</small></label>
+        <label data-calculator-for="maternitates"><span data-i18n="calc.maternityDays">Grūtniecības un dzemdību atvaļinājums</span><select name="days"><option value="112">112</option><option value="126">126</option><option value="140">140</option></select><small data-i18n="calc.maternityHelp">Kopējais kalendāra dienu skaits no darbnespējas lapām; 56/70 dienas katrā daļā.</small></label>
+        <label data-calculator-for="berna_piedzimsanas berna_kopsanas"><span data-i18n="calc.birth">Bērna dzimšanas datums</span><input name="birth" type="date" min="2013-01-01" max="2026-12-31" required></label>
+        <label data-calculator-for="berna_kopsanas"><span data-i18n="calc.age">Aprūpes periods</span><select name="age"><option value="under18" data-i18n="calc.under18"></option><option value="18to24" data-i18n="calc.18to24"></option></select></label>
+        <label data-calculator-for="vecaku"><span data-i18n="calc.duration">Kopējais pabalsta periods</span><select name="duration"><option value="13" data-i18n="dialog.opt13"></option><option value="19" data-i18n="dialog.opt19"></option></select></label>
+        <label data-calculator-for="vecaku"><span data-i18n="calc.monthDays">Kalendāra dienas izmaksas mēnesī</span><input name="monthDays" type="number" min="28" max="31" step="1" value="30" required></label>
+        <label class="calculator-check" data-calculator-for="vecaku"><input name="working" type="checkbox"><span data-i18n="calc.working">Strādāju un neatrodos bērna kopšanas atvaļinājumā (pamatdaļa: 75 % 2026. gadā)</span></label>
+        <label data-calculator-for="gimenes_valsts"><span data-i18n="calc.count">Bērnu skaits, par kuriem viens saņēmējs saņem pabalstu</span><input name="count" type="number" min="0" max="20" step="1" value="1" required><small data-i18n="calc.countHelp">Tikai bērni, kuriem ir tiesības uz pabalstu: no 1 gada; pēc 16 gadiem piemēro izglītības nosacījumus līdz 20 gadiem.</small></label>
+        <div class="calculator-wide"><button class="gov-btn" type="submit" data-i18n="calc.calculate">Aprēķināt</button></div>
+      </form>
+      <div class="calculator-result" data-calculator-result role="status" aria-live="polite" hidden></div>
+      <p class="form-note" data-i18n="calc.note">Orientējošs aprēķins, nevis VSAA lēmums. Tas nepārbauda tiesības, iemaksu periodus vai pabalstu savstarpējo saderību. Paternitāte: 10 darba dienas vienam bērnam. Vecāku pabalsts: pamatdaļas pilns mēnesis; nenododamo daļu šis aprēķins neaptver. Kopšanas pabalsts: 2026. gada mēneša likme; piemaksas par dvīņiem un invaliditāti nav iekļautas.</p>
+      <div class="calculator-links"><a class="section-link" data-calculator-source href="https://www.vsaa.gov.lv/lv/pakalpojumi/maternitates-pabalsta-pieskirsana-un-izmaksasana" target="_blank" rel="noopener noreferrer" data-i18n="calc.rules">VSAA nosacījumi ↗</a><a class="section-link" href="data-licenses.html#calculator-sources" data-i18n="calc.sources">Aprēķina avoti</a></div>
+    </div>
+  </section>
+
+</div></div></main>
+  <footer class="footer portal-footer"><div class="shell footer-layout"><div class="footer-brand"><a href="index.html" class="fake-logo">Fake<span>tvija</span>.lv<small>HAKATONA PROTOTIPS</small></a></div><div class="footer-content"><button class="language" type="button" data-language-toggle><svg class="profile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></svg><span data-language-label>EN</span></button><p data-i18n="footer.note">Faketvija.lv · Hakatona prototips, nav oficiāls valsts portāls.</p><a href="data-licenses.html" data-i18n="footer.sources">Datu avoti un licences</a></div></div></footer>
+
+
+<script src="benefit-calculator.js?v=calculator-page-18" defer></script>
+<script src="demo-admin.js?v=quick-login-9" defer></script></body></html>

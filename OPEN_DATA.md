@@ -117,3 +117,13 @@ The following are **not** open data and must never be described as official:
 ## Licence status / Licenču statuss
 
 No unresolved licence or attribution issue was found: datasets 2–6 are CC0 1.0 and dataset 1 (CC BY 4.0) is attributed with a licence link and a description of changes wherever its data appears. Latvija.gov.lv logos, wordmarks and design assets are not used; the portal's typeface (Ubuntu, Ubuntu Font Licence) is loaded from Google Fonts. The project reproduces the portal's colours and layout conventions only, as a design study for a hackathon prototype.
+
+## Benefit calculator (verified 10 October 2026)
+
+The local browser calculator covers maternity, paternity, childbirth, childcare, parental and family state benefits. Inputs stay in browser memory and are not submitted or persisted. It uses public rules, not personal open data or VSAA registry access. Sources are linked in `public/data-licenses.html#calculator-sources` alongside the existing legal references.
+
+- [Official VSAA calculators](https://www.vsaa.gov.lv/lv/kalkulatori): authenticated forecasts for maternity and parental benefits, among other services. External authentication is independent of the prototype.
+- [Paternity rules](https://www.vsaa.gov.lv/lv/pakalpojumi/paternitates-pabalsta-pieskirsana-un-izmaksasana): 80% of the daily contribution wage, coefficient 1.46, ten working days for one child; daily payment rounded to cents.
+- [2026 changes](https://www.vsaa.gov.lv/lv/jaunums/izmainas-vsaa-pakalpojumos-2026-gada): childbirth payment 600 EUR for births from 1 January 2026; childcare monthly rate 298 EUR and transitional 42.69 EUR for ages 18–24 months for children born by 2 November 2026 inclusive; working parental-benefit recipients receive 75% of the main portion during 2026.
+
+Maternity uses entered daily contribution wage and 112/126/140 calendar days. Parental estimates use entered daily wage, 28–31 calendar days and 60%/43.75% for the selected 13/19-month total period. Family state benefit uses the number of eligible children covered by one recipient (25/100/225 EUR for 1/2/3 children, 100 EUR per child for 4+). These are illustrative estimates under 2026 rules, not an entitlement or combined household payout calculation. Insurance qualification, non-transferable parental portions, maternity offsets, twins and disability supplements, cross-border cases and benefit compatibility are outside this tool. Agency pages are cited as guidance; no page content, logos or calculator implementation was copied.

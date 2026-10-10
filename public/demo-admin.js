@@ -1,7 +1,7 @@
 // Public demonstration inspector for fictional data; separate from user-facing services.
 // Labels come from i18n.t('demo.*') and the panel re-renders when the language changes.
 (() => {
-  const stylesheet = document.createElement('link'); stylesheet.rel = 'stylesheet'; stylesheet.href = 'demo-admin.css?v=public-demo-8'; document.head.append(stylesheet);
+  const stylesheet = document.createElement('link'); stylesheet.rel = 'stylesheet'; stylesheet.href = 'demo-admin.css?v=quick-login-9'; document.head.append(stylesheet);
   const node = (tag, text, className) => { const e = document.createElement(tag); if (text != null) e.textContent = text; if (className) e.className = className; return e; };
   const keyed = (tag, key, className) => { const e = node(tag, t(key), className); e.dataset.i18n = key; return e; };
   const launch = keyed('button', 'demo.launch', 'demo-launch'); launch.type = 'button'; document.body.append(launch);
@@ -36,6 +36,23 @@
   function render() {
     content.replaceChildren(); const p = people.find(p => p.id === Number(select.value)); if (!p) return;
     content.append(node('h3', `${p.first_name} ${p.last_name}`), node('p', p.scenario), copyField(t('common.personalCode'), p.personas_kods), copyField(t('demo.email'), p.email), copyField(t('demo.phone'), p.phone), copyField(t('demo.address'), p.address));
+    const login=keyed('button','demo.loginAs','demo-switch-user');login.type='button';
+    login.onclick=async()=>{
+      login.disabled=true;select.disabled=true;search.disabled=true;status.textContent=t('demo.switching');
+      let session;
+      try{
+        const response=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${adminToken()}`},body:JSON.stringify({personasKods:p.personas_kods})});
+        if(!response.ok)throw new Error();
+        session=await response.json();
+        localStorage.setItem('faketvijaSession',JSON.stringify(session));
+        const onVsaa=location.pathname.endsWith('/vsaa.html');
+        location.replace(session.person.role==='admin'?'admin.html':!session.person.iban?'bank-account.html':onVsaa?'vsaa.html':'profile.html');
+      }catch{
+        if(session?.token){try{await fetch('/api/logout',{method:'POST',headers:{Authorization:`Bearer ${session.token}`}});}catch{}}
+        status.textContent=t('demo.switchFailed');login.disabled=false;select.disabled=false;search.disabled=false;
+      }
+    };
+    content.append(login);
     if (p.role === 'admin') { content.append(node('p', t('demo.adminHint'), 'demo-intro')); return; }
     content.append(node('h3', t('demo.accounts')));
     for (const a of p.bankAccounts) content.append(copyField(`IBAN (${a.active ? t('demo.active') : t('demo.inactive')})`, a.iban));

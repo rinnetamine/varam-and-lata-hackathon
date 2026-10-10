@@ -6,6 +6,8 @@
   const status = $('#page-status');
   let dashboard = null;
   let selectedChild = 'all';
+  const pendingChildNotifications = new Set();
+  const childNotificationFeedback = new Map();
 
   const fmtDate = iso => i18n.formatDate(iso);
   const fmtMonth = key => i18n.formatMonth(key);
@@ -94,6 +96,7 @@
     } else {
       actions.append(el('a', {class: 'section-link', href: benefit.source, target: '_blank', rel: 'noopener', i18n: 'common.about'}));
     }
+    actions.append(el('a', {class: 'section-link', href: `calculator.html?benefit=${encodeURIComponent(benefit.code)}`, i18n: 'calc.open'}));
     row.append(actions);
     return row;
   }
@@ -105,25 +108,45 @@
       el('div', {class: 'meta'}, el('span', {}, tx('common.born'), ' ', el('span', {text: fmtDate(child.birthDate), 'data-no-translate': true}), ' · ', tx(...ageKey(child.ageDays))),
         el('span', {}, tx('common.personalCode'), ': ', el('strong', {text: child.personasKods, 'data-no-translate': true})),
         el('span', {}, tx('common.role'), ' ', el('strong', {i18n: `role.${child.myRole}`})),
-        el('span', {}, tx('common.municipality'), ' ', el('strong', {text: child.municipal.municipality || '—', 'data-no-translate': true})))));
+        el('span', {}, tx('common.municipality'), ' ', el('strong', {class:'fetched-municipality',text: child.municipal.municipality || '—', 'data-no-translate': true})))));
     card.append(el('ul', {class: 'benefit-list'}, child.benefits.map(benefit => benefitRow(child, benefit))));
     const footer = el('footer');
     const shared = child.benefits.filter(b => b.onePerFamily && ['pieejams', 'steidzami'].includes(b.status)).map(b => t(`benefit.${b.code}`));
-    if (shared.length) footer.append(el('p', {class: 'compare-note', i18n: 'child.compare', i18nParams: {list: shared.join(', ')}}));
+    if (shared.length) footer.append(el('p', {class: 'compare-note'}, tx('child.compare', {list: shared.join(', ')}), ' ', el('a', {class: 'section-link', href: 'calculator.html?benefit=vecaku', i18n: 'calc.title'})));
     const parentRow = el('div', {class: 'parent-row'});
     if (child.notification.allowed) {
 
-      const sent = el('span', {class: 'sent'});
+      const sent = el('span', {class: 'sent', role:'status', 'aria-live':'polite'});
+      const feedback=childNotificationFeedback.get(child.id);
+      if(feedback){sent.dataset.i18n=feedback;sent.textContent=t(feedback);}
 
       const button = el('button', {class: 'gov-btn secondary small', type: 'button', onclick: async () => {
-        button.disabled = true; setStatus('child.sending');
-        try { const data = await request('/api/vsaa/notify-other-parent', 'POST', {childId: child.id}); render(data.dashboard); setStatus(data.notified ? 'child.sent' : 'child.sentAlready'); }
-        catch (error) { setStatus(error.code && MESSAGES.lv[`err.${error.code}`] ? `err.${error.code}` : 'child.sendFailed'); button.disabled = false; }
+        if(pendingChildNotifications.has(child.id))return;
+        pendingChildNotifications.add(child.id);
+        button.disabled=true;button.setAttribute('aria-busy','true');
+        button.replaceChildren(el('span',{class:'notify-spinner','aria-hidden':true}),tx('child.sending'));
+        sent.replaceChildren();setStatus('child.sending');
+        try {
+          const [data]=await Promise.all([request('/api/vsaa/notify-other-parent','POST',{childId:child.id}),new Promise(resolve=>setTimeout(resolve,900))]);
+          pendingChildNotifications.delete(child.id);
+          const result=data.notified?'child.sent':'child.sentAlready';
+          childNotificationFeedback.set(child.id,result);render(data.dashboard);setStatus(result);
+        } catch(error){
+          pendingChildNotifications.delete(child.id);
+          const result=error.code && MESSAGES.lv[`err.${error.code}`]?`err.${error.code}`:'child.sendFailed';
+          childNotificationFeedback.set(child.id,result);render(dashboard);setStatus(result);
+        }
       }}, icon(ICONS.send), tx('child.notify'));
+      if(pendingChildNotifications.has(child.id)){
+        button.disabled=true;button.setAttribute('aria-busy','true');button.replaceChildren(el('span',{class:'notify-spinner','aria-hidden':true}),tx('child.sending'));
+      }
       parentRow.append(el('div', {style: 'display:flex;gap:12px;align-items:center;flex-wrap:wrap'}, sent, button));
     }
     footer.append(parentRow);
-    footer.append(el('div', {class: 'parent-row'}, el('p', {i18n: 'child.municipal', i18nParams: {municipality: child.municipal.municipality || '—'}}),
+    const municipality = child.municipal.municipality || '—';
+    const [beforeMunicipality, afterMunicipality = ''] = t('child.municipal', {municipality:'__MUNICIPALITY__'}).split('__MUNICIPALITY__');
+    const municipalityNote = el('p', {'data-no-translate':true}, beforeMunicipality, el('strong', {class:'fetched-municipality',text:municipality}), afterMunicipality);
+    footer.append(el('div', {class: 'parent-row'}, municipalityNote,
       el('a', {class: 'gov-btn secondary small', href: child.municipal.lifeSituationUrl, target: '_blank', rel: 'noopener', i18n: 'child.municipalLink'})));
     card.append(footer);
     return card;
@@ -248,11 +271,22 @@
     root.replaceChildren(el('ul', {class: 'leave-list', style: 'list-style:none;padding:0;margin:0'}, applications.map(app => {
       const child = app.childId && dashboard.children.find(c => c.id === app.childId);
       const leave = app.sickLeaveId && dashboard.sickLeaves.find(l => l.id === app.sickLeaveId);
-      const extra = Object.entries(app.details).filter(([key]) => key !== 'seed').map(([key, value]) => `${key}: ${value}`).join(' · ');
+      const saved = app.details || {};
+      const field = (key, value) => el('div', {}, el('dt', {i18n: key}), el('dd', {}, value == null || value === '' ? tx('common.noData') : el('span', {text: value, 'data-no-translate': true})));
+      const fields = [field('apps.reference', `#${app.id}`)];
+      if (child) {
+        fields.push(field('common.child', `${child.firstName} ${child.lastName}`), field('common.personalCode', child.personasKods), field('common.born', fmtDate(child.birthDate)));
+      } else if (saved['bērns']) fields.push(field('common.child', saved['bērns']));
+      if (leave || saved.lapa) fields.push(field('apps.certificate', leave?.number || saved.lapa));
+      fields.push(field('apps.paymentAccount', saved.izmaksa));
+      if (saved.ilgums) fields.push(el('div', {}, el('dt', {i18n: 'apps.duration'}), el('dd', {}, /^(13|19) mēneši$/.test(saved.ilgums) ? tx(saved.ilgums.startsWith('13') ? 'dialog.opt13' : 'dialog.opt19') : el('span', {text: saved.ilgums, 'data-no-translate': true}))));
+      if (app.decidedAt) fields.push(field('admin.decided', fmtDate(app.decidedAt)));
+      const details = el('details', {class: 'application-details'}, el('summary', {i18n: 'common.details'}), el('dl', {}, fields));
+      if (saved.seed) details.append(el('p', {class: 'application-seed-note', i18n: 'admin.seeded'}));
       const subject = child ? el('div', {class: 'sub'}, tx('common.child'), el('span', {text: `: ${child.firstName}`, 'data-no-translate': true})) : leave ? el('div', {class: 'sub', i18n: 'apps.leave', i18nParams: {number: leave.number}}) : el('div', {class: 'sub', i18n: 'apps.none'});
       return el('li', {class: 'leave'}, el('div', {}, el('div', {class: 'title', i18n: `benefit.${app.benefitCode}`}), subject),
         el('dl', {}, el('dt', {i18n: 'common.submitted'}), el('dd', {text: fmtDate(app.submittedAt), 'data-no-translate': true})),
-        el('dl', {}, el('dt', {i18n: 'common.details'}), el('dd', {text: extra || '—', 'data-no-translate': true})),
+        details,
         el('div', {class: 'actions'}, chip(app.status, `status.${app.status}`)));
     })));
   }
@@ -286,7 +320,32 @@
   }
 
   // --- Prefilled application dialog ------------------------------------------------------
+  let directApplicationPending = false;
+  async function sendDirectApplication(benefit, context) {
+    if(directApplicationPending)return;
+    directApplicationPending=true;
+    const dialog=$('#apply-dialog');
+    const preventClose=event=>event.preventDefault();
+    dialog.addEventListener('cancel',preventClose);
+    dialog.setAttribute('aria-busy','true');
+    dialog.replaceChildren(el('div',{class:'dialog-ok'},el('h2',{id:'apply-title',i18n:`benefit.${benefit.code}`}),el('p',{class:'application-loading',role:'status'},el('span',{class:'notify-spinner','aria-hidden':true}),tx('dialog.submitting'))));
+    applyLanguage();if(!dialog.open)dialog.showModal();
+    try {
+      const [data]=await Promise.all([request('/api/vsaa/apply','POST',{benefitCode:benefit.code,childId:context.child?.id,sickLeaveId:context.leave?.id,iban:dashboard.person.iban,options:{}}),new Promise(resolve=>setTimeout(resolve,900))]);
+      render(data.dashboard);
+      dialog.replaceChildren(el('div',{class:'dialog-ok'},icon(ICONS.check),el('h2',{id:'apply-title',i18n:'dialog.done'}),el('p',{i18n:'dialog.doneText',i18nParams:{service:t(`service.${benefit.code}`),days:benefit.processingDays}}),el('button',{class:'gov-btn',type:'button',onclick:()=>dialog.close(),i18n:'common.close'})));
+      setStatus('');
+    }catch(error){
+      const key=error.code && MESSAGES.lv[`err.${error.code}`]?`err.${error.code}`:'dialog.failed';
+      dialog.replaceChildren(el('div',{class:'dialog-ok'},el('h2',{id:'apply-title',i18n:`benefit.${benefit.code}`}),el('p',{role:'alert',i18n:key}),el('button',{class:'gov-btn',type:'button',onclick:()=>dialog.close(),i18n:'common.close'})));
+    }finally{
+      directApplicationPending=false;dialog.removeAttribute('aria-busy');dialog.removeEventListener('cancel',preventClose);applyLanguage();
+    }
+  }
   function openApply(benefit, context) {
+    if(!dashboard.person.iban){location.assign('bank-account.html');return;}
+    if(!benefit.options || !Object.keys(benefit.options).length){sendDirectApplication(benefit,context);return;}
+
     const dialog = $('#apply-dialog');
     const person = dashboard.person;
     const form = el('form', {method: 'dialog'});
@@ -299,7 +358,7 @@
     form.append(facts, el('p', {class: 'prefilled-note', i18n: 'dialog.prefilled'}));
     if (benefit.estimate) form.append(el('p', {class: 'prefilled-note'}, tx('benefit.estimate'), el('span', {text: `: ${benefitAmount(benefit)}`, 'data-no-translate': true})));
     if (benefit.late) form.append(el('p', {class: 'prefilled-note', i18n: 'dialog.late', i18nParams: {rule: t(lateKey(benefit))}}));
-    form.append(el('label', {class: 'field'}, tx('dialog.iban'), el('input', {name: 'iban', value: person.iban || '', placeholder: 'LV00 BANK 0000 0000 0000 0', required: true, autocomplete: 'off', maxlength: '26'}), el('span', {class: 'hint', i18n: 'dialog.ibanHint'})));
+    form.append(el('p',{class:'prefilled-note'},tx('dialog.iban'),': ',el('strong',{text:person.iban,'data-no-translate':true})),el('input',{type:'hidden',name:'iban',value:person.iban}));
     if (benefit.options) {
       for (const [name, values] of Object.entries(benefit.options)) {
         const choice = el('fieldset', {class: 'field choice', style: 'border:0;padding:0;margin:0'}, el('legend', {i18n: 'dialog.duration', style: 'margin-bottom:6px'}));
@@ -332,7 +391,7 @@
     dialog.replaceChildren(form);
     applyLanguage();
     dialog.showModal();
-    form.iban.focus();
+    form.querySelector('input[type=radio]')?.focus();
   }
 
   // --- Profile alert and reminder toggle ---------------------------------------------------
