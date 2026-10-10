@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap">
   <link rel="stylesheet" href="styles.css?v=sidebar-labels-2">
   <link rel="stylesheet" href="vsaa.css?v=calculator-link-15">
-  <script src="translations.js?v=calculator-sidebar-17"></script>
+  <script src="translations.js?v=calculator-sidebar-18"></script>
   <script src="app.js?v=accessibility-3"></script>
   <script src="auth.js?v=header-guard-3" defer></script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
@@ -42,7 +42,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
     <div>
       <h3 data-i18n="profileAlert.title">Profils nav pilnībā iestatīts</h3>
-      <p data-i18n="profileAlert.text">Vārds, personas kods, deklarētā dzīvesvieta un bērna dati jau ir valsts reģistros. Lai VSAA varētu izmaksāt pabalstus, trūkst tikai bankas konta.</p>
+      <p data-i18n="profileAlert.text">Šeit redzamie personas, adreses un bērna dati ir izdomāti demo dati no prototipa datubāzes, nevis valsts reģistriem. Demonstrācijā trūkst tikai testa bankas konta.</p>
       <form class="inline-form" id="iban-form">
         <label><span data-i18n="profileAlert.iban">Konta numurs (IBAN)</span><input id="iban-input" name="iban" inputmode="latin" autocomplete="off" placeholder="LV00 BANK 0000 0000 0000 0" maxlength="26" required></label>
         <button class="gov-btn" type="submit" data-i18n="profileAlert.save">Saglabāt kontu</button>
@@ -52,8 +52,8 @@
   </section>
 
   <section class="vsaa-section" id="berni" aria-labelledby="berni-title">
-    <header><h2 id="berni-title" data-i18n="children.title">Bērnu pabalsti</h2><a class="section-link" href="https://latvija.gov.lv/LifeSituations/22503" target="_blank" rel="noopener" data-i18n="children.link">Dzīves situācija Latvija.gov.lv</a></header>
-    <p class="section-intro" data-i18n="children.intro">Piedzimstot bērnam, vecāki var pieprasīt sešus dažādus VSAA pabalstus, katru ar savu iesniegumu un termiņu. Šeit tie ir apkopoti vienā sarakstā ar oficiālajiem nosaukumiem, lai nebūtu jāmin, kā pakalpojums saucas katalogā.</p>
+    <header><h2 id="berni-title" data-i18n="children.title">Ar bērnu saistītie pabalsti</h2><a class="section-link" href="https://latvija.gov.lv/LifeSituations/22503" target="_blank" rel="noopener" data-i18n="children.link">Dzīves situācija Latvija.gov.lv</a></header>
+    <p class="section-intro" data-i18n="children.intro">Atkarībā no ģimenes situācijas un bērna vecuma var būt pieejami vairāki VSAA pabalsti. Tie kļūst pieejami dažādos brīžos, un katram ir savi nosacījumi un termiņi. Šeit tie apkopoti vienuviet ar oficiālajiem nosaukumiem.</p>
 
     <div id="children"></div>
   </section>
@@ -68,7 +68,7 @@
 
   <section class="vsaa-section" id="darbs" aria-labelledby="darbs-title">
     <header><h2 id="darbs-title" data-i18n="work.title">Sociālās iemaksas un darbs</h2><a class="section-link" href="https://latvija.gov.lv/LifeSituations/22291" target="_blank" rel="noopener" data-i18n="children.link">Dzīves situācija Latvija.gov.lv</a></header>
-    <p class="section-intro" data-i18n="work.intro">Ja darba devējs pārstāj veikt sociālās iemaksas, VSAA to redz pirmā. Šeit redzami pēdējie 16 mēneši, bezdarbnieka pabalsta nosacījumi un NVA reģistrētās vakances jūsu pašvaldībā.</p>
+    <p class="section-intro" data-i18n="work.intro">Sociālo iemaksu dati var tikt reģistrēti ar aizkavi. Šeit redzami pēdējie 16 mēneši, bezdarbnieka pabalsta nosacījumi un NVA reģistrētās vakances jūsu pašvaldībā.</p>
     <div class="employment-grid">
       <div class="gov-panel" id="employment"></div>
       <div class="gov-panel muted" id="vacancies"></div>
@@ -76,13 +76,13 @@
   </section>
 
   <section class="vsaa-section" id="atgadinajumi" aria-labelledby="atgadinajumi-title">
-    <header><h2 id="atgadinajumi-title" data-i18n="rem.title">Atgādinājumi</h2><label class="toggle"><input type="checkbox" id="reminders-toggle"><span data-i18n="rem.toggle">Sūtīt atgādinājumus uz e-adresi</span></label></header>
-    <p class="section-intro" data-i18n="rem.intro">VSAA atgādina par pabalstiem, kas ir pieejami, bet nav pieprasīti, un par termiņiem, kas tuvojas. Ieslēdzot sūtīšanu, atgādinājumi nonāk arī e-adreses iesūtnē.</p>
+    <header><h2 id="atgadinajumi-title" data-i18n="rem.title">Atgādinājumi</h2><label class="toggle"><input type="checkbox" id="reminders-toggle"><span data-i18n="rem.toggle">Ieslēgt demo atgādinājumus prototipa iesūtnei</span></label></header>
+    <p class="section-intro" data-i18n="rem.intro">Prototips atgādina par demo profilā redzamajiem pabalstiem un termiņiem. Ieslēdzot atgādinājumus, tie tiek pievienoti prototipa iesūtnei, nevis oficiālajai e-adresei.</p>
     <ul class="reminder-list" id="reminders"></ul>
   </section>
 
   <section class="vsaa-section" id="pieteikumi" aria-labelledby="pieteikumi-title">
-    <header><h2 id="pieteikumi-title" data-i18n="apps.title">Pieteiktie pakalpojumi</h2></header>
+    <header><h2 id="pieteikumi-title" data-i18n="apps.title">Demo pieteikumi</h2></header>
     <div id="applications"></div>
   </section>
 

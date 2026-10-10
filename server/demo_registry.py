@@ -9,10 +9,12 @@ NAME_FILE = Path(os.environ.get('NAME_FILE', Path(__file__).resolve().parent.par
 CASES = {1:'Nav bērnu', 2:'Viens jaundzimušais, divi vecāki', 3:'Divi bērni, daļa pabalstu jau piešķirta', 4:'Viens bērns, tēvs nav norādīts'}
 CHILD_BENEFITS = ('berna_piedzimsanas','berna_kopsanas','vecaku','gimenes_valsts','maternitates','paternitates')
 
-def attach(db, people_path):
+def attach(db, people_path, initialize=True):
     folder = Path(people_path).resolve().parent
     db.execute('ATTACH DATABASE ? AS family', (str(folder/'children.db'),))
     db.execute('ATTACH DATABASE ? AS bank', (str(folder/'bank.db'),))
+    if not initialize:
+        return
     db.executescript('''
     CREATE TABLE IF NOT EXISTS family.children (
       id INTEGER PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL,

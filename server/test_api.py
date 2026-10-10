@@ -36,6 +36,14 @@ def call(path, method='GET', body=None, token=None):
         return error.code, error.read()
 
 
+def read_rows(path, query, parameters=()):
+    connection = sqlite3.connect(path)
+    try:
+        return connection.execute(query, parameters).fetchall()
+    finally:
+        connection.close()
+
+
 def main():
     failures = []
 
@@ -57,9 +65,9 @@ def main():
                 except Exception:
                     time.sleep(0.1)
 
-            people = sqlite3.connect(db_path).execute("SELECT personas_kods, first_name, last_name FROM people WHERE role = 'person' ORDER BY id").fetchall()
+            people = read_rows(db_path, "SELECT personas_kods, first_name, last_name FROM people WHERE role = 'person' ORDER BY id")
             check('database seeded with four showcase people and three partners', len(people) == 7, str(len(people)))
-            admin_row = sqlite3.connect(db_path).execute("SELECT personas_kods FROM people WHERE role = 'admin'").fetchall()
+            admin_row = read_rows(db_path, "SELECT personas_kods FROM people WHERE role = 'admin'")
             check('one demo administrator account is seeded', len(admin_row) == 1)
             _, bootstrap_raw=call('/api/login','POST',{'personasKods':admin_row[0][0]})
             demo_admin_token=json.loads(bootstrap_raw)['token']
@@ -106,7 +114,7 @@ def main():
             check('marking read twice preserves timestamp', json.loads(raw)['messages'][0]['readAt'] == read_at)
             _, raw = call('/api/messages', token=token)
             check('read state persists on reload', json.loads(raw)['unreadCount'] == inbox['unreadCount'] - 1)
-            saved = sqlite3.connect(db_path).execute('SELECT read_at FROM messages WHERE id = ?', (message_id,)).fetchone()[0]
+            saved = read_rows(db_path, 'SELECT read_at FROM messages WHERE id = ?', (message_id,))[0][0]
             check('read state stored in SQLite', saved == read_at)
             _, raw = call('/api/messages', token=other_token)
             check('other user retains unread mail', json.loads(raw)['unreadCount'] >= 1)
@@ -163,7 +171,7 @@ def main():
             _, raw = call('/api/messages', token=token)
             check('application confirmation lands in the inbox', any(m['subject'].startswith('Iesniegums saņemts') for m in json.loads(raw)['messages']))
 
-            other_code = [p for p in sqlite3.connect(db_path).execute('SELECT personas_kods FROM people WHERE id = 5')][0][0]
+            other_code = read_rows(db_path, 'SELECT personas_kods FROM people WHERE id = 5')[0][0]
             _, raw = call('/api/login', 'POST', {'personasKods': other_code})
             other_parent = json.loads(raw)['token']
             _, raw = call('/api/vsaa/dashboard', token=other_parent)
@@ -183,7 +191,7 @@ def main():
             _, raw = call('/api/messages', token=token)
             check('reminder subjects are prefixed', any(m['subject'].startswith('Atgādinājums') for m in json.loads(raw)['messages']))
 
-            unemployed_code = [p for p in sqlite3.connect(db_path).execute('SELECT personas_kods FROM people WHERE id = 4')][0][0]
+            unemployed_code = read_rows(db_path, 'SELECT personas_kods FROM people WHERE id = 4')[0][0]
             _, raw = call('/api/login', 'POST', {'personasKods': unemployed_code})
             unemployed = json.loads(raw)['token']
             _, raw = call('/api/vsaa/dashboard', token=unemployed)
@@ -229,10 +237,18 @@ def main():
             _, raw = call('/api/vsaa/dashboard', token=other_parent)
             kopsanas = next(b for b in next(c for c in json.loads(raw)['dashboard']['children'] if c['id'] == newborn['id'])['benefits'] if b['code'] == 'berna_kopsanas')
             check('childcare benefit follows the parental-benefit recipient (VSP likuma 7. panta otrā daļa)', kopsanas['status'] == 'nav_pieejams')
+            concurrent_iban = father_dash['person']['iban']
+            if not concurrent_iban:
+                bank_connection = sqlite3.connect(Path(tmp) / 'bank.db')
+                try:
+                    concurrent_iban = bank_connection.execute(
+                        'SELECT iban FROM accounts WHERE personas_kods=?', (other_code,)).fetchone()[0]
+                finally:
+                    bank_connection.close()
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-                results = list(pool.map(lambda _: call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': newborn['id'], 'iban': father_dash['person']['iban'] or sqlite3.connect(Path(tmp)/'bank.db').execute('SELECT iban FROM accounts WHERE personas_kods=?',(other_code,)).fetchone()[0]}, token=other_parent)[0], range(6)))
-            stored_count = sqlite3.connect(db_path).execute("SELECT count(*) FROM applications WHERE benefit_code = 'paternitates' AND child_id = ?", (newborn['id'],)).fetchone()[0]
+                results = list(pool.map(lambda _: call('/api/vsaa/apply', 'POST', {'benefitCode': 'paternitates', 'childId': newborn['id'], 'iban': concurrent_iban}, token=other_parent)[0], range(6)))
+            stored_count = read_rows(db_path, "SELECT count(*) FROM applications WHERE benefit_code = 'paternitates' AND child_id = ?", (newborn['id'],))[0][0]
             check('concurrent duplicate submissions store a single application', stored_count == 1 and results.count(200) == 1, str(results))
             # Restore the father's profile (the demo panel action) so later isolation checks start clean.
             status, _ = call('/api/demo/people/5/clear-iban', 'POST',token=demo_admin_token)
@@ -305,10 +321,14 @@ def main():
             bank_conn.execute('UPDATE accounts SET active = 1 WHERE iban = ?', (iban,))
             bank_conn.commit(); bank_conn.close()
             from seed_people import connect, ensure_seeded
-            with connect(db_path) as seeded:
-                ensure_seeded(seeded)
-                check('reseeding preserves four children', seeded.execute('SELECT count(*) FROM family.children').fetchone()[0] == 4)
-                check('reseeding retains saved IBAN', seeded.execute('SELECT iban FROM people WHERE id = 2').fetchone()[0] == iban)
+            seeded = connect(db_path)
+            try:
+                with seeded:
+                    ensure_seeded(seeded)
+                    check('reseeding preserves four children', seeded.execute('SELECT count(*) FROM family.children').fetchone()[0] == 4)
+                    check('reseeding retains saved IBAN', seeded.execute('SELECT iban FROM people WHERE id = 2').fetchone()[0] == iban)
+            finally:
+                seeded.close()
 
             status, _ = call('/api/demo/people/2/clear-iban','POST',token=admin_token)
             check('demo panel clears saved IBAN', status == 200)
@@ -320,7 +340,7 @@ def main():
             status, _ = call('/api/demo/people/999999/clear-iban','POST',token=admin_token)
             check('unknown demo person rejected',status == 404)
 
-            stored = [row[0] for row in sqlite3.connect(db_path).execute('SELECT token_hash FROM sessions')]
+            stored = [row[0] for row in read_rows(db_path, 'SELECT token_hash FROM sessions')]
             check('only token hashes are stored', token not in stored and all(len(item) == 64 for item in stored))
 
             conn = sqlite3.connect(db_path)
